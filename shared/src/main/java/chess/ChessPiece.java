@@ -52,7 +52,20 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> possibilities = new ArrayList<ChessMove>();
-        possibilities = moveCalculator.getMoves(type, board, myPosition);
+        switch (type){
+            case KING: possibilities = moveCalculator.kingCalculator.getMoves(board, myPosition);
+                break;
+            case QUEEN:
+                break;
+            case BISHOP:
+                break;
+            case KNIGHT:
+                break;
+            case ROOK:
+                break;
+            case PAWN:
+                break;
+        }
         return possibilities;
     }
 }
