@@ -53,11 +53,11 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> possibilities = new ArrayList<ChessMove>();
         switch (type){
-            case KING: possibilities = moveCalculator.kingCalculator.getMoves(board, myPosition);
+            case KING: possibilities = MoveCalculator.kingMoves(board, myPosition);
                 break;
             case QUEEN:
                 break;
-            case BISHOP:
+            case BISHOP: possibilities = MoveCalculator.kingMoves(board, myPosition);
                 break;
             case KNIGHT:
                 break;
