@@ -11,8 +11,13 @@ import java.util.Objects;
 public class ChessMove {
     private ChessPosition startPosition;
     private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
+
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = promotionPiece;
     }
     @Override
     public boolean equals(java.lang.Object obj) {
@@ -20,7 +25,11 @@ public class ChessMove {
         if(obj == null) return false;
         if(obj.getClass() != this.getClass()) return false;
         ChessMove that = (ChessMove)obj;
-        if(this.getStartPosition() != that.getStartPosition() || this.getEndPosition() != that.getEndPosition() || this.getPromotionPiece() != that.getPromotionPiece()) return false;
+        if(this.getStartPosition().getRow() != that.getStartPosition().getRow()
+                ||this.getStartPosition().getColumn() != that.getStartPosition().getColumn()
+                || this.getEndPosition().getRow() != that.getEndPosition().getRow()
+                || this.getEndPosition().getColumn() != that.getEndPosition().getColumn()
+                || this.getPromotionPiece() != that.getPromotionPiece()) return false;
         return true;
     }
 
@@ -47,6 +56,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return null;
+        return promotionPiece;
     }
 }

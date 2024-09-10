@@ -26,13 +26,13 @@ public class ChessPiece {
         if(obj == null) return false;
         if(obj.getClass() != this.getClass()) return false;
         ChessPiece that = (ChessPiece)obj;
-        if(this.getPieceType() != that.getPieceType()) return false;
-        return true;
+        if(this.getPieceType() != that.getPieceType() || this.getTeamColor() != that.getTeamColor()) return false;
+        else return true;
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(this.getPieceType());
+        return Objects.hash(this.getPieceType(), this.getTeamColor());
     }
 
     /**
