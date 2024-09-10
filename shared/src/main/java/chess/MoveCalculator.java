@@ -8,7 +8,7 @@ public class MoveCalculator {
     public static int validityChecker(ChessPosition probe, ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         //check if that test position is on the board
-        if (probe.getRow() < 8 && probe.getRow() > 0 && probe.getColumn() < 8 && probe.getColumn() > 0) {
+        if (probe.getRow() < 9 && probe.getRow() > 0 && probe.getColumn() < 9 && probe.getColumn() > 0) {
             //check that there are no teammates on that square
             if (board.getPiece(probe) == null) {
                 //a return value of 1 means that the space is empty and a valid move
@@ -42,10 +42,15 @@ public class MoveCalculator {
 
     public static ArrayList<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> possibleMoves = new ArrayList<>();
+        System.out.println("Original Row: " + myPosition.getRow() + "Original Column: " + myPosition.getColumn());
+        System.out.println();
         //upper right diagonal
         int increment = 1;
-        while (increment < 8) {
+        while (increment < 9) {
             ChessPosition testPos = new ChessPosition(increment + myPosition.getRow(), increment + myPosition.getColumn());
+            System.out.println("1");
+            System.out.println("New Row: " + testPos.getRow() + " New Col: " + testPos.getColumn());
+            System.out.println();
             if (validityChecker(testPos, board, myPosition) == 1) {
                 //append this new move to the array of possible moves.
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
@@ -61,8 +66,11 @@ public class MoveCalculator {
         }
         //upper left diagonal
         increment = 1;
-        while (increment < 8) {
+        while (increment < 9) {
             ChessPosition testPos = new ChessPosition(increment + myPosition.getRow(), myPosition.getColumn() - increment);
+            System.out.println("2");
+            System.out.println("New Row: " + testPos.getRow() + " New Col: " + testPos.getColumn());
+            System.out.println();
             if (validityChecker(testPos, board, myPosition) == 1) {
                 //append this new move to the array of possible moves.
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
@@ -78,8 +86,11 @@ public class MoveCalculator {
         }
         //lower left diagonal
         increment = 1;
-        while (increment < 8) {
+        while (increment < 9) {
             ChessPosition testPos = new ChessPosition(myPosition.getRow() - increment, myPosition.getColumn() - increment);
+            System.out.println("3");
+            System.out.println("New Row: " + testPos.getRow() + " New Col: " + testPos.getColumn());
+            System.out.println();
             if (validityChecker(testPos, board, myPosition) == 1) {
                 //append this new move to the array of possible moves.
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
@@ -95,8 +106,11 @@ public class MoveCalculator {
         }
         //lower right diagonal
         increment = 1;
-        while (increment < 8) {
+        while (increment < 9) {
             ChessPosition testPos = new ChessPosition(myPosition.getRow() - increment, myPosition.getColumn() + increment);
+            System.out.println("4");
+            System.out.println("New Row: " + testPos.getRow() + " New Col: " + testPos.getColumn());
+            System.out.println();
             if (validityChecker(testPos, board, myPosition) == 1) {
                 //append this new move to the array of possible moves.
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
@@ -109,6 +123,11 @@ public class MoveCalculator {
                 possibleMoves.add(newMove);
                 increment = 9;
             } else increment = 9;
+        }
+
+        System.out.println("Actual Moves");
+        for(ChessMove move : possibleMoves) {
+            System.out.println("New Row: " + move.getEndPosition().getRow() + " New Col: " + move.getEndPosition().getColumn());
         }
         return possibleMoves;
     }
@@ -175,13 +194,37 @@ public class MoveCalculator {
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
                 possibleMoves.add(newMove);
                 ++increment;
-                continue;
             } else if (validityChecker(testPos, board, myPosition) == 2) {
                 //append this new move to the array of possible moves.
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
                 possibleMoves.add(newMove);
                 increment = 9;
             } else increment = 9;
+        }
+        System.out.print(possibleMoves);
+        return possibleMoves;
+    }
+
+    public static ArrayList<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
+        int smallStep;
+        int bigStep;
+        //iterate through every square within range
+        for (smallStep = -1; smallStep <= 1; smallStep+=2) {
+            for (bigStep = -2; bigStep <= 2; bigStep+=4) {
+                ChessPosition testPos = new ChessPosition(myPosition.getRow()+smallStep, myPosition.getColumn()+bigStep);
+                if (validityChecker(testPos, board, myPosition) <= 2) {
+                    //append this new move to the array of possible moves.
+                    ChessMove newMove = new ChessMove(myPosition, testPos, null);
+                    possibleMoves.add(newMove);
+                }
+                ChessPosition secondPos = new ChessPosition(myPosition.getRow()+bigStep, myPosition.getColumn()+smallStep);
+                if (validityChecker(testPos, board, myPosition) <= 2) {
+                    //append this new move to the array of possible moves.
+                    ChessMove newMove = new ChessMove(myPosition, secondPos, null);
+                    possibleMoves.add(newMove);
+                }
+            }
         }
         return possibleMoves;
     }

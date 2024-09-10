@@ -89,7 +89,7 @@ public class ChessPiece {
             case KNIGHT:
                 break;
             case ROOK:
-                possibilities = MoveCalculator.bishopMoves(board, myPosition);
+                possibilities = MoveCalculator.rookMoves(board, myPosition);
                 break;
             case PAWN:
                 break;
