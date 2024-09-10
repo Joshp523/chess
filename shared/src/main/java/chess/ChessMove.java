@@ -20,13 +20,13 @@ public class ChessMove {
         if(obj == null) return false;
         if(obj.getClass() != this.getClass()) return false;
         ChessMove that = (ChessMove)obj;
-        if(this.getStartPosition() != that.getStartPosition() || this.getEndPosition() != that.getEndPosition()) return false;
+        if(this.getStartPosition() != that.getStartPosition() || this.getEndPosition() != that.getEndPosition() || this.getPromotionPiece() != that.getPromotionPiece()) return false;
         return true;
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(this.getStartPosition(),this.getEndPosition());
+        return Objects.hash(this.getStartPosition(),this.getEndPosition(), this.getPromotionPiece());
     }
 
     /**

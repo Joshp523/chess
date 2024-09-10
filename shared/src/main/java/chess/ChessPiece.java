@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,10 +12,27 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    private ChessPiece.PieceType type;
+    private PieceType type;
     private ChessGame.TeamColor pieceColor;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
+        this.type = type;
+        this.pieceColor = pieceColor;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object obj) {
+        if(this == obj) return true;
+        if(obj == null) return false;
+        if(obj.getClass() != this.getClass()) return false;
+        ChessPiece that = (ChessPiece)obj;
+        if(this.getPieceType() != that.getPieceType()) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(this.getPieceType());
     }
 
     /**
@@ -51,20 +69,32 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+//        String checker = "wrong";
+//        if (type == PieceType.BISHOP)checker = "bishop";
+//        System.out.printf("type is %s", checker);
         ArrayList<ChessMove> possibilities = new ArrayList<ChessMove>();
-        switch (type){
-            case KING: possibilities = MoveCalculator.kingMoves(board, myPosition);
+        switch (type) {
+            case KING:
+                possibilities = MoveCalculator.kingMoves(board, myPosition);
                 break;
             case QUEEN:
+                possibilities = MoveCalculator.bishopMoves(board, myPosition);
+                for (ChessMove move : MoveCalculator.rookMoves(board, myPosition)) {
+                    possibilities.add(move);
+                }
                 break;
-            case BISHOP: possibilities = MoveCalculator.kingMoves(board, myPosition);
+            case BISHOP:
+                possibilities = MoveCalculator.bishopMoves(board, myPosition);
                 break;
             case KNIGHT:
                 break;
             case ROOK:
+                possibilities = MoveCalculator.bishopMoves(board, myPosition);
                 break;
             case PAWN:
                 break;
+            default:
+                possibilities = new ArrayList<>();
         }
         return possibilities;
     }
