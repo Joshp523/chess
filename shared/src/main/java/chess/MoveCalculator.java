@@ -126,8 +126,8 @@ public class MoveCalculator {
         }
 
         System.out.println("Actual Moves");
-        for(ChessMove move : possibleMoves) {
-            System.out.println("New Row: " + move.getEndPosition().getRow() + " New Col: " + move.getEndPosition().getColumn());
+        for (ChessMove move : possibleMoves) {
+            System.out.println("New Row: " + move.getEndPosition().getRow() + " \nNew Col: " + move.getEndPosition().getColumn());
         }
         return possibleMoves;
     }
@@ -210,15 +210,15 @@ public class MoveCalculator {
         int smallStep;
         int bigStep;
         //iterate through every square within range
-        for (smallStep = -1; smallStep <= 1; smallStep+=2) {
-            for (bigStep = -2; bigStep <= 2; bigStep+=4) {
-                ChessPosition testPos = new ChessPosition(myPosition.getRow()+smallStep, myPosition.getColumn()+bigStep);
+        for (smallStep = -1; smallStep <= 1; smallStep += 2) {
+            for (bigStep = -2; bigStep <= 2; bigStep += 4) {
+                ChessPosition testPos = new ChessPosition(myPosition.getRow() + smallStep, myPosition.getColumn() + bigStep);
                 if (validityChecker(testPos, board, myPosition) <= 2) {
                     //append this new move to the array of possible moves.
                     ChessMove newMove = new ChessMove(myPosition, testPos, null);
                     possibleMoves.add(newMove);
                 }
-                ChessPosition secondPos = new ChessPosition(myPosition.getRow()+bigStep, myPosition.getColumn()+smallStep);
+                ChessPosition secondPos = new ChessPosition(myPosition.getRow() + bigStep, myPosition.getColumn() + smallStep);
                 if (validityChecker(testPos, board, myPosition) <= 2) {
                     //append this new move to the array of possible moves.
                     ChessMove newMove = new ChessMove(myPosition, secondPos, null);
@@ -231,35 +231,43 @@ public class MoveCalculator {
 
     public static ArrayList<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> possibleMoves = new ArrayList<>();
+        int direction;
+        if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            direction = 1;
+        } else direction = -1;
+
         int limit;
-        if (myPosition.getRow() == 2) limit = 3;
+        if (myPosition.getRow() == 2 || myPosition.getRow() == 7) limit = 3;
         else limit = 2;
         int increment = 1;
         while (increment < limit) {
-            ChessPosition testPos = new ChessPosition(myPosition.getRow() + increment, myPosition.getColumn());
+            ChessPosition testPos = new ChessPosition(myPosition.getRow() + increment * direction, myPosition.getColumn());
             if (validityChecker(testPos, board, myPosition) == 1) {
                 //append this new move to the array of possible moves.
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
                 possibleMoves.add(newMove);
+
                 ++increment;
             } else increment = 9;
         }
 
-        ChessPosition leftAttack = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+        ChessPosition leftAttack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() - 1);
         if (validityChecker(leftAttack, board, myPosition) == 2) {
             //append this new move to the array of possible moves.
             ChessMove newMove = new ChessMove(myPosition, leftAttack, null);
             possibleMoves.add(newMove);
         }
 
-        ChessPosition rightAttack = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+        ChessPosition rightAttack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + 1);
         if (validityChecker(rightAttack, board, myPosition) == 2) {
             //append this new move to the array of possible moves.
             ChessMove newMove = new ChessMove(myPosition, rightAttack, null);
             possibleMoves.add(newMove);
         }
-        if (myPosition.getRow() == 7) {
 
+        System.out.println("Actual Moves");
+        for (ChessMove move : possibleMoves) {
+            System.out.println("New Row: " + move.getEndPosition().getRow() + " \nNew Col: " + move.getEndPosition().getColumn());
         }
         return possibleMoves;
     }

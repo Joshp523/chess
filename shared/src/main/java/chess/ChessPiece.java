@@ -79,19 +79,19 @@ public class ChessPiece {
                 break;
             case QUEEN:
                 possibilities = MoveCalculator.bishopMoves(board, myPosition);
-                for (ChessMove move : MoveCalculator.rookMoves(board, myPosition)) {
-                    possibilities.add(move);
-                }
+                possibilities.addAll(MoveCalculator.rookMoves(board, myPosition));
                 break;
             case BISHOP:
                 possibilities = MoveCalculator.bishopMoves(board, myPosition);
                 break;
             case KNIGHT:
+                possibilities = MoveCalculator.knightMoves(board, myPosition);
                 break;
             case ROOK:
                 possibilities = MoveCalculator.rookMoves(board, myPosition);
                 break;
             case PAWN:
+                possibilities = MoveCalculator.pawnMoves(board, myPosition);
                 break;
             default:
                 possibilities = new ArrayList<>();
