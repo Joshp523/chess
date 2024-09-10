@@ -3,6 +3,11 @@ package chess;
 import java.util.AbstractList;
 import java.util.ArrayList;
 
+import static chess.ChessPiece.PieceType.QUEEN;
+import static chess.ChessPiece.PieceType.BISHOP;
+import static chess.ChessPiece.PieceType.KNIGHT;
+import static chess.ChessPiece.PieceType.ROOK;
+
 public class MoveCalculator {
 
     public static int validityChecker(ChessPosition probe, ChessBoard board, ChessPosition myPosition) {
@@ -244,9 +249,16 @@ public class MoveCalculator {
             ChessPosition testPos = new ChessPosition(myPosition.getRow() + increment * direction, myPosition.getColumn());
             if (validityChecker(testPos, board, myPosition) == 1) {
                 //append this new move to the array of possible moves.
-                ChessMove newMove = new ChessMove(myPosition, testPos, null);
-                possibleMoves.add(newMove);
-
+                if ((direction == 1 && myPosition.getRow() == 7) || (direction == -1 && myPosition.getRow() == 2)) {
+                    ChessPiece.PieceType pieces[] = {QUEEN, BISHOP, KNIGHT, ROOK};
+                    for (ChessPiece.PieceType promotion : pieces) {
+                        ChessMove promoMove = new ChessMove(myPosition, testPos, promotion);
+                        possibleMoves.add(promoMove);
+                    }
+                }else {
+                    ChessMove newMove = new ChessMove(myPosition, testPos, null);
+                    possibleMoves.add(newMove);
+                }
                 ++increment;
             } else increment = 9;
         }
@@ -254,15 +266,32 @@ public class MoveCalculator {
         ChessPosition leftAttack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() - 1);
         if (validityChecker(leftAttack, board, myPosition) == 2) {
             //append this new move to the array of possible moves.
-            ChessMove newMove = new ChessMove(myPosition, leftAttack, null);
-            possibleMoves.add(newMove);
+            if ((direction == 1 && myPosition.getRow() == 7) || (direction == -1 && myPosition.getRow() == 2)) {
+                ChessPiece.PieceType pieces[] = {QUEEN, BISHOP, KNIGHT, ROOK};
+                for (ChessPiece.PieceType promotion : pieces) {
+                    ChessMove promoMove = new ChessMove(myPosition, leftAttack, promotion);
+                    possibleMoves.add(promoMove);
+                }
+            }else {
+                ChessMove newMove = new ChessMove(myPosition, leftAttack, null);
+                possibleMoves.add(newMove);
+            }
         }
 
         ChessPosition rightAttack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + 1);
         if (validityChecker(rightAttack, board, myPosition) == 2) {
             //append this new move to the array of possible moves.
-            ChessMove newMove = new ChessMove(myPosition, rightAttack, null);
-            possibleMoves.add(newMove);
+            if ((direction == 1 && myPosition.getRow() == 7) || (direction == -1 && myPosition.getRow() == 2)) {
+                ChessPiece.PieceType pieces[] = {QUEEN, BISHOP, KNIGHT, ROOK};
+                for (ChessPiece.PieceType promotion : pieces) {
+                    ChessMove promoMove = new ChessMove(myPosition, rightAttack, promotion);
+                    possibleMoves.add(promoMove);
+                }
+
+            }else {
+                ChessMove newMove = new ChessMove(myPosition, rightAttack, null);
+                possibleMoves.add(newMove);
+            }
         }
 
         System.out.println("Actual Moves");
