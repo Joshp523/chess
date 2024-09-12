@@ -72,7 +72,7 @@ public class ChessPiece {
 //        String checker = "wrong";
 //        if (type == PieceType.BISHOP)checker = "bishop";
 //        System.out.printf("type is %s", checker);
-        ArrayList<ChessMove> possibilities = new ArrayList<ChessMove>();
+        ArrayList<ChessMove> possibilities;
         switch (type) {
             case KING:
                 possibilities = MoveCalculator.kingMoves(board, myPosition);
