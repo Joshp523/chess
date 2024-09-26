@@ -61,9 +61,12 @@ public class ChessGame {
     private boolean suicide(ChessMove move, ChessBoard workingBoard) {
         ChessBoard potential = workingBoard;
         ChessPiece pieceInQuestion = workingBoard.getPiece(move.getStartPosition());
-        potential.addPiece(move.getStartPosition(), null);
-        potential.addPiece(move.getEndPosition(), pieceInQuestion);
-        return isPotentiallyInCheck(pieceInQuestion.getTeamColor(), potential);
+        if (pieceInQuestion != null) {
+            potential.addPiece(move.getStartPosition(), null);
+            potential.addPiece(move.getEndPosition(), pieceInQuestion);
+            return isInCheck(pieceInQuestion.getTeamColor(), potential);
+        }
+        return false;
     }
 
 
@@ -75,22 +78,16 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ArrayList<ChessMove> finalizedMoves = new ArrayList();
-        if (this.board.getPiece(startPosition) == null) return null;
-        else {
-            for (ChessMove move : this.board.getPiece(startPosition).pieceMoves(board, startPosition)) {
-                if (!suicide(move, this.board)) finalizedMoves.add(move);
-            }
-        }
-        return finalizedMoves;
+        return validMoves(startPosition, this.board);
     }
 
-    public Collection<ChessMove> validHypotheticalMoves(ChessPosition startPosition, ChessBoard testBoard) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessBoard testBoard) {
         ArrayList<ChessMove> finalizedMoves = new ArrayList();
         if (testBoard.getPiece(startPosition) == null) return null;
         else {
             for (ChessMove move : testBoard.getPiece(startPosition).pieceMoves(testBoard, startPosition)) {
-                if (!suicide(move, testBoard)) finalizedMoves.add(move);
+                if (!suicide(move, testBoard))
+                    finalizedMoves.add(move);
             }
         }
         return finalizedMoves;
@@ -107,6 +104,8 @@ public class ChessGame {
             throw new InvalidMoveException();
         } else if (!validMoves(move.getStartPosition()).contains(move)) {
             throw new InvalidMoveException();
+        } else if (board.getPiece(move.getStartPosition()).getTeamColor() != turn) {
+            throw new InvalidMoveException();
         } else {
             ChessBoard newBoard = this.board;
             ChessPiece pieceInQuestion = this.board.getPiece(move.getStartPosition());
@@ -114,6 +113,8 @@ public class ChessGame {
             newBoard.addPiece(move.getEndPosition(), pieceInQuestion);
             this.history.add(this.board);
             setBoard(newBoard);
+            if (this.turn == TeamColor.WHITE) setTeamTurn(TeamColor.BLACK);
+            else setTeamTurn(TeamColor.WHITE);
         }
     }
 
@@ -121,10 +122,11 @@ public class ChessGame {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition testPos = new ChessPosition(i, j);
-                if (testBoard.getPiece(testPos) == null) continue;
-                if (testBoard.getPiece(testPos).getPieceType() == ChessPiece.PieceType.KING
-                        && testBoard.getPiece(testPos).getTeamColor() == teamColor) {
-                    return testPos;
+                if (testBoard.getPiece(testPos) != null) {
+                    if (testBoard.getPiece(testPos).getPieceType() == ChessPiece.PieceType.KING
+                            && testBoard.getPiece(testPos).getTeamColor() == teamColor) {
+                        return testPos;
+                    }
                 }
             }
         }
@@ -138,26 +140,11 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingPos = findKing(teamColor, this.board);
-        ChessPosition enemyPos;
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition testPos = new ChessPosition(i, j);
-                ChessPiece testPiece = board.getPiece(testPos);
-                if (testPiece != null) {
-                    if (testPiece.getTeamColor() != teamColor) {
-                        enemyPos = testPos;
-                        if (validMoves(enemyPos).contains(kingPos)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+        return isInCheck(teamColor, this.board);
     }
 
-    private boolean isPotentiallyInCheck(TeamColor teamColor, ChessBoard testBoard) {
+
+    private boolean isInCheck(TeamColor teamColor, ChessBoard testBoard) {
 
         ChessPosition kingPos = findKing(teamColor, testBoard);
         ChessPosition enemyPos;
@@ -168,7 +155,7 @@ public class ChessGame {
                 if (testPiece != null) {
                     if (testPiece.getTeamColor() != teamColor) {
                         enemyPos = testPos;
-                        if (validHypotheticalMoves(enemyPos, testBoard).contains(kingPos)) {
+                        if (testPiece.pieceMoves(testBoard, enemyPos).contains(kingPos)) {
                             return true;
                         }
                     }
