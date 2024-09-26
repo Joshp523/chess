@@ -61,12 +61,17 @@ public class ChessGame {
     private boolean suicide(ChessMove move, ChessBoard workingBoard) {
         ChessBoard potentialBoard = workingBoard;
         ChessPiece pieceInQuestion = workingBoard.getPiece(move.getStartPosition());
+        boolean check = false;
         if (pieceInQuestion != null) {
+            ChessPiece enemy = workingBoard.getPiece(move.getEndPosition());
             potentialBoard.removePiece(move.getStartPosition());
             potentialBoard.addPiece(move.getEndPosition(), pieceInQuestion);
-            return isInCheck(pieceInQuestion.getTeamColor(), potentialBoard);
+            check = isInCheck(pieceInQuestion.getTeamColor(), potentialBoard);
+            potentialBoard.removePiece(move.getEndPosition());
+            potentialBoard.addPiece(move.getStartPosition(), pieceInQuestion);
+            potentialBoard.addPiece(move.getEndPosition(), enemy);
         }
-        return false;
+        return check;
     }
 
 
@@ -82,11 +87,11 @@ public class ChessGame {
     }
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessBoard testBoard) {
-        ArrayList<ChessMove> finalizedMoves = new ArrayList();
-        if (testBoard.getPiece(startPosition) == null) return null;
+        ArrayList<ChessMove> finalizedMoves = new ArrayList<>();
+        if (testBoard.getPiece(startPosition) == null) return finalizedMoves;
         else {
             for (ChessMove move : testBoard.getPiece(startPosition).pieceMoves(testBoard, startPosition)) {
-                if (suicide(move, testBoard)) {
+                if (!suicide(move, testBoard)) {
                     finalizedMoves.add(move);
                 }
             }
@@ -160,7 +165,7 @@ public class ChessGame {
                     if (testPiece.getTeamColor() != teamColor) {
                         enemyPos = testPos;
                         for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
-                            if (potentialMove.getEndPosition() == kingPos) return true;
+                            if (potentialMove.getEndPosition().equals(kingPos)) return true;
                         }
                     }
                 }
