@@ -59,12 +59,12 @@ public class ChessGame {
     }
 
     private boolean suicide(ChessMove move, ChessBoard workingBoard) {
-        ChessBoard potential = workingBoard;
+        ChessBoard potentialBoard = workingBoard;
         ChessPiece pieceInQuestion = workingBoard.getPiece(move.getStartPosition());
         if (pieceInQuestion != null) {
-            potential.addPiece(move.getStartPosition(), null);
-            potential.addPiece(move.getEndPosition(), pieceInQuestion);
-            return isInCheck(pieceInQuestion.getTeamColor(), potential);
+            potentialBoard.removePiece(move.getStartPosition());
+            potentialBoard.addPiece(move.getEndPosition(), pieceInQuestion);
+            return isInCheck(pieceInQuestion.getTeamColor(), potentialBoard);
         }
         return false;
     }
@@ -86,9 +86,13 @@ public class ChessGame {
         if (testBoard.getPiece(startPosition) == null) return null;
         else {
             for (ChessMove move : testBoard.getPiece(startPosition).pieceMoves(testBoard, startPosition)) {
-                if (!suicide(move, testBoard))
+                if (suicide(move, testBoard)) {
                     finalizedMoves.add(move);
+                }
             }
+        }
+        for (ChessMove move : finalizedMoves) {
+            System.out.print(move.toString());
         }
         return finalizedMoves;
     }
@@ -96,7 +100,7 @@ public class ChessGame {
     /**
      * Makes a move in a chess game
      *
-     * @param move chess move to preform
+     * @param move chess move to perform
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
@@ -155,8 +159,8 @@ public class ChessGame {
                 if (testPiece != null) {
                     if (testPiece.getTeamColor() != teamColor) {
                         enemyPos = testPos;
-                        if (testPiece.pieceMoves(testBoard, enemyPos).contains(kingPos)) {
-                            return true;
+                        for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
+                            if (potentialMove.getEndPosition() == kingPos) return true;
                         }
                     }
                 }
