@@ -119,7 +119,10 @@ public class ChessGame {
             ChessBoard newBoard = this.board;
             ChessPiece pieceInQuestion = this.board.getPiece(move.getStartPosition());
             newBoard.removePiece(move.getStartPosition());
-            newBoard.addPiece(move.getEndPosition(), pieceInQuestion);
+            ChessPiece promoPiece = new ChessPiece(pieceInQuestion.getTeamColor(), move.getPromotionPiece());
+            if(move.getPromotionPiece() != null) {
+                newBoard.addPiece(move.getEndPosition(), promoPiece);
+            }else newBoard.addPiece(move.getEndPosition(), pieceInQuestion);
             this.history.add(this.board);
             setBoard(newBoard);
             if (this.turn == TeamColor.WHITE) setTeamTurn(TeamColor.BLACK);
