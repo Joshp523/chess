@@ -88,8 +88,7 @@ public class MoveCalculator {
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
                 shot.add(newMove);
                 return shot;
-            }
-            return shot;
+            } else return shot;
         }
         return shot;
     }
