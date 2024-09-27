@@ -112,9 +112,7 @@ public class ChessGame {
         for (ChessMove move : finalizedMoves) {
             System.out.print(move.toString());
         }
-        if (finalizedMoves.isEmpty()) {
-            return null;
-        } else return finalizedMoves;
+        return finalizedMoves;
     }
 
     /**
@@ -253,7 +251,7 @@ public class ChessGame {
                 ChessPosition testPos = new ChessPosition(i, j);
                 ChessPiece testPiece = board.getPiece(testPos);
                 if (testPiece != null) {
-                    if (testPiece.getTeamColor() == turn && validMoves(testPos) != null) {
+                    if (testPiece.getTeamColor() == turn && !validMoves(testPos).isEmpty()) {
                         return false;
                     }
                 }
@@ -269,7 +267,7 @@ public class ChessGame {
                 ChessPosition testPos = new ChessPosition(i, j);
                 ChessPiece testPiece = board.getPiece(testPos);
                 if (testPiece != null) {
-                    if (testPiece.getTeamColor() == turn && validMoves(testPos) != null) {
+                    if (testPiece.getTeamColor() == turn && !validMoves(testPos).isEmpty()) {
                         return false;
                     }
                 }
