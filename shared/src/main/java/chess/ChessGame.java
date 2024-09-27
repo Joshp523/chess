@@ -25,10 +25,12 @@ public class ChessGame {
     public ChessGame() {
         this.turn = WHITE;
         this.board = new ChessBoard();
+        this.board.resetBoard();
         this.whiteCM = false;
         this.blackCM = false;
         this.whiteSM = false;
         this.blackSM = false;
+        updateStatus();
     }
 
     @Override
@@ -58,6 +60,7 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         this.turn = team;
+        updateStatus();
     }
 
     /**
@@ -98,7 +101,7 @@ public class ChessGame {
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessBoard testBoard) {
         ArrayList<ChessMove> finalizedMoves = new ArrayList<>();
-        if (testBoard.getPiece(startPosition) == null) return finalizedMoves;
+        if (testBoard.getPiece(startPosition) == null) return null;
         else {
             for (ChessMove move : testBoard.getPiece(startPosition).pieceMoves(testBoard, startPosition)) {
                 if (!suicide(move, testBoard)) {
@@ -109,7 +112,9 @@ public class ChessGame {
         for (ChessMove move : finalizedMoves) {
             System.out.print(move.toString());
         }
-        return finalizedMoves;
+        if (finalizedMoves.isEmpty()) {
+            return null;
+        } else return finalizedMoves;
     }
 
     /**
@@ -229,6 +234,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
+        updateStatus();
     }
 
     /**
