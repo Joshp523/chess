@@ -2,8 +2,8 @@ package dataaccess;
 
 public interface AuthDAO {
     boolean findUser(String username);
-    int createAuthToken(String username);
-    void deleteAuthToken(int authToken);
-    String fetchUsername(int authToken);
+    int createAuthToken(String username) throws DataAccessException;
+    void deleteAuthToken(int authToken) throws DataAccessException;
+    String fetchUsername(int authToken) throws DataAccessException;
     void clearTokens();
 }
