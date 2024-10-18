@@ -1,9 +1,12 @@
 package dataaccess;
 
+import model.AuthData;
+import model.UserData;
+
 public interface AuthDAO {
-    boolean findUser(String username);
-    int createAuthToken(String username) throws DataAccessException;
-    void deleteAuthToken(int authToken) throws DataAccessException;
-    String fetchUsername(int authToken) throws DataAccessException;
+    boolean findUser(UserData ud);
+    int createAuthToken(UserData ud) throws DataAccessException;
+    void deleteAuthToken(AuthData ad) throws DataAccessException;
+    String fetchUsername(AuthData ad) throws DataAccessException;
     void clearTokens();
 }

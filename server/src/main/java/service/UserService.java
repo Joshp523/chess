@@ -1,22 +1,32 @@
 package service;
 
-import dataaccess.memory.MemAuth;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
 
 public class UserService {
-    public AuthData register(UserData user){
-        UserDAO.createUser(user);
+    private final UserDAO userDAO;
+
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
-    public AuthData login(UserData user){
-        AuthDAO.login(user.username());
-        return AuthDAO.fetchToken(user.username);
+    public AuthData register(UserData user) throws DataAccessException {
+        userDAO.createUser(user);
+        return login(user);
+    }
+
+    public AuthData login(UserData user) throws DataAccessException {
+
+    return null;
     }
 
     public void logout(UserData user){
-        MemAuth
+
+    }
+
+    public void clearUsers(){
+        userDAO.clearUsers();
     }
 }

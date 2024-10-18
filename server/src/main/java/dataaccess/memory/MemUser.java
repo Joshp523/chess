@@ -1,18 +1,23 @@
 package dataaccess.memory;
 
+import dataaccess.UserDAO;
+import model.AuthData;
 import model.UserData;
 
 import java.util.HashMap;
 
-public class MemUser {
+public class MemUser implements UserDAO {
     //key: username
     //value: UserData
-    final private HashMap<String, UserData> UserList = new HashMap<> ();
+    final private HashMap<UserData, AuthData> UserList = new HashMap<> ();
 
-    void createUser(UserData u){
-        UserList.put(u.username, u);
+     public void createUser(UserData u){
+        UserList.put(u, null);
     }
-    void clearUsers(){
+    public boolean validateUser(AuthData ad){
+        return UserList.containsValue(ad);
+    }
+    public void clearUsers(){
         UserList.clear();
     }
 }
