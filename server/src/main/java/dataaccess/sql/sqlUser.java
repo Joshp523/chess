@@ -18,7 +18,7 @@ public class sqlUser implements UserDAO {
     }
 
     @Override
-    public boolean validateUser(AuthData ad) throws DataAccessException {
-        return false;
+    public UserData getUserByUsername(String username) throws DataAccessException {
+        return null;
     }
 }

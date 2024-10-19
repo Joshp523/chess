@@ -1,71 +1,52 @@
 package dataaccess.memory;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import static chess.ChessGame.TeamColor.WHITE;
 
 public class MemGame implements GameDAO {
-    static int gameID = 0;
-    //key: gameName
-    //value: GameData
-    final private HashMap<String, GameData> UserList = new HashMap<>();
+    static int id = 0;
+    ArrayList<GameData> games = new ArrayList<>();
 
-    ChessGame getGame(String gameName) {
-        return UserList.get(gameName).game();
+    @Override
+    public int createGame(String gameName) throws DataAccessException {
+        id += 1;
+        GameData newGame = new GameData(id, null, null, gameName, new ChessGame());
+        games.add(newGame);
+        return id;
     }
 
-    int createGame(String gameName) {
-        gameID += 1;
-        UserList.put(gameName, new GameData(gameID, null, null, gameName, new ChessGame()));
-        return gameID;
+    @Override
+    public void clearGames() {
+        games.clear();
     }
 
-    void deleteGame(String gameName) {
-        UserList.remove(gameName);
+    @Override
+    public ArrayList<GameData> getAllGames() {
+        return games;
     }
 
-    void addPlayer(String gameName, String username, ChessGame.TeamColor color) {
-        GameData OldGameData = UserList.get(gameName);
-        GameData NewGameData = OldGameData ;
-
-        int oldGameID = OldGameData.gameID();
-        String oldWhiteUsername = OldGameData.whiteUsername();
-        String oldBlackUsername = OldGameData.blackUsername();
-        String oldGameName = OldGameData.gameName();
-        ChessGame oldGame = OldGameData.game();
-
-        switch (color) {
-            case WHITE:
-                NewGameData = new GameData(oldGameID, username, oldBlackUsername, oldGameName, oldGame);
-                break;
-            case BLACK:
-                NewGameData = new GameData(oldGameID, oldWhiteUsername, username, oldGameName, oldGame);
-                break;
+    @Override
+    public void addUser(String username, ChessGame.TeamColor color, String gameName) {
+        for (GameData game : games) {
+            if (game.gameName().equals(gameName)) {
+                GameData updatedGame = null;
+                switch (color) {
+                    case WHITE:
+                        updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                        break;
+                    case BLACK:
+                        updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                        break;
+                }
+                games.remove(game);
+                games.add(updatedGame);
+            }
         }
-
-        UserList.replace(gameName, NewGameData);
     }
-
-    void updateGame(String gameName, ChessGame newGame) {
-        GameData OldGameData = UserList.get(gameName);
-
-        int oldGameID = OldGameData.gameID();
-        String oldWhiteUsername = OldGameData.whiteUsername();
-        String oldBlackUsername = OldGameData.blackUsername();
-        String oldGameName = OldGameData.gameName();
-        ChessGame oldGame = OldGameData.game();
-
-        GameData newGameData = new GameData(oldGameID, oldWhiteUsername, oldBlackUsername, oldGameName, newGame);
-
-        UserList.replace(gameName, newGameData);
-    }
-
-    void clearGames() {
-        UserList.clear();
-    }
-
 }

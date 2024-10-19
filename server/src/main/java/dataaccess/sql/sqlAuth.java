@@ -12,22 +12,23 @@ public class sqlAuth implements AuthDAO {
     }
 
     @Override
-    public int createAuthToken(UserData ud) throws DataAccessException {
-        return 0;
-    }
-
-    @Override
-    public void deleteAuthToken(AuthData ad) throws DataAccessException {
-
-    }
-
-    @Override
-    public String fetchUsername(AuthData ad) throws DataAccessException {
+    public String createAuthToken(UserData ud) throws DataAccessException {
         return "";
+    }
+
+
+    @Override
+    public boolean deleteAuthToken(AuthData ad) throws DataAccessException {
+        return false;
     }
 
     @Override
     public void clearTokens() {
 
+    }
+
+    @Override
+    public AuthData findByToken(String authToken) {
+        return null;
     }
 }

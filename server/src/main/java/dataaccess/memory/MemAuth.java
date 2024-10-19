@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class MemAuth implements AuthDAO {
 
-    final private ArrayList<AuthData> AuthList = new ArrayList<> ();
+    final private ArrayList<AuthData> AuthList = new ArrayList<>();
 
     @Override
     public boolean findUser(UserData ud) {
@@ -26,25 +26,22 @@ public class MemAuth implements AuthDAO {
     }
 
     @Override
-    public void deleteAuthToken(AuthData ad) throws DataAccessException {
+    public boolean deleteAuthToken(AuthData ad) throws DataAccessException {
+        int index = AuthList.indexOf(ad);
+        if (index == -1) return false;
+        AuthList.remove(index);
+        return true;
+    }
 
+    public void clearTokens() {
+        AuthList.clear();
     }
 
     @Override
-    public boolean authenticate(AuthData ad) throws DataAccessException {
-        return AuthList.contains(ad);
-    }
-
-    @Override
-    public String fetchUsername(AuthData ad) throws DataAccessException {
-        return "";
-    }
-
-    public void clearTokens(){
-        AuthList.clear ();
-    }
-
-    public boolean validateUser(AuthData ad){
-        return AuthList.contains(ad);
+    public AuthData findByToken(String authToken) {
+        for (AuthData ad : AuthList) {
+            if (ad.authToken().equals(authToken)) return ad;
+        }
+        return null;
     }
 }

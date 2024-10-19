@@ -8,6 +8,6 @@ public interface UserDAO {
 
     void createUser(UserData ud) throws DataAccessException;
     void clearUsers();
-    UserData getUserByUsername(String username) throws DataAccessException;
+    UserData findByUnPwd(String username, String password);
     //boolean validateUser(AuthData ad) throws DataAccessException;
 }

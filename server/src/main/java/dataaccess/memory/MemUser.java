@@ -21,7 +21,10 @@ public class MemUser implements UserDAO {
     }
 
     @Override
-    public UserData getUserByUsername(String username) throws DataAccessException {
-        return UserList.get(username);
+    public UserData findByUnPwd(String username, String password) {
+        UserData checkMe = UserList.get(username);
+        if (checkMe.password().equals(password)) {
+            return checkMe;
+        }return null;
     }
 }
