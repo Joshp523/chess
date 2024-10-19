@@ -31,4 +31,5 @@ public class sqlAuth implements AuthDAO {
     public AuthData findByToken(String authToken) {
         return null;
     }
+
 }

@@ -57,8 +57,14 @@ public class Service {
         return gameDAO.createGame(gameName);
     }
 
+    private UserData findUserByToken(String authToken) throws DataAccessException {
+        AuthData authData = authDAO.findByToken(authToken);
+        String username = authData.username();
+        return userDAO.findByUsername(username);
+    }
+
     public void joinGame(String authToken, ChessGame.TeamColor color, String gameName) throws DataAccessException {
-        UserData userData = authDAO.findUserByToken(authToken);
+        UserData userData = findUserByToken(authToken);
         String username = userData.username();
         gameDAO.addUser(username, color, gameName);
     }

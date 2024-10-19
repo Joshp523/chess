@@ -24,4 +24,9 @@ public class sqlGame implements GameDAO {
     public ArrayList<GameData> getAllGames() {
         return null;
     }
+
+    @Override
+    public void addUser(String username, ChessGame.TeamColor color, String gameName) {
+
+    }
 }

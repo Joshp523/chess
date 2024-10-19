@@ -15,6 +15,9 @@ public class Main {
             if (args.length >= 1) {
                 port = Integer.parseInt(args[0]);
             }
+            var service = new Service(new MemUser(), new MemAuth(), new MemGame());
+            var server = new Server().run(port);
+//            port = server.port();
         } catch (Throwable ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());
         }

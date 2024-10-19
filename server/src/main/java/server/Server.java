@@ -132,7 +132,7 @@ public class Server {
         service.createUser(newUser);
         response.status(200);
         String authToken = service.createAuthToken(newUser);
-        return new Gson().toJson(authToken);
+        return new Gson().toJson(new AuthData(authToken,newUser.username()));
     }
 
 
@@ -142,7 +142,7 @@ public class Server {
         return "";
     }
 
-    public int port() {
+    public Integer port() {
         return Spark.port();
     }
 

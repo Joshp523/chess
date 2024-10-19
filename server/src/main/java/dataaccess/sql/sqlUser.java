@@ -18,7 +18,12 @@ public class sqlUser implements UserDAO {
     }
 
     @Override
-    public UserData getUserByUsername(String username) throws DataAccessException {
+    public UserData findByUnPwd(String username, String password) {
+        return null;
+    }
+
+    @Override
+    public UserData findByUsername(String username) {
         return null;
     }
 }

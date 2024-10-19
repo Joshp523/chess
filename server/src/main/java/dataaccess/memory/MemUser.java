@@ -27,4 +27,9 @@ public class MemUser implements UserDAO {
             return checkMe;
         }return null;
     }
+
+    @Override
+    public UserData findByUsername(String username) {
+        return UserList.get(username);
+    }
 }
