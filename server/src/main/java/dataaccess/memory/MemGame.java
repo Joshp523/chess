@@ -1,13 +1,14 @@
 package dataaccess.memory;
 
 import chess.ChessGame;
+import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.HashMap;
 
 import static chess.ChessGame.TeamColor.WHITE;
 
-public class MemGame {
+public class MemGame implements GameDAO {
     static int gameID = 0;
     //key: gameName
     //value: GameData

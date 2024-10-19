@@ -18,23 +18,18 @@ public class Service {
         this.gameDAO = gameDAO;
     }
 
-    public AuthData register(UserData user) throws DataAccessException {
-        userDAO.createUser(user);
-        return login(user);
-    }
-
-    public AuthData login(UserData user) throws DataAccessException {
-
-    return null;
-    }
-
-    public void logout(UserData user){
-
-    }
-
     public void clear(){
         userDAO.clearUsers();
         gameDAO.clearGames();
         authDAO.clearTokens();
+    }
+
+    public boolean authenticate(AuthData ad) throws DataAccessException {
+        return authDAO.authenticate(ad);
+    }
+
+    public String createUser(UserData user) throws DataAccessException {
+        userDAO.createUser(user);
+        return authDAO.createAuthToken(user);
     }
 }

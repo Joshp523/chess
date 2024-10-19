@@ -1,14 +1,25 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.UserDAO;
-import service.UserService;
+import dataaccess.memory.MemAuth;
+import dataaccess.memory.MemGame;
+import dataaccess.memory.MemUser;
+import dataaccess.sql.sqlUser;
+import model.UserData;
+import service.Service;
 import spark.*;
+import dataaccess.*;
+
 
 public class Server {
-    private final UserService userService;
+    UserDAO userDataAccess = new MemUser();
+    GameDAO gameDataAccess = new MemGame();
+    AuthDAO authDataAccess = new MemAuth();
 
-    public Server(UserService userService) {
-        this.userService = userService;
+    private final Service service = new Service(userDataAccess, authDataAccess, gameDataAccess);
+
+    public Server() {
     }
 
     public int run(int desiredPort) {
@@ -26,15 +37,23 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::join);
 
-
-//        Spark.post("/user", () -> );
-//        Spark.exception(Exception.class, () -> this::exceptionHandler);
+        Spark.exception(Exception.class, this::exceptionHandler);
 
         Spark.awaitInitialization();
         return Spark.port();
     }
 
+    private Object exceptionHandler(Exception ex, Request req, Response res) {
+
+    }
+
     private Object join(Request request, Response response) {
+
+        var pet = new Gson().fromJson(request.body(), String.class);
+//        if (service.authenticate(ad)){
+
+//        }
+        //serialize unauthorized messaage in the body of the response
     }
 
     private Object createGame(Request request, Response response) {
@@ -47,14 +66,17 @@ public class Server {
     }
 
     private Object login(Request request, Response response) {
+        var  = new Gson().fromJson(req.body(), Pet.class);
     }
 
-    private Object register(Request request, Response response) {
+    private String register(Request request, Response response) {
+        UserData newUser = new Gson().fromJson(request.body(), UserData.class);
+        service.createUser(newUser);
     }
 
 
     Object clear(Request req, Response res) {
-        Service.clear();
+        service.clear();
         res.status(200);
         return "";
     }

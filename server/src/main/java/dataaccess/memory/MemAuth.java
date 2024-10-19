@@ -1,35 +1,50 @@
 package dataaccess.memory;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.AuthData;
+import model.UserData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
-public class MemAuth {
-    private static int nextID = 0;
-    //key: AuthToken
-    //value: username
-    final private HashMap<Integer, String> AuthList = new HashMap<> ();
+public class MemAuth implements AuthDAO {
 
+    final private ArrayList<AuthData> AuthList = new ArrayList<> ();
 
-    boolean findUser(String username){
-        return AuthList.containsValue(username);
+    @Override
+    public boolean findUser(UserData ud) {
+        return false;
     }
-    int createAuthToken(String username){
-        nextID++;
-        AuthList.put(nextID, username);
-        return nextID;
+
+    @Override
+    public String createAuthToken(UserData ud) throws DataAccessException {
+        String newToken = UUID.randomUUID().toString();
+        AuthList.add(new AuthData(newToken, ud.username()));
+        return newToken;
     }
-    void deleteAuthToken(int authToken){
-        AuthList.remove(authToken);
+
+    @Override
+    public void deleteAuthToken(AuthData ad) throws DataAccessException {
+
     }
-    String fetchUsername(int authToken){
-        return AuthList.get(authToken);
+
+    @Override
+    public boolean authenticate(AuthData ad) throws DataAccessException {
+        return AuthList.contains(ad);
     }
-    void clearTokens(){
+
+    @Override
+    public String fetchUsername(AuthData ad) throws DataAccessException {
+        return "";
+    }
+
+    public void clearTokens(){
         AuthList.clear ();
     }
 
     public boolean validateUser(AuthData ad){
-        return AuthList.containsValue(ad);
+        return AuthList.contains(ad);
     }
 }
