@@ -19,35 +19,53 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.delete("/db", this::clear);
+        Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
+        Spark.put("/game", this::join);
+
 
 //        Spark.post("/user", () -> );
 //        Spark.exception(Exception.class, () -> this::exceptionHandler);
 
-
-        //This line initializes the server and can be removed once you have a functioning endpoint
-        Spark.init();
-
         Spark.awaitInitialization();
         return Spark.port();
     }
-//    void createuser(Request req, Response res) throws Exception{
-//        var newUser = serializer.fronJson(req.body(), )
-//
-//    }
 
-    public void stop() {
-        Spark.stop();
-        Spark.awaitStop();
+    private Object join(Request request, Response response) {
     }
 
+    private Object createGame(Request request, Response response) {
+    }
+
+    private Object listGames(Request request, Response response) {
+    }
+
+    private Object logout(Request request, Response response) {
+    }
+
+    private Object login(Request request, Response response) {
+    }
+
+    private Object register(Request request, Response response) {
+    }
+
+
     Object clear(Request req, Response res) {
-        userService.clearUsers();
+        Service.clear();
         res.status(200);
         return "";
     }
 
     public int port() {
         return Spark.port();
+    }
+
+    public void stop() {
+        Spark.stop();
+        Spark.awaitStop();
     }
 }
 

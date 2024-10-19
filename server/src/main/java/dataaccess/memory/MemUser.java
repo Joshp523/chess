@@ -1,5 +1,6 @@
 package dataaccess.memory;
 
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -7,17 +8,20 @@ import model.UserData;
 import java.util.HashMap;
 
 public class MemUser implements UserDAO {
-    //key: username
+    //key: UserData.username
     //value: UserData
-    final private HashMap<UserData, AuthData> UserList = new HashMap<> ();
+    final private HashMap<String, UserData> UserList = new HashMap<>();
 
-     public void createUser(UserData u){
-        UserList.put(u, null);
+    public void createUser(UserData u) {
+        UserList.put(u.username(), u);
     }
-    public boolean validateUser(AuthData ad){
-        return UserList.containsValue(ad);
-    }
-    public void clearUsers(){
+
+    public void clearUsers() {
         UserList.clear();
+    }
+
+    @Override
+    public UserData getUserByUsername(String username) throws DataAccessException {
+        return UserList.get(username);
     }
 }

@@ -1,5 +1,7 @@
 package dataaccess.memory;
 
+import model.AuthData;
+
 import java.util.HashMap;
 
 public class MemAuth {
@@ -25,5 +27,9 @@ public class MemAuth {
     }
     void clearTokens(){
         AuthList.clear ();
+    }
+
+    public boolean validateUser(AuthData ad){
+        return AuthList.containsValue(ad);
     }
 }

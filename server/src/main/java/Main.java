@@ -14,15 +14,15 @@ public class Main {
                 port = Integer.parseInt(args[0]);
             }
 
-            UserDAO dataAccess = new MemUser();
+            UserDAO userDataAccess = new MemUser();
             if (args.length >= 2 && args[1].equals("dataaccess/sql")) {
-                dataAccess = new sqlUser();
+                userDataAccess = new sqlUser();
             }
 
-            var service = new UserService(dataAccess);
+            var service = new UserService(userDataAccess);
             var server = new Server(service).run(port);
             //port = server.port;
-            System.out.printf("Server started on port %d with %s%n", port, dataAccess.getClass());
+            System.out.printf("Server started on port %d with %s%n", port, userDataAccess.getClass());
             return;
         } catch (Throwable ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());
