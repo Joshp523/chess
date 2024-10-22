@@ -13,5 +13,5 @@ public interface GameDAO {
 
     ArrayList<GameData> getAllGames();
 
-    void addUser(String username, ChessGame.TeamColor color, String gameName);
+    void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException;
 }

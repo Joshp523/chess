@@ -18,8 +18,7 @@ public class sqlAuth implements AuthDAO {
 
 
     @Override
-    public boolean deleteAuthToken(AuthData ad) throws DataAccessException {
-        return false;
+    public void deleteAuthToken(AuthData ad) throws DataAccessException {
     }
 
     @Override

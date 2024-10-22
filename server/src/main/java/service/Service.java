@@ -1,14 +1,18 @@
 package service;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import dataaccess.UserDAO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Service {
     private final UserDAO userDAO;
@@ -35,25 +39,28 @@ public class Service {
         return authDAO.createAuthToken(ud);
     }
 
-    public UserData findDataByUnPwd(String username, String password) {
+    public UserData findDataByUnPwd(String username, String password) throws DataAccessException {
         return userDAO.findByUnPwd(username, password);
     }
 
-    public boolean logout(String authToken) throws DataAccessException {
-        AuthData authData = authDAO.findByToken(authToken);
-        return authDAO.deleteAuthToken(authData);
+    public void logout(String authToken) throws DataAccessException {
+
+            AuthData authData = authDAO.findByToken(authToken);
+            authDAO.deleteAuthToken(authData);
+
     }
 
-    public boolean validToken(String authToken) {
-        if(authDAO.findByToken(authToken) != null)return true;
-        return false;
+    public boolean validToken(String authToken){
+        return authDAO.findByToken(authToken) != null;
+
     }
 
-    public ArrayList listGames() {
+    public ArrayList<GameData> listGames() {
         return gameDAO.getAllGames();
     }
 
     public int createGame(String gameName) throws DataAccessException {
+        //System.out.println("got to service class");
         return gameDAO.createGame(gameName);
     }
 
@@ -63,9 +70,13 @@ public class Service {
         return userDAO.findByUsername(username);
     }
 
-    public void joinGame(String authToken, ChessGame.TeamColor color, String gameName) throws DataAccessException {
+    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws DataAccessException {
         UserData userData = findUserByToken(authToken);
         String username = userData.username();
-        gameDAO.addUser(username, color, gameName);
+        gameDAO.addUser(username, color, gameID);
+    }
+
+    public HashMap<String, UserData> getUserList() {
+        return userDAO.getUserList();
     }
 }

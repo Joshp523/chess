@@ -5,6 +5,7 @@ import model.AuthData;
 import model.UserData;
 
 import java.sql.*;
+import java.util.HashMap;
 
 public class sqlUser implements UserDAO {
     @Override
@@ -24,6 +25,11 @@ public class sqlUser implements UserDAO {
 
     @Override
     public UserData findByUsername(String username) {
+        return null;
+    }
+
+    @Override
+    public HashMap<String, UserData> getUserList() {
         return null;
     }
 }

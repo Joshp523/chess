@@ -26,11 +26,10 @@ public class MemAuth implements AuthDAO {
     }
 
     @Override
-    public boolean deleteAuthToken(AuthData ad) throws DataAccessException {
+    public void deleteAuthToken(AuthData ad) throws DataAccessException {
         int index = AuthList.indexOf(ad);
-        if (index == -1) return false;
+        if (index == -1) throw new DataAccessException("No such auth token");
         AuthList.remove(index);
-        return true;
     }
 
     public void clearTokens() {
@@ -38,7 +37,7 @@ public class MemAuth implements AuthDAO {
     }
 
     @Override
-    public AuthData findByToken(String authToken) {
+    public AuthData findByToken(String authToken){
         for (AuthData ad : AuthList) {
             if (ad.authToken().equals(authToken)) return ad;
         }

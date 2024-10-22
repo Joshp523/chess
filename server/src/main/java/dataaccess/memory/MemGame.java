@@ -1,6 +1,7 @@
 package dataaccess.memory;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
@@ -15,6 +16,7 @@ public class MemGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
+        //System.out.println("gameName: " + gameName);
         id += 1;
         GameData newGame = new GameData(id, null, null, gameName, new ChessGame());
         games.add(newGame);
@@ -32,16 +34,20 @@ public class MemGame implements GameDAO {
     }
 
     @Override
-    public void addUser(String username, ChessGame.TeamColor color, String gameName) {
+    public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException {
         for (GameData game : games) {
-            if (game.gameName().equals(gameName)) {
+            if (game.gameID() == gameID) {
                 GameData updatedGame = null;
                 switch (color) {
                     case WHITE:
-                        updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                        if (game.whiteUsername() == null) {
+                            updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                        } else throw new DataAccessException("Error: already taken");
                         break;
                     case BLACK:
-                        updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                        if (game.blackUsername() == null) {
+                            updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                        } else throw new DataAccessException("Error: already taken");
                         break;
                 }
                 games.remove(game);

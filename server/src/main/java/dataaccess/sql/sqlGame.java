@@ -26,7 +26,7 @@ public class sqlGame implements GameDAO {
     }
 
     @Override
-    public void addUser(String username, ChessGame.TeamColor color, String gameName) {
+    public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException{
 
     }
 }
