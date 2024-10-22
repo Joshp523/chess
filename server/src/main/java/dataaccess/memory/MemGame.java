@@ -16,7 +16,10 @@ public class MemGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        //System.out.println("gameName: " + gameName);
+        if(gameName == "")throw new DataAccessException("Game name cannot be empty");
+        for(GameData game: games){
+            if (game.gameName()==gameName){throw new DataAccessException("Game name already exists");}
+        }
         id += 1;
         GameData newGame = new GameData(id, null, null, gameName, new ChessGame());
         games.add(newGame);

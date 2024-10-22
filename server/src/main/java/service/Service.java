@@ -25,7 +25,7 @@ public class Service {
         this.gameDAO = gameDAO;
     }
 
-    public void clear(){
+    public void clear() {
         userDAO.clearUsers();
         gameDAO.clearGames();
         authDAO.clearTokens();
@@ -44,13 +44,11 @@ public class Service {
     }
 
     public void logout(String authToken) throws DataAccessException {
-
-            AuthData authData = authDAO.findByToken(authToken);
-            authDAO.deleteAuthToken(authData);
-
+        AuthData authData = authDAO.findByToken(authToken);
+        authDAO.deleteAuthToken(authData);
     }
 
-    public boolean validToken(String authToken){
+    public boolean validToken(String authToken) {
         return authDAO.findByToken(authToken) != null;
 
     }
@@ -74,9 +72,5 @@ public class Service {
         UserData userData = findUserByToken(authToken);
         String username = userData.username();
         gameDAO.addUser(username, color, gameID);
-    }
-
-    public HashMap<String, UserData> getUserList() {
-        return userDAO.getUserList();
     }
 }

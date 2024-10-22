@@ -20,6 +20,9 @@ public class MemAuth implements AuthDAO {
 
     @Override
     public String createAuthToken(UserData ud) throws DataAccessException {
+        if (ud.username()==null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
         String newToken = UUID.randomUUID().toString();
         AuthList.add(new AuthData(newToken, ud.username()));
         return newToken;
