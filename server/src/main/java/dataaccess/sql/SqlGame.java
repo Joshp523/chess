@@ -7,7 +7,7 @@ import model.GameData;
 
 import java.util.ArrayList;
 
-public class sqlGame implements GameDAO {
+public class SqlGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {

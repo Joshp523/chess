@@ -148,17 +148,17 @@ public class MoveCalculator {
             } else increment = 9;
         }
         for (int a = -1; a <= 1; a += 2) {
-            ChessPosition Attack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + a);
-            if (validityChecker(Attack, board, myPosition) == 2) {
+            ChessPosition attack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + a);
+            if (validityChecker(attack, board, myPosition) == 2) {
                 //append this new move to the array of possible moves.
                 if ((direction == 1 && myPosition.getRow() == 7) || (direction == -1 && myPosition.getRow() == 2)) {
                     ChessPiece.PieceType pieces[] = {QUEEN, BISHOP, KNIGHT, ROOK};
                     for (ChessPiece.PieceType promotion : pieces) {
-                        ChessMove promoMove = new ChessMove(myPosition, Attack, promotion);
+                        ChessMove promoMove = new ChessMove(myPosition, attack, promotion);
                         possibleMoves.add(promoMove);
                     }
                 } else {
-                    ChessMove newMove = new ChessMove(myPosition, Attack, null);
+                    ChessMove newMove = new ChessMove(myPosition, attack, null);
                     possibleMoves.add(newMove);
                 }
             }

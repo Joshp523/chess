@@ -5,11 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
-public class sqlAuth implements AuthDAO {
-    @Override
-    public boolean findUser(UserData ud) {
-        return false;
-    }
+public class SqlAuth implements AuthDAO {
 
     @Override
     public String createAuthToken(UserData ud) throws DataAccessException {

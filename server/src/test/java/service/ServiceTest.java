@@ -16,22 +16,17 @@ import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 class ServiceTest {
-    private UserDAO MemUser = new MemUser();
-    private AuthDAO MemAuth = new MemAuth();
-    private GameDAO MemGame = new MemGame();
-    Service service = new Service(MemUser, MemAuth, MemGame);
+    private UserDAO memUser = new MemUser();
+    private AuthDAO memAuth = new MemAuth();
+    private GameDAO memGame = new MemGame();
+    Service service = new Service(memUser, memAuth, memGame);
     ServiceTest(){}
 
     @BeforeEach
     void setUp() {
         this.service.clear();
-        this.service = new Service(MemUser, MemAuth, MemGame);
+        this.service = new Service(memUser, memAuth, memGame);
     }
-//
-//    @AfterEach
-//    void tearDown() {
-//
-//    }
 
     @Test
     void clearGood() {

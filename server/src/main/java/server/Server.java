@@ -29,7 +29,6 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
 
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
@@ -38,16 +37,10 @@ public class Server {
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::join);
-
-//        Spark.exception(Exception.class, this::exceptionHandler);
-//
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-//    private Object exceptionHandler(Exception ex, Request req, Response res) {
-//
-//    }
 
     private String join(Request request, Response response) {
         String authToken = request.headers("authorization");
@@ -139,9 +132,10 @@ public class Server {
 
     private String login(Request request, Response response) {
         try {
-            UsernameAndPassword NameAndPass = new Gson().fromJson(request.body(), UsernameAndPassword.class);
-            String username = NameAndPass.username();
-            String password = NameAndPass.password();
+            UsernameAndPassword nameAndPass = new Gson().fromJson(request.body(), UsernameAndPassword.class);
+            String username = nameAndPass.username();
+            String password = nameAndPass.password();
+
             UserData storedData = service.findDataByUnPwd(username, password);
             String authToken = service.createAuthToken(storedData);
             response.status(200);

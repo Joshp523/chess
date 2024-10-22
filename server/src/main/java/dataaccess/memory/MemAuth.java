@@ -6,17 +6,11 @@ import model.AuthData;
 import model.UserData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class MemAuth implements AuthDAO {
 
-    final private ArrayList<AuthData> AuthList = new ArrayList<>();
-
-    @Override
-    public boolean findUser(UserData ud) {
-        return false;
-    }
+    final private ArrayList<AuthData> authList = new ArrayList<>();
 
     @Override
     public String createAuthToken(UserData ud) throws DataAccessException {
@@ -24,24 +18,24 @@ public class MemAuth implements AuthDAO {
             throw new DataAccessException("Error: unauthorized");
         }
         String newToken = UUID.randomUUID().toString();
-        AuthList.add(new AuthData(newToken, ud.username()));
+        authList.add(new AuthData(newToken, ud.username()));
         return newToken;
     }
 
     @Override
     public void deleteAuthToken(AuthData ad) throws DataAccessException {
-        int index = AuthList.indexOf(ad);
+        int index = authList.indexOf(ad);
         if (index == -1) throw new DataAccessException("No such auth token");
-        AuthList.remove(index);
+        authList.remove(index);
     }
 
     public void clearTokens() {
-        AuthList.clear();
+        authList.clear();
     }
 
     @Override
     public AuthData findByToken(String authToken){
-        for (AuthData ad : AuthList) {
+        for (AuthData ad : authList) {
             if (ad.authToken().equals(authToken)) return ad;
         }
         return null;

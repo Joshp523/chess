@@ -176,15 +176,21 @@ public class ChessGame {
         ChessPosition enemyPos;
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
-                ChessPosition testPos = new ChessPosition(i, j);
-                ChessPiece testPiece = testBoard.getPiece(testPos);
-                if (testPiece != null) {
-                    if (testPiece.getTeamColor() != teamColor) {
-                        enemyPos = testPos;
-                        for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
-                            if (potentialMove.getEndPosition().equals(kingPos)) return true;
-                        }
-                    }
+                if (extracted(teamColor, testBoard, i, j, kingPos)) return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean extracted(TeamColor teamColor, ChessBoard testBoard, int i, int j, ChessPosition kingPos) {
+        ChessPosition enemyPos;
+        ChessPosition testPos = new ChessPosition(i, j);
+        ChessPiece testPiece = testBoard.getPiece(testPos);
+        if (testPiece != null) {
+            if (testPiece.getTeamColor() != teamColor) {
+                enemyPos = testPos;
+                for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
+                    if (potentialMove.getEndPosition().equals(kingPos)) return true;
                 }
             }
         }
@@ -246,6 +252,10 @@ public class ChessGame {
 
     private boolean stalemateChecker() {
         if (isInCheck(turn)) return false;
+        return kingInDanger();
+    }
+
+    private boolean kingInDanger() {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition testPos = new ChessPosition(i, j);
@@ -262,18 +272,7 @@ public class ChessGame {
 
     private boolean checkmateChecker() {
         if (!isInCheck(turn)) return false;
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition testPos = new ChessPosition(i, j);
-                ChessPiece testPiece = board.getPiece(testPos);
-                if (testPiece != null) {
-                    if (testPiece.getTeamColor() == turn && !validMoves(testPos).isEmpty()) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return kingInDanger();
     }
 
     private void updateStatus() {

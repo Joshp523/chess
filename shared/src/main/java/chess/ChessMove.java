@@ -34,24 +34,6 @@ public class ChessMove {
     public int hashCode() {
         return Objects.hash(getStartPosition(), getEndPosition(), getPromotionPiece());
     }
-//    @Override
-//    public boolean equals(java.lang.Object obj) {
-//        if(this == obj) return true;
-//        if(obj == null) return false;
-//        if(obj.getClass() != this.getClass()) return false;
-//        ChessMove that = (ChessMove)obj;
-//        if(this.getStartPosition().getRow() != that.getStartPosition().getRow()
-//                ||this.getStartPosition().getColumn() != that.getStartPosition().getColumn()
-//                || this.getEndPosition().getRow() != that.getEndPosition().getRow()
-//                || this.getEndPosition().getColumn() != that.getEndPosition().getColumn()
-//                || this.getPromotionPiece() != that.getPromotionPiece()) return false;
-//        return true;
-//    }
-//
-//    @Override
-//    public int hashCode(){
-//        return Objects.hash(this.getStartPosition(),this.getEndPosition(), this.getPromotionPiece());
-//    }
 
     /**
      * @return ChessPosition of starting location

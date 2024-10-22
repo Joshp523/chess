@@ -1,8 +1,6 @@
-import dataaccess.UserDAO;
 import dataaccess.memory.MemAuth;
 import dataaccess.memory.MemGame;
 import dataaccess.memory.MemUser;
-import dataaccess.sql.sqlUser;
 import server.Server;
 import service.Service;
 
