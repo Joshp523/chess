@@ -1,14 +1,11 @@
 package dataaccess.memory;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.ArrayList;
-
-import static chess.ChessGame.TeamColor.WHITE;
 
 public class MemGame implements GameDAO {
     static int id = 0;

@@ -1,8 +1,6 @@
 package service;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -10,9 +8,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import dataaccess.UserDAO;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Service {
     private final UserDAO userDAO;

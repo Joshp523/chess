@@ -8,16 +8,12 @@ import dataaccess.memory.MemAuth;
 import dataaccess.memory.MemGame;
 import dataaccess.memory.MemUser;
 import model.UserData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import dataaccess.DataAccessException;
-import org.junit.jupiter.api.function.Executable;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceTest {
     private UserDAO MemUser = new MemUser();

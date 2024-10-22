@@ -1,12 +1,10 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import dataaccess.UserDAO;
 import dataaccess.memory.MemAuth;
 import dataaccess.memory.MemGame;
 import dataaccess.memory.MemUser;
-import dataaccess.sql.sqlUser;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -14,8 +12,6 @@ import service.Service;
 import spark.*;
 import dataaccess.*;
 
-import java.util.ArrayList;
-import java.util.Map;
 
 
 public class Server {
