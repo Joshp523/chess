@@ -35,14 +35,19 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessGame chessGame = (ChessGame) o;
         return turn == chessGame.turn && Objects.equals(getBoard(), chessGame.getBoard()) && Objects.equals(history, chessGame.history);
     }
 
     @Override
     public int hashCode() {
+
         return Objects.hash(turn, getBoard(), history);
     }
 
@@ -50,6 +55,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
+
         return turn;
     }
 
@@ -101,8 +107,9 @@ public class ChessGame {
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessBoard testBoard) {
         ArrayList<ChessMove> finalizedMoves = new ArrayList<>();
-        if (testBoard.getPiece(startPosition) == null) return null;
-        else {
+        if (testBoard.getPiece(startPosition) == null) {
+            return null;
+        } else {
             for (ChessMove move : testBoard.getPiece(startPosition).pieceMoves(testBoard, startPosition)) {
                 if (!suicide(move, testBoard)) {
                     finalizedMoves.add(move);
@@ -135,11 +142,16 @@ public class ChessGame {
             ChessPiece promoPiece = new ChessPiece(pieceInQuestion.getTeamColor(), move.getPromotionPiece());
             if (move.getPromotionPiece() != null) {
                 newBoard.addPiece(move.getEndPosition(), promoPiece);
-            } else newBoard.addPiece(move.getEndPosition(), pieceInQuestion);
+            } else {
+                newBoard.addPiece(move.getEndPosition(), pieceInQuestion);
+            }
             this.history.add(this.board);
             setBoard(newBoard);
-            if (this.turn == WHITE) setTeamTurn(TeamColor.BLACK);
-            else setTeamTurn(WHITE);
+            if (this.turn == WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            } else {
+                setTeamTurn(WHITE);
+            }
             updateStatus();
         }
     }
@@ -182,7 +194,9 @@ public class ChessGame {
                     if (testPiece.getTeamColor() != teamColor) {
                         enemyPos = testPos;
                         for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
-                            if (potentialMove.getEndPosition().equals(kingPos)) return true;
+                            if (potentialMove.getEndPosition().equals(kingPos)) {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -241,11 +255,14 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
+
         return board;
     }
 
     private boolean stalemateChecker() {
-        if (isInCheck(turn)) return false;
+        if (isInCheck(turn)) {
+            return false;
+        }
         return kingInDanger();
     }
 
@@ -265,7 +282,9 @@ public class ChessGame {
     }
 
     private boolean checkmateChecker() {
-        if (!isInCheck(turn)) return false;
+        if (!isInCheck(turn)) {
+            return false;
+        }
         return kingInDanger();
     }
 
