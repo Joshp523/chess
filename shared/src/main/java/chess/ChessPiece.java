@@ -22,12 +22,17 @@ public class ChessPiece {
 
     @Override
     public boolean equals(java.lang.Object obj) {
-        if(this == obj) return true;
-        if(obj == null) return false;
-        if(obj.getClass() != this.getClass()) return false;
+        if(this == obj) {
+            return true;
+        }
+        if(obj == null) {
+            return false;
+        }
+        if(obj.getClass() != this.getClass()) {
+            return false;
+        }
         ChessPiece that = (ChessPiece)obj;
-        if(this.getPieceType() != that.getPieceType() || this.getTeamColor() != that.getTeamColor()) return false;
-        else return true;
+        return this.getPieceType() == that.getPieceType() && this.getTeamColor() == that.getTeamColor();
     }
 
     @Override

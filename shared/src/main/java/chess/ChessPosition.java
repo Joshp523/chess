@@ -18,11 +18,19 @@ public class ChessPosition {
     }
     @Override
     public boolean equals(java.lang.Object obj) {
-        if(this == obj) return true;
-        if(obj == null) return false;
-        if(obj.getClass() != this.getClass()) return false;
+        if(this == obj) {
+            return true;
+        }
+        if(obj == null) {
+            return false;
+        }
+        if(obj.getClass() != this.getClass()) {
+            return false;
+        }
         ChessPosition that = (ChessPosition)obj;
-        if(this.getRow() != that.getRow() || this.getColumn() != that.getColumn()) return false;
+        if(this.getRow() != that.getRow() || this.getColumn() != that.getColumn()) {
+            return false;
+        }
         return true;
     }
 

@@ -25,7 +25,9 @@ public class MemUser implements UserDAO {
         UserData checkMe = userList.get(username);
         if (checkMe != null && checkMe.password().equals(password)) {
             return checkMe;
-        }else throw new DataAccessException("Error: unauthorized");
+        }else {
+            throw new DataAccessException("Error: unauthorized");
+        }
     }
 
     @Override

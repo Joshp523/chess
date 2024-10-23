@@ -21,7 +21,9 @@ public class MoveCalculator {
                 return 2;
             }
             //a return value of 4 means that the spot is occupied by a teammate and therefore invalid
-            else return 4;
+            else {
+                return 4;
+            }
         }
         //a return value of 3 means the space is out of bounds and therefore invalid
         return 3;
@@ -88,7 +90,9 @@ public class MoveCalculator {
                 ChessMove newMove = new ChessMove(myPosition, testPos, null);
                 shot.add(newMove);
                 return shot;
-            } else return shot;
+            } else {
+                return shot;
+            }
         }
         return shot;
     }
@@ -125,11 +129,16 @@ public class MoveCalculator {
         int direction;
         if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
             direction = 1;
-        } else direction = -1;
+        } else {
+            direction = -1;
+        }
 
         int limit;
-        if (myPosition.getRow() == 2 || myPosition.getRow() == 7) limit = 3;
-        else limit = 2;
+        if (myPosition.getRow() == 2 || myPosition.getRow() == 7) {
+            limit = 3;
+        } else {
+            limit = 2;
+        }
         int increment = 1;
         while (increment < limit) {
             ChessPosition testPos = new ChessPosition(myPosition.getRow() + increment * direction, myPosition.getColumn());
@@ -145,7 +154,9 @@ public class MoveCalculator {
                     possibleMoves.add(newMove);
                 }
                 ++increment;
-            } else increment = 9;
+            } else {
+                increment = 9;
+            }
         }
         for (int a = -1; a <= 1; a += 2) {
             ChessPosition attack = new ChessPosition(myPosition.getRow() + direction, myPosition.getColumn() + a);

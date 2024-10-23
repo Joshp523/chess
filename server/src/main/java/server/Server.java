@@ -47,9 +47,6 @@ public class Server {
         if (service.validToken(authToken)) {
             try {
                 ColorAndGame cag = new Gson().fromJson(request.body(), ColorAndGame.class);
-//                System.out.println(request.body());
-                //System.out.println("\ngameID: "+cag.gameID());
-
                 if(cag.playerColor()==null || cag.gameID() == 0){
                     response.status(400);
                     return new Gson().toJson(new Message("Error: bad request"));
@@ -168,7 +165,9 @@ public class Server {
             String complaint = e.getMessage();
             if (complaint == "Error: already taken") {
                 response.status(403);
-            } else response.status(500);
+            } else {
+                response.status(500);
+            }
             return new Gson().toJson(new Message(complaint));
         }
     }

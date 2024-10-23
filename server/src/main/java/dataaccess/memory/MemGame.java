@@ -13,9 +13,12 @@ public class MemGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        if(gameName == "")throw new DataAccessException("Game name cannot be empty");
+        if(gameName == "") {
+            throw new DataAccessException("Game name cannot be empty");
+        }
         for(GameData game: games){
-            if (game.gameName()==gameName){throw new DataAccessException("Game name already exists");}
+            if (game.gameName()==gameName){
+                throw new DataAccessException("Game name already exists");}
         }
         id += 1;
         GameData newGame = new GameData(id, null, null, gameName, new ChessGame());
@@ -42,12 +45,16 @@ public class MemGame implements GameDAO {
                     case WHITE:
                         if (game.whiteUsername() == null) {
                             updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                        } else throw new DataAccessException("Error: already taken");
+                        } else {
+                            throw new DataAccessException("Error: already taken");
+                        }
                         break;
                     case BLACK:
                         if (game.blackUsername() == null) {
                             updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                        } else throw new DataAccessException("Error: already taken");
+                        } else {
+                            throw new DataAccessException("Error: already taken");
+                        }
                         break;
                 }
                 games.remove(game);
