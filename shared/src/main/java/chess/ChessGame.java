@@ -191,14 +191,20 @@ public class ChessGame {
                 ChessPosition testPos = new ChessPosition(i, j);
                 ChessPiece testPiece = testBoard.getPiece(testPos);
                 if (testPiece != null) {
-                    if (testPiece.getTeamColor() != teamColor) {
-                        enemyPos = testPos;
-                        for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
-                            if (potentialMove.getEndPosition().equals(kingPos)) {
-                                return true;
-                            }
-                        }
-                    }
+                    if (extracted(teamColor, testBoard, testPiece, testPos, kingPos)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean extracted(TeamColor teamColor, ChessBoard testBoard, ChessPiece testPiece, ChessPosition testPos, ChessPosition kingPos) {
+        ChessPosition enemyPos;
+        if (testPiece.getTeamColor() != teamColor) {
+            enemyPos = testPos;
+            for (ChessMove potentialMove : testPiece.pieceMoves(testBoard, enemyPos)) {
+                if (potentialMove.getEndPosition().equals(kingPos)) {
+                    return true;
                 }
             }
         }
