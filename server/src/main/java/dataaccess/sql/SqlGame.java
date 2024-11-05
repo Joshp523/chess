@@ -141,6 +141,31 @@ public class SqlGame implements GameDAO {
 
     @Override
     public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException {
-
+        for (GameData game : getAllGames()) {
+            if (game.gameID() == gameID) {
+                GameData updatedGame = null;
+                switch (color) {
+                    case WHITE:
+                        if (game.whiteUsername() == null) {
+                            updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                        } else {
+                            throw new DataAccessException("Error: already taken");
+                        }
+                        break;
+                    case BLACK:
+                        if (game.blackUsername() == null) {
+                            updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                        } else {
+                            throw new DataAccessException("Error: already taken");
+                        }
+                        break;
+                }
+                var statement1 = "DELETE FROM gametable WHERE id=?";
+                executeUpdate(statement1, updatedGame.gameID());
+                var statement2 = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
+                var json = new Gson().toJson(updatedGame);
+                executeUpdate(statement2,updatedGame.gameID(), updatedGame.gameName(), updatedGame.whiteUsername(), updatedGame.blackUsername(), json);
+            }
+        }
     }
 }
