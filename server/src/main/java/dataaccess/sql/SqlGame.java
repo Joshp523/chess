@@ -6,8 +6,10 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -84,6 +86,13 @@ public class SqlGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
+        if(gameName == "") {
+            throw new DataAccessException("Game name cannot be empty");
+        }
+        for(GameData game: getAllGames()){
+            if (game.gameName().equals(gameName)){
+                throw new DataAccessException("Game name already exists");}
+        }
         id += 1;
         var statement = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
         var json = new Gson().toJson(new ChessGame());
@@ -94,7 +103,40 @@ public class SqlGame implements GameDAO {
 
     @Override
     public ArrayList<GameData> getAllGames() {
-        return null;
+        var result = new ArrayList<GameData>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM gametable";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(rowToGameDataObject(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+//            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    private GameData rowToGameDataObject(ResultSet rs) {
+        int gameID = 0;
+        String whiteUsername = null;
+        String blackUsername = null;
+        String gameName = null;
+        String json = null;
+        try {
+            gameID = rs.getInt("gameid");
+            whiteUsername = rs.getString("whiteusername");
+            blackUsername = rs.getString("blackusername");
+            gameName = rs.getString("gamename");
+            json = rs.getString("json");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        var game = new Gson().fromJson(json, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
     @Override
