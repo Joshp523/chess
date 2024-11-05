@@ -6,6 +6,7 @@ import model.AuthData;
 import model.UserData;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -36,7 +37,7 @@ public class SqlAuth implements AuthDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException( String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 
@@ -65,7 +66,7 @@ public class SqlAuth implements AuthDAO {
     }
 
     @Override
-    public void clearTokens(){
+    public void clearTokens() {
         var statement = "TRUNCATE authtable";
         try {
             executeUpdate(statement);
@@ -76,7 +77,11 @@ public class SqlAuth implements AuthDAO {
 
     @Override
     public String createAuthToken(UserData ud) throws DataAccessException {
-        return "";
+        var statement = "INSERT INTO authtable (username, authtoken) VALUES (?, ?)";
+        String newToken = UUID.randomUUID().toString();
+        var id = executeUpdate(statement, ud.username(), newToken);
+        return newToken;
+
     }
 
 

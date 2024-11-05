@@ -1,4 +1,6 @@
 package dataaccess.sql;
+
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
@@ -12,6 +14,7 @@ import static java.sql.Types.NULL;
 public class SqlUser implements UserDAO {
 
     private DatabaseManager DbInfo = new DatabaseManager();
+
     public SqlUser() throws Exception {
         configureDatabase();
     }
@@ -37,7 +40,7 @@ public class SqlUser implements UserDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException( String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 
@@ -66,7 +69,7 @@ public class SqlUser implements UserDAO {
     }
 
     @Override
-    public void clearUsers(){
+    public void clearUsers() {
         var statement = "TRUNCATE usertable";
         try {
             executeUpdate(statement);
@@ -77,7 +80,10 @@ public class SqlUser implements UserDAO {
 
     @Override
     public void createUser(UserData ud) throws DataAccessException {
+        var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, ud.username(), ud.password(), ud.email());
     }
+
 
     @Override
     public UserData findByUnPwd(String username, String password) {
