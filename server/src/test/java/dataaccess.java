@@ -1,0 +1,2 @@
+public class dataaccess {
+}
