@@ -5,6 +5,9 @@ import dataaccess.UserDAO;
 import dataaccess.memory.MemAuth;
 import dataaccess.memory.MemGame;
 import dataaccess.memory.MemUser;
+import dataaccess.sql.SqlAuth;
+import dataaccess.sql.SqlGame;
+import dataaccess.sql.SqlUser;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -15,13 +18,21 @@ import dataaccess.*;
 
 
 public class Server {
-    UserDAO userDataAccess = new MemUser();
-    GameDAO gameDataAccess = new MemGame();
-    AuthDAO authDataAccess = new MemAuth();
+    UserDAO userDataAccess;
+    GameDAO gameDataAccess;
+    AuthDAO authDataAccess;
 
-    private final Service service = new Service(userDataAccess, authDataAccess, gameDataAccess);
+    private final Service service;
 
     public Server() {
+        try {
+            userDataAccess = new SqlUser();
+            gameDataAccess = new SqlGame();
+            authDataAccess = new SqlAuth();
+            service = new Service(userDataAccess, authDataAccess, gameDataAccess);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int run(int desiredPort) {
