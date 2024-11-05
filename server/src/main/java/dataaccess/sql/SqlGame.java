@@ -1,6 +1,7 @@
 package dataaccess.sql;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
@@ -12,6 +13,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class SqlGame implements GameDAO {
+    static int id = 0;
 
     public SqlGame() throws Exception {
         configureDatabase();
@@ -20,7 +22,7 @@ public class SqlGame implements GameDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  gametable (
-              `gameid` int NOT NULL AUTO_INCREMENT,
+              `gameid` int,
               `gamename` varchar(256) NOT NULL,
               `whiteusername` varchar(256) NOT NULL,
               `blackusername` varchar(256) NOT NULl,
@@ -42,7 +44,7 @@ public class SqlGame implements GameDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException( String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 
@@ -53,7 +55,7 @@ public class SqlGame implements GameDAO {
                     var param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    //else if (param instanceof  p) ps.setString(i + 1, p.toString());
+                        //else if (param instanceof  p) ps.setString(i + 1, p.toString());
                     else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
@@ -71,7 +73,7 @@ public class SqlGame implements GameDAO {
     }
 
     @Override
-    public void clearGames(){
+    public void clearGames() {
         var statement = "TRUNCATE gametable";
         try {
             executeUpdate(statement);
@@ -82,7 +84,11 @@ public class SqlGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        return 0;
+        id += 1;
+        var statement = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
+        var json = new Gson().toJson(new ChessGame());
+        executeUpdate(statement,id, gameName, null, null, json);
+        return id;
     }
 
 
@@ -92,7 +98,7 @@ public class SqlGame implements GameDAO {
     }
 
     @Override
-    public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException{
+    public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException {
 
     }
 }
