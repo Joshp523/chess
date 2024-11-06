@@ -37,7 +37,7 @@ public class SqlAuth implements AuthDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
@@ -61,7 +61,7 @@ public class SqlAuth implements AuthDAO {
 
                 return 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
@@ -71,7 +71,7 @@ public class SqlAuth implements AuthDAO {
         var statement = "TRUNCATE authtable";
         try {
             executeUpdate(statement);
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -81,11 +81,14 @@ public class SqlAuth implements AuthDAO {
         if (ud.username() == null) {
             throw new DataAccessException("Error: unauthorized");
         }
-        var statement = "INSERT INTO authtable (username, authtoken) VALUES (?, ?)";
-        String newToken = UUID.randomUUID().toString();
-        executeUpdate(statement, ud.username(), newToken);
-        return newToken;
-
+        try {
+            var statement = "INSERT INTO authtable (username, authtoken) VALUES (?, ?)";
+            String newToken = UUID.randomUUID().toString();
+            executeUpdate(statement, ud.username(), newToken);
+            return newToken;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -96,44 +99,61 @@ public class SqlAuth implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM authtable WHERE authtoken=?";
             try (var ps = conn.prepareStatement(statement)) {
-                try (var rs = ps.executeQuery(deleteMe)) {
+                ps.setString(1, deleteMe);
+                try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
                         foundFlag = true;
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         if (foundFlag == false) {
             throw new DataAccessException("No such auth token");
         } else {
-            var statement1 = "DELETE FROM gametable WHERE id=?";
-            executeUpdate(statement1, deleteMe);
+            try {
+                var statement1 = "DELETE FROM gametable WHERE id=?";
+                executeUpdate(statement1, deleteMe);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     @Override
-    public AuthData findByToken(String authToken) throws SQLException, DataAccessException {
-        var conn = DatabaseManager.getConnection();
-        var statement = "SELECT * FROM authtable WHERE authtoken=?";
-        var ps = conn.prepareStatement(statement);
-        var rs = ps.executeQuery(authToken);
-        return readToAuthDataObject(rs);
+    public AuthData findByToken(String authToken) {
+        try {
+            var conn = DatabaseManager.getConnection();
+            var statement = "SELECT * FROM authtable WHERE authtoken=?";
+            var ps = conn.prepareStatement(statement);
+            ps.setString(1, authToken);
+            var rs = ps.executeQuery();
+            System.out.print(ps);
+            System.out.print("authToken: " + authToken);
+            System.out.print();
+            return readToAuthDataObject(rs);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private AuthData readToAuthDataObject(ResultSet rs) {
         int gameID = 0;
         String username = null;
         String authToken = null;
-
         try {
-            username = rs.getString("username");
-            authToken = rs.getString("authtoken");
-        } catch (SQLException e) {
+            if (rs.next()) {
+                username = rs.getString("username");
+                authToken = rs.getString("authtoken");
+            }else {
+                throw new DataAccessException("the table is empty");
+            }
+            } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new AuthData(authToken, username);
     }
-
 }

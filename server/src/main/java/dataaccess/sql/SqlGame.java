@@ -45,7 +45,7 @@ public class SqlGame implements GameDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
@@ -69,7 +69,7 @@ public class SqlGame implements GameDAO {
 
                 return 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
@@ -79,25 +79,29 @@ public class SqlGame implements GameDAO {
         var statement = "TRUNCATE gametable";
         try {
             executeUpdate(statement);
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        if(gameName == "") {
-            throw new DataAccessException("Game name cannot be empty");
+        try {
+            if(gameName == "") {
+                throw new DataAccessException("Game name cannot be empty");
+            }
+            for(GameData game: getAllGames()){
+                if (game.gameName().equals(gameName)){
+                    throw new DataAccessException("Game name already exists");}
+            }
+            id += 1;
+            var statement = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
+            var json = new Gson().toJson(new ChessGame());
+            executeUpdate(statement,id, gameName, null, null, json);
+            return id;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        for(GameData game: getAllGames()){
-            if (game.gameName().equals(gameName)){
-                throw new DataAccessException("Game name already exists");}
-        }
-        id += 1;
-        var statement = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
-        var json = new Gson().toJson(new ChessGame());
-        executeUpdate(statement,id, gameName, null, null, json);
-        return id;
     }
 
 
@@ -114,7 +118,6 @@ public class SqlGame implements GameDAO {
                 }
             }
         } catch (Exception e) {
-//            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
             throw new RuntimeException(e);
         }
         return result;
@@ -132,7 +135,7 @@ public class SqlGame implements GameDAO {
             blackUsername = rs.getString("blackusername");
             gameName = rs.getString("gamename");
             json = rs.getString("json");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         var game = new Gson().fromJson(json, ChessGame.class);
@@ -141,31 +144,35 @@ public class SqlGame implements GameDAO {
 
     @Override
     public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException {
-        for (GameData game : getAllGames()) {
-            if (game.gameID() == gameID) {
-                GameData updatedGame = null;
-                switch (color) {
-                    case WHITE:
-                        if (game.whiteUsername() == null) {
-                            updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                        } else {
-                            throw new DataAccessException("Error: already taken");
-                        }
-                        break;
-                    case BLACK:
-                        if (game.blackUsername() == null) {
-                            updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                        } else {
-                            throw new DataAccessException("Error: already taken");
-                        }
-                        break;
+        try {
+            for (GameData game : getAllGames()) {
+                if (game.gameID() == gameID) {
+                    GameData updatedGame = null;
+                    switch (color) {
+                        case WHITE:
+                            if (game.whiteUsername() == null) {
+                                updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                            } else {
+                                throw new DataAccessException("Error: already taken");
+                            }
+                            break;
+                        case BLACK:
+                            if (game.blackUsername() == null) {
+                                updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                            } else {
+                                throw new DataAccessException("Error: already taken");
+                            }
+                            break;
+                    }
+                    var statement1 = "DELETE FROM gametable WHERE id=?";
+                    executeUpdate(statement1, updatedGame.gameID());
+                    var statement2 = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
+                    var json = new Gson().toJson(updatedGame);
+                    executeUpdate(statement2,updatedGame.gameID(), updatedGame.gameName(), updatedGame.whiteUsername(), updatedGame.blackUsername(), json);
                 }
-                var statement1 = "DELETE FROM gametable WHERE id=?";
-                executeUpdate(statement1, updatedGame.gameID());
-                var statement2 = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
-                var json = new Gson().toJson(updatedGame);
-                executeUpdate(statement2,updatedGame.gameID(), updatedGame.gameName(), updatedGame.whiteUsername(), updatedGame.blackUsername(), json);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

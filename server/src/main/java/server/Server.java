@@ -15,6 +15,7 @@ import service.Service;
 import spark.*;
 import dataaccess.*;
 
+import java.sql.SQLException;
 
 
 public class Server {
@@ -53,7 +54,7 @@ public class Server {
     }
 
 
-    private String join(Request request, Response response) {
+    private String join(Request request, Response response) throws SQLException, DataAccessException {
         String authToken = request.headers("authorization");
         if (service.validToken(authToken)) {
             try {
@@ -128,7 +129,7 @@ public class Server {
                 service.logout(authToken);
                 response.status(200);
                 return "";
-            } catch (DataAccessException e) {
+            } catch (Exception e) {
                 response.status(500);
                 return new Gson().toJson(new Message(e.getMessage()));
             }

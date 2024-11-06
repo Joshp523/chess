@@ -1,15 +1,11 @@
 package dataaccess.sql;
 
-import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
-import model.AuthData;
-import model.GameData;
 import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -18,7 +14,11 @@ import static java.sql.Types.NULL;
 public class SqlUser implements UserDAO {
 
     public SqlUser() throws Exception {
-        configureDatabase();
+        try {
+            configureDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private final String[] createStatements = {
@@ -41,7 +41,7 @@ public class SqlUser implements UserDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
@@ -65,7 +65,7 @@ public class SqlUser implements UserDAO {
 
                 return 0;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
@@ -82,18 +82,22 @@ public class SqlUser implements UserDAO {
 
     @Override
     public void createUser(UserData ud) throws DataAccessException {
-        var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, ud.username(), ud.password(), ud.email());
+        try {
+            var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
+            executeUpdate(statement, ud.username(), ud.password(), ud.email());
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error: already taken");
+        }
     }
 
 
     @Override
-    public UserData findByUnPwd(String username, String password) {
-        UserData ud = findByUsername(username);
-        if (ud.password() == password) {
-            return ud;
-        } else {
-            throw new RuntimeException("Wrong password");
+    public UserData findByUnPwd(String username, String password) throws DataAccessException {
+        UserData checkMe = findByUsername(username);
+        if (checkMe != null && checkMe.password().equals(password)) {
+            return checkMe;
+        }else {
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 
@@ -102,20 +106,21 @@ public class SqlUser implements UserDAO {
         var statement = "SELECT * FROM usertable WHERE username = ?";
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
-                try (var rs = ps.executeQuery(username)) {
-                    return readToUserDataObject(rs);
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readToUserDataObject(rs);
+                    }else{
+                        return null;
+                    }
                 }
             }
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private UserData readToUserDataObject(ResultSet rs) {
-        int gameID = 0;
         String username = null;
         String password = null;
         String email = null;
@@ -124,7 +129,7 @@ public class SqlUser implements UserDAO {
             username = rs.getString("username");
             password = rs.getString("password");
             email = rs.getString("email");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new UserData(username, password, email);
@@ -145,7 +150,6 @@ public class SqlUser implements UserDAO {
                 }
             }
         } catch (Exception e) {
-//            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
             throw new RuntimeException(e);
         }
         return result;

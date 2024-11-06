@@ -8,6 +8,8 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import dataaccess.UserDAO;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Service {
@@ -39,14 +41,23 @@ public class Service {
         return userDAO.findByUnPwd(username, password);
     }
 
-    public void logout(String authToken) throws DataAccessException {
-        AuthData authData = authDAO.findByToken(authToken);
-        authDAO.deleteAuthToken(authData);
+    public void logout(String authToken) {
+        try {
+            AuthData authData = authDAO.findByToken(authToken);
+            authDAO.deleteAuthToken(authData);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean validToken(String authToken) {
-        return authDAO.findByToken(authToken) != null;
-
+        try {
+            return authDAO.findByToken(authToken) != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public ArrayList<GameData> listGames() {
@@ -58,13 +69,13 @@ public class Service {
         return gameDAO.createGame(gameName);
     }
 
-    private UserData findUserByToken(String authToken) throws DataAccessException {
+    private UserData findUserByToken(String authToken) throws DataAccessException, SQLException {
         AuthData authData = authDAO.findByToken(authToken);
         String username = authData.username();
         return userDAO.findByUsername(username);
     }
 
-    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws DataAccessException {
+    public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws DataAccessException, SQLException {
         UserData userData = findUserByToken(authToken);
         String username = userData.username();
         gameDAO.addUser(username, color, gameID);
