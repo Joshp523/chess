@@ -3,6 +3,7 @@ package dataaccess.sql;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -83,8 +84,9 @@ public class SqlUser implements UserDAO {
     @Override
     public void createUser(UserData ud) throws DataAccessException {
         try {
+            String hashedPwd = BCrypt.hashpw(ud.password(), BCrypt.gensalt());
             var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
-            executeUpdate(statement, ud.username(), ud.password(), ud.email());
+            executeUpdate(statement, ud.username(), hashedPwd, ud.email());
         } catch (DataAccessException e) {
             throw new DataAccessException("Error: already taken");
         }
@@ -94,7 +96,7 @@ public class SqlUser implements UserDAO {
     @Override
     public UserData findByUnPwd(String username, String password) throws DataAccessException {
         UserData checkMe = findByUsername(username);
-        if (checkMe != null && checkMe.password().equals(password)) {
+        if (checkMe != null && BCrypt.checkpw(password, checkMe.password())) {
             return checkMe;
         }else {
             throw new DataAccessException("Error: unauthorized");
