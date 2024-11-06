@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -77,9 +78,12 @@ public class SqlAuth implements AuthDAO {
 
     @Override
     public String createAuthToken(UserData ud) throws DataAccessException {
+        if (ud.username() == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
         var statement = "INSERT INTO authtable (username, authtoken) VALUES (?, ?)";
         String newToken = UUID.randomUUID().toString();
-        var id = executeUpdate(statement, ud.username(), newToken);
+        executeUpdate(statement, ud.username(), newToken);
         return newToken;
 
     }
@@ -87,11 +91,49 @@ public class SqlAuth implements AuthDAO {
 
     @Override
     public void deleteAuthToken(AuthData ad) throws DataAccessException {
+        boolean foundFlag = false;
+        String deleteMe = ad.authToken();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM authtable WHERE authtoken=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery(deleteMe)) {
+                    while (rs.next()) {
+                        foundFlag = true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (foundFlag == false) {
+            throw new DataAccessException("No such auth token");
+        } else {
+            var statement1 = "DELETE FROM gametable WHERE id=?";
+            executeUpdate(statement1, deleteMe);
+        }
     }
 
     @Override
-    public AuthData findByToken(String authToken) {
-        return null;
+    public AuthData findByToken(String authToken) throws SQLException, DataAccessException {
+        var conn = DatabaseManager.getConnection();
+        var statement = "SELECT * FROM authtable WHERE authtoken=?";
+        var ps = conn.prepareStatement(statement);
+        var rs = ps.executeQuery(authToken);
+        return readToAuthDataObject(rs);
+    }
+
+    private AuthData readToAuthDataObject(ResultSet rs) {
+        int gameID = 0;
+        String username = null;
+        String authToken = null;
+
+        try {
+            username = rs.getString("username");
+            authToken = rs.getString("authtoken");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return new AuthData(authToken, username);
     }
 
 }
