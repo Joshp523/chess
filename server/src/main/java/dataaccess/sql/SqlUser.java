@@ -87,7 +87,12 @@ public class SqlUser implements UserDAO {
 
     @Override
     public UserData findByUnPwd(String username, String password) {
-        return null;
+        UserData ud = findByUsername(username);
+        if (ud.password() == password){
+            return ud;
+        }else{
+            throw new RuntimeException("Wrong password");
+        }
     }
 
     @Override
