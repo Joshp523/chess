@@ -59,7 +59,7 @@ public class Server {
         if (service.validToken(authToken)) {
             try {
                 ColorAndGame cag = new Gson().fromJson(request.body(), ColorAndGame.class);
-                if(cag.playerColor().equals("") || cag.gameID() == 0){
+                if(cag.playerColor()==null || cag.gameID() == 0){
                     response.status(400);
                     return new Gson().toJson(new Message("Error: bad request"));
                 }
