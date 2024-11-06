@@ -131,7 +131,6 @@ public class SqlAuth implements AuthDAO {
             var rs = ps.executeQuery();
             System.out.print(ps);
             System.out.print("authToken: " + authToken);
-            System.out.print();
             return readToAuthDataObject(rs);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
