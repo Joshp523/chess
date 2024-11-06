@@ -94,30 +94,11 @@ public class SqlAuth implements AuthDAO {
 
     @Override
     public void deleteAuthToken(AuthData ad) throws DataAccessException {
-        boolean foundFlag = false;
-        String deleteMe = ad.authToken();
-        try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM authtable WHERE authtoken=?";
-            try (var ps = conn.prepareStatement(statement)) {
-                ps.setString(1, deleteMe);
-                try (var rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        foundFlag = true;
-                    }
-                }
-            }
+        try {
+            var statement1 = "DELETE FROM authtable WHERE authtoken=?";
+            executeUpdate(statement1, ad.authToken());
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        if (foundFlag == false) {
-            throw new DataAccessException("No such auth token");
-        } else {
-            try {
-                var statement1 = "DELETE FROM gametable WHERE id=?";
-                executeUpdate(statement1, deleteMe);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            throw new DataAccessException("Error: " + e.getMessage());
         }
     }
 
@@ -147,10 +128,10 @@ public class SqlAuth implements AuthDAO {
             if (rs.next()) {
                 username = rs.getString("username");
                 authToken = rs.getString("authtoken");
-            }else {
+            } else {
                 throw new DataAccessException("the table is empty");
             }
-            } catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return new AuthData(authToken, username);
