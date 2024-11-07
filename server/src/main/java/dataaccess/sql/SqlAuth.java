@@ -104,7 +104,7 @@ public class SqlAuth implements AuthDAO {
         try (
             var conn = DatabaseManager.getConnection();
             var ps = conn.prepareStatement(statement1)){
-            ps.setString(1, ad.username());
+            ps.setString(1, ad.authToken());
             ps.executeUpdate();
         } catch (Exception e) {
             throw new DataAccessException("Error: " + e.getMessage());
