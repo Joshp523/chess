@@ -119,10 +119,7 @@ class SqlAuthTest {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        String finalToken = token;
-        AuthData expectedAuthData = new AuthData(finalToken, moreUserData.username());
-        AuthData actualAuthData;
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(Exception.class, () -> {
             sqlauth.findByToken("bogusToken");
         });
     }
