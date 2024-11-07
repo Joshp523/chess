@@ -81,19 +81,25 @@ public class SqlUser implements UserDAO {
     @Override
     public void clearUsers() {
         var statement = "TRUNCATE usertable";
-        try {
-            executeUpdate(statement);
-        } catch (DataAccessException e) {
+        try (
+            var conn = DatabaseManager.getConnection();
+            var ps = conn.prepareStatement(statement)){
+            ps.executeUpdate();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public void createUser(UserData ud) throws DataAccessException {
-        try {
-            String hashedPwd = BCrypt.hashpw(ud.password(), BCrypt.gensalt());
-            var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
-            executeUpdate(statement, ud.username(), hashedPwd, ud.email());
+        String hashedPwd = BCrypt.hashpw(ud.password(), BCrypt.gensalt());
+        var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
+        try (var conn = DatabaseManager.getConnection();
+        var ps = conn.prepareStatement(statement))
+        {
+            ps.setString(1, ud.username());
+            ps.setString(2, hashedPwd);
+            ps.setString(3, ud.email());
         } catch (Exception e) {
             throw new DataAccessException("Error: already taken");
         }

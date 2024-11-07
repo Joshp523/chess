@@ -69,7 +69,9 @@ public class SqlAuth implements AuthDAO {
     public void clearTokens() {
         var statement = "TRUNCATE authtable";
         try {
-            executeUpdate(statement);
+            var conn = DatabaseManager.getConnection();
+            var ps = conn.prepareStatement(statement);
+            ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -84,6 +86,12 @@ public class SqlAuth implements AuthDAO {
             var statement = "INSERT INTO authtable (username, authtoken) VALUES (?, ?)";
             String newToken = UUID.randomUUID().toString();
             executeUpdate(statement, ud.username(), newToken);
+            try(var conn = DatabaseManager.getConnection();
+            var ps = conn.prepareStatement(statement)){
+                ps.setString(2, newToken);
+                ps.setString(1, ud.username());
+                ps.executeUpdate();
+            }
             return newToken;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -93,9 +101,12 @@ public class SqlAuth implements AuthDAO {
 
     @Override
     public void deleteAuthToken(AuthData ad) throws DataAccessException {
-        try {
-            var statement1 = "DELETE FROM authtable WHERE authtoken=?";
-            executeUpdate(statement1, ad.authToken());
+        var statement1 = "DELETE FROM authtable WHERE authtoken=?";
+        try (
+            var conn = DatabaseManager.getConnection();
+            var ps = conn.prepareStatement(statement1)){
+            ps.setString(1, ad.username());
+            ps.executeUpdate();
         } catch (Exception e) {
             throw new DataAccessException("Error: " + e.getMessage());
         }
