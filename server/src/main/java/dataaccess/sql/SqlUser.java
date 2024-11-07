@@ -150,7 +150,7 @@ public class SqlUser implements UserDAO {
     public HashMap<String, UserData> getUserList() {
         var result = new HashMap<String, UserData>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM gametable";
+            var statement = "SELECT * FROM usertable";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {

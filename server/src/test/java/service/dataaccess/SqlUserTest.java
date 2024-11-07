@@ -8,16 +8,14 @@ import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlUser;
 import model.GameData;
 import model.UserData;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SqlUserTest {
     static UserDAO sqluser;
     static UserData ud;
+    static UserData ud1;
 
     @BeforeEach
      void setUp() {
@@ -31,10 +29,14 @@ class SqlUserTest {
         assertDoesNotThrow(() -> {
             sqluser.createUser(ud);
         });
+        ud1 = new UserData("dumb", "passworder", "dumb@byu.edu");
+        assertDoesNotThrow(() -> {
+            sqluser.createUser(ud1);
+        });
     }
 
-@AfterEach
-void tearDown() {
+@AfterAll
+static void tearDown() {
     assertDoesNotThrow(() -> {
         sqluser.clearUsers();
     });
@@ -65,26 +67,43 @@ void negCreateUser() {
 
 @Test
 void posFindByUnPwd() {
-
+    UserData renderedUserData;
+    try {
+        renderedUserData = sqluser.findByUnPwd("dummy", "password");
+    } catch (DataAccessException e) {
+        throw new RuntimeException(e);
+    }
+    assertEquals(ud.email(), renderedUserData.email());
 }
 
 @Test
 void negFindByUnPwd() {
+    assertThrows(DataAccessException.class, () -> {sqluser.findByUnPwd("dummy", "wrongpassword");});
 }
 
 @Test
 void posFindByUsername() {
+    UserData renderedUserData;
+    try {
+        renderedUserData = sqluser.findByUsername("dummy");
+    } catch (Exception e) {
+        throw new RuntimeException(e);
+    }
+    assertEquals(ud.email(), renderedUserData.email());
 }
 
 @Test
 void negFindByUsername() {
+    assertNull(sqluser.findByUsername("wrong username"));
 }
 
 @Test
 void posGetUserList() {
+        assertEquals(2, sqluser.getUserList().size());
 }
 
 @Test
 void negGetUserList() {
+    assertNotEquals(0, sqluser.getUserList().size());
 }
 }
