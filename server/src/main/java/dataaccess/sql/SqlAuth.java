@@ -85,7 +85,6 @@ public class SqlAuth implements AuthDAO {
         try {
             var statement = "INSERT INTO authtable (username, authtoken) VALUES (?, ?)";
             String newToken = UUID.randomUUID().toString();
-            executeUpdate(statement, ud.username(), newToken);
             try(var conn = DatabaseManager.getConnection();
             var ps = conn.prepareStatement(statement)){
                 ps.setString(2, newToken);

@@ -100,6 +100,7 @@ public class SqlUser implements UserDAO {
             ps.setString(1, ud.username());
             ps.setString(2, hashedPwd);
             ps.setString(3, ud.email());
+            ps.executeUpdate();
         } catch (Exception e) {
             throw new DataAccessException("Error: already taken");
         }

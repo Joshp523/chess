@@ -29,8 +29,8 @@ class SqlUserTest {
         });
     }
 
-@AfterAll
-static void tearDown() {
+@AfterEach
+void tearDown() {
     assertDoesNotThrow(() -> {
         sqluser.clearUsers();
     });
