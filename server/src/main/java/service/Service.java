@@ -41,14 +41,14 @@ public class Service {
         return userDAO.findByUnPwd(username, password);
     }
 
-    public void logout(String authToken) {
+    public void logout(String authToken) throws DataAccessException {
         try {
             AuthData authData = authDAO.findByToken(authToken);
             authDAO.deleteAuthToken(authData);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e.getMessage());
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
         }
     }
 
