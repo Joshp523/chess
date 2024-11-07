@@ -102,8 +102,6 @@ public class SqlGame implements GameDAO {
              var ps = conn.prepareStatement(statement)) {
             ps.setInt(1, id);
             ps.setString(2, gameName);
-//            ps.setString(3, "");
-//            ps.setString(4, "");
             ps.setString(3, json);
             ps.executeUpdate();
             return id;
