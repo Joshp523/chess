@@ -6,7 +6,6 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
