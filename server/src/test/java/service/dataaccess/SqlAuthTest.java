@@ -1,4 +1,5 @@
 package service.dataaccess;
+
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.sql.SqlAuth;
@@ -17,31 +18,43 @@ class SqlAuthTest {
 
     @BeforeEach
     void setUp() {
-        assertDoesNotThrow(() -> {sqlauth = new SqlAuth();});
+        assertDoesNotThrow(() -> {
+            sqlauth = new SqlAuth();
+        });
         UserData ud = new UserData("dummy", "password", "dummy@byu.edu");
-        assertDoesNotThrow(() -> {sqlauth.createAuthToken(ud);});
+        assertDoesNotThrow(() -> {
+            sqlauth.createAuthToken(ud);
+        });
     }
 
     @AfterEach
     void tearDown() {
-        assertDoesNotThrow(() -> {sqlauth.clearTokens();});
+        assertDoesNotThrow(() -> {
+            sqlauth.clearTokens();
+        });
     }
 
     @Test
     void clearTokens() {
-        assertDoesNotThrow(() -> {sqlauth.clearTokens();});
+        assertDoesNotThrow(() -> {
+            sqlauth.clearTokens();
+        });
     }
 
     @Test
     void posCreateAuthToken() {
         UserData moreData = new UserData("dumb", "passwordisme", "dumb@byu.edu");
-        assertDoesNotThrow(() -> {sqlauth.createAuthToken(moreData);});
+        assertDoesNotThrow(() -> {
+            sqlauth.createAuthToken(moreData);
+        });
     }
 
     @Test
     void negCreateAuthToken() {
         UserData ud = new UserData(null, "password", "dummy@byu.edu");
-        assertThrows(DataAccessException.class, () -> {sqlauth.createAuthToken(ud);});
+        assertThrows(DataAccessException.class, () -> {
+            sqlauth.createAuthToken(ud);
+        });
     }
 
     @Test
@@ -54,8 +67,10 @@ class SqlAuthTest {
             throw new RuntimeException(e);
         }
         String finalToken = token;
-        AuthData testAuthData = new AuthData(finalToken,moreUserData.username());
-        assertDoesNotThrow(() -> {sqlauth.deleteAuthToken(testAuthData);});
+        AuthData testAuthData = new AuthData(finalToken, moreUserData.username());
+        assertDoesNotThrow(() -> {
+            sqlauth.deleteAuthToken(testAuthData);
+        });
     }
 
     @Test
@@ -67,8 +82,10 @@ class SqlAuthTest {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        AuthData testAuthData = new AuthData("badToken",moreUserData.username());
-        assertDoesNotThrow(() -> {sqlauth.deleteAuthToken(testAuthData);});
+        AuthData testAuthData = new AuthData("badToken", moreUserData.username());
+        assertDoesNotThrow(() -> {
+            sqlauth.deleteAuthToken(testAuthData);
+        });
     }
 
     @Test
@@ -95,5 +112,18 @@ class SqlAuthTest {
 
     @Test
     void negFindByToken() {
+        UserData moreUserData = new UserData("dumb", "passwordisme", "dumb@byu.edu");
+        String token = null;
+        try {
+            token = sqlauth.createAuthToken(moreUserData);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        String finalToken = token;
+        AuthData expectedAuthData = new AuthData(finalToken, moreUserData.username());
+        AuthData actualAuthData;
+        assertThrows(DataAccessException.class, () -> {
+            sqlauth.findByToken("bogusToken");
+        });
     }
 }
