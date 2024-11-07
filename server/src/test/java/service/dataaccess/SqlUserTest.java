@@ -1,66 +1,90 @@
 package service.dataaccess;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlUser;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 class SqlUserTest {
-    UserDAO sqluser;
+    static UserDAO sqluser;
+    static UserData ud;
 
     @BeforeEach
-    void setUp() {
+     void setUp() {
         assertDoesNotThrow(() -> {
             sqluser = new SqlUser();
         });
-        UserData ud = new UserData("dummy", "password", "dummy@byu.edu");
-    }
-
-    @AfterEach
-    void tearDown() {
         assertDoesNotThrow(() -> {
             sqluser.clearUsers();
         });
+        ud = new UserData("dummy", "password", "dummy@byu.edu");
+        assertDoesNotThrow(() -> {
+            sqluser.createUser(ud);
+        });
     }
 
-    @Test
-    void clearUsers() {
-    }
+@AfterEach
+void tearDown() {
+    assertDoesNotThrow(() -> {
+        sqluser.clearUsers();
+    });
+}
 
-    @Test
-    void posCreateUser() {
-    }
+@Test
+void clearUsers() {
+    assertDoesNotThrow(() -> {
+        sqluser.clearUsers();
+    });
+}
 
-    @Test
-    void negCreateUser() {
-    }
+@Test
+void posCreateUser() {
+    UserData ud2 = new UserData("dumber", "otherpassword", "dumber@byu.edu");
+    assertDoesNotThrow(() -> {
+        sqluser.createUser(ud2);
+    });
+}
 
-    @Test
-    void posFindByUnPwd() {
-    }
+@Test
+void negCreateUser() {
+    UserData ud3 = new UserData("dummy", "otherpassword", "dumber@byu.edu");
+    assertThrows(DataAccessException.class, () -> {
+        sqluser.createUser(ud3);
+    });
+}
 
-    @Test
-    void negFindByUnPwd() {
-    }
+@Test
+void posFindByUnPwd() {
 
-    @Test
-    void posFindByUsername() {
-    }
+}
 
-    @Test
-    void negFindByUsername() {
-    }
+@Test
+void negFindByUnPwd() {
+}
 
-    @Test
-    void posGetUserList() {
-    }
+@Test
+void posFindByUsername() {
+}
 
-    @Test
-    void negGetUserList() {
-    }
+@Test
+void negFindByUsername() {
+}
+
+@Test
+void posGetUserList() {
+}
+
+@Test
+void negGetUserList() {
+}
 }

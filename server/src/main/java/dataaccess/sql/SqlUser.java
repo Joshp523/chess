@@ -32,12 +32,20 @@ public class SqlUser implements UserDAO {
               INDEX(password)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
+            ,
+            """
+            
+            ALTER TABLE usertable ADD CONSTRAINT unique_username UNIQUE (username);
+            """
     };
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
+                if (statement.contains("ALTER TABLE")) {
+                    continue;
+                }
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
@@ -87,7 +95,7 @@ public class SqlUser implements UserDAO {
             String hashedPwd = BCrypt.hashpw(ud.password(), BCrypt.gensalt());
             var statement = "INSERT INTO usertable (username, password, email) VALUES (?, ?, ?)";
             executeUpdate(statement, ud.username(), hashedPwd, ud.email());
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             throw new DataAccessException("Error: already taken");
         }
     }
@@ -98,7 +106,7 @@ public class SqlUser implements UserDAO {
         UserData checkMe = findByUsername(username);
         if (checkMe != null && BCrypt.checkpw(password, checkMe.password())) {
             return checkMe;
-        }else {
+        } else {
             throw new DataAccessException("Error: unauthorized");
         }
     }
@@ -112,7 +120,7 @@ public class SqlUser implements UserDAO {
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
                         return readToUserDataObject(rs);
-                    }else{
+                    } else {
                         return null;
                     }
                 }
@@ -140,14 +148,14 @@ public class SqlUser implements UserDAO {
 
     @Override
     public HashMap<String, UserData> getUserList() {
-        var result= new HashMap<String, UserData>();
+        var result = new HashMap<String, UserData>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM gametable";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
                         var myObject = readToUserDataObject(rs);
-                        result.put(myObject.username(),myObject);
+                        result.put(myObject.username(), myObject);
                     }
                 }
             }
