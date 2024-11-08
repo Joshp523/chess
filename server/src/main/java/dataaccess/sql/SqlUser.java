@@ -5,11 +5,10 @@ import dataaccess.UserDAO;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
 public class SqlUser implements UserDAO {
 
@@ -51,30 +50,6 @@ public class SqlUser implements UserDAO {
             }
         } catch (Exception ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
-
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                        //else if (param instanceof  p) ps.setString(i + 1, p.toString());
-                    else if (param == null) ps.setNull(i + 1, NULL);
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
@@ -121,18 +96,22 @@ public class SqlUser implements UserDAO {
     public UserData findByUsername(String username) {
         var statement = "SELECT * FROM usertable WHERE username = ?";
         try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement)) {
-                ps.setString(1, username);
-                try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return readToUserDataObject(rs);
-                    } else {
-                        return null;
-                    }
-                }
-            }
+            return getUserData(username, conn, statement);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private UserData getUserData(String username, Connection conn, String statement) throws SQLException {
+        try (var ps = conn.prepareStatement(statement)) {
+            ps.setString(1, username);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return readToUserDataObject(rs);
+                } else {
+                    return null;
+                }
+            }
         }
     }
 
@@ -157,17 +136,21 @@ public class SqlUser implements UserDAO {
         var result = new HashMap<String, UserData>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM usertable";
-            try (var ps = conn.prepareStatement(statement)) {
-                try (var rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        var myObject = readToUserDataObject(rs);
-                        result.put(myObject.username(), myObject);
-                    }
-                }
-            }
+            extractedLogic(conn, statement, result);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    private void extractedLogic(Connection conn, String statement, HashMap<String, UserData> result) throws SQLException {
+        try (var ps = conn.prepareStatement(statement)) {
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    var myObject = readToUserDataObject(rs);
+                    result.put(myObject.username(), myObject);
+                }
+            }
+        }
     }
 }

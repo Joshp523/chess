@@ -9,7 +9,6 @@ import model.GameData;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class SqlGame implements GameDAO {
@@ -43,29 +42,6 @@ public class SqlGame implements GameDAO {
             }
         } catch (Exception ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
-
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param == null) ps.setNull(i + 1, NULL);
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
-            }
-        } catch (Exception e) {
-            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
@@ -117,11 +93,11 @@ public class SqlGame implements GameDAO {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM gametable";
             try (var ps = conn.prepareStatement(statement)) {
-                try (var rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        result.add(rowToGameDataObject(rs));
-                    }
+                var rs = ps.executeQuery();
+                while (rs.next()) {
+                    result.add(rowToGameDataObject(rs));
                 }
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -153,58 +129,68 @@ public class SqlGame implements GameDAO {
         try {
             for (GameData game : getAllGames()) {
                 if (game.gameID() == gameID) {
-                    GameData updatedGame = null;
-                    switch (color) {
-                        case WHITE:
-                            if (game.whiteUsername()==null) {
-                                updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                            } else {
-                                throw new DataAccessException("Error: already taken");
-                            }
-                            break;
-                        case BLACK:
-                            if (game.blackUsername()==null) {
-                                updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                            } else {
-                                throw new DataAccessException("Error: already taken");
-                            }
-                            break;
-                    }
-                    var statement1 = "DELETE FROM gametable WHERE gameid=?";
-                    try (var conn = DatabaseManager.getConnection();
-                         var ps = conn.prepareStatement(statement1)) {
-                        ps.setInt(1, gameID);
-                        ps.executeUpdate();
-                    } catch (Exception e) {
-                        throw new DataAccessException(String.format("unable to update database: %s", e.getMessage()));
-                    }
-                    var statement2 = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
-                    var json = new Gson().toJson(updatedGame);
-                    try (var conn2 = DatabaseManager.getConnection();
-                         var ps2 = conn2.prepareStatement(statement2)) {
-                        if(updatedGame.whiteUsername() != null){
-                            ps2.setString(3, updatedGame.whiteUsername());
-                        }else{
-                            ps2.setNull(3, NULL);
-                        }
-                        if(updatedGame.blackUsername() != null){
-                            ps2.setString(4, updatedGame.blackUsername());
-                        }else{
-                            ps2.setNull(4, NULL);
-                        }
-                        ps2.setInt(1, gameID);
-                        ps2.setString(2, updatedGame.gameName());
 
-                        ps2.setString(5, json);
-                        ps2.executeUpdate();
-                    } catch (Exception e) {
-                        throw new DataAccessException(String.format("unable to update database: %s", e.getMessage()));
-                    }
+                    extractedLogic(username, color, gameID, game);
 
                 }
             }
         } catch (Exception e) {
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    private static void extractedLogic(String username, ChessGame.TeamColor color, int gameID, GameData game) throws DataAccessException {
+        GameData updatedGame = getGameData(username, color, game);
+        var statement1 = "DELETE FROM gametable WHERE gameid=?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(statement1)) {
+            ps.setInt(1, gameID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("unable to update database: %s", e.getMessage()));
+        }
+        var statement2 = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
+        var json = new Gson().toJson(updatedGame);
+        try (var conn2 = DatabaseManager.getConnection();
+             var ps2 = conn2.prepareStatement(statement2)) {
+            if (updatedGame.whiteUsername() != null) {
+                ps2.setString(3, updatedGame.whiteUsername());
+            } else {
+                ps2.setNull(3, NULL);
+            }
+            if (updatedGame.blackUsername() != null) {
+                ps2.setString(4, updatedGame.blackUsername());
+            } else {
+                ps2.setNull(4, NULL);
+            }
+            ps2.setInt(1, gameID);
+            ps2.setString(2, updatedGame.gameName());
+
+            ps2.setString(5, json);
+            ps2.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("unable to update database: %s", e.getMessage()));
+        }
+    }
+
+    private static GameData getGameData(String username, ChessGame.TeamColor color, GameData game) throws DataAccessException {
+        GameData updatedGame = null;
+        switch (color) {
+            case WHITE:
+                if (game.whiteUsername() == null) {
+                    updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                } else {
+                    throw new DataAccessException("Error: already taken");
+                }
+                break;
+            case BLACK:
+                if (game.blackUsername() == null) {
+                    updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                } else {
+                    throw new DataAccessException("Error: already taken");
+                }
+                break;
+        }
+        return updatedGame;
     }
 }

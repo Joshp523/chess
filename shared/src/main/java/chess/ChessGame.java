@@ -191,7 +191,9 @@ public class ChessGame {
                 ChessPosition testPos = new ChessPosition(i, j);
                 ChessPiece testPiece = testBoard.getPiece(testPos);
                 if (testPiece != null) {
-                    if (extracted(teamColor, testBoard, testPiece, testPos, kingPos)) return true;
+                    if (extracted(teamColor, testBoard, testPiece, testPos, kingPos)) {
+                        return true;
+                    }
                 }
             }
         }
