@@ -38,19 +38,7 @@ public class SqlUser implements UserDAO {
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                if (statement.contains("ALTER TABLE")) {
-                    continue;
-                }
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
+        DatabaseManager.makeStatement(createStatements);
     }
 
     @Override
