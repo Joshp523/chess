@@ -8,10 +8,11 @@ import static ui.EscapeSequences.*;
 
 public class PreLoginClient {
     ServerFacade server;
-    String serverUrl = "";
+    String serverUrl;
+
 
     PreLoginClient(String serverURL, Repl repl) {
-        this.serverUrl = serverUrl;
+        this.serverUrl = serverURL;
         server = new ServerFacade(serverUrl);
 
     }
@@ -43,11 +44,12 @@ public class PreLoginClient {
     }
 
     private String registerNewUser(String... params) {
-        String returnMe = server.register(params[0], params[1], params[2]);
-        if (returnMe.equals("")) {
-            return SET_TEXT_COLOR_GREEN + "success";
+        String authToken = server.register(params[0], params[1], params[2]);
+        if (authToken.equals("")) {
+            return SET_TEXT_COLOR_RED + "failure";
         }else {
-            return returnMe;
+
+            return SET_TEXT_COLOR_GREEN + "success";
         }
     }
 

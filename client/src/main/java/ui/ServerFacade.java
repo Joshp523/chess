@@ -48,8 +48,9 @@ public class ServerFacade {
 
     public String register(String username, String password, String email){
         var path = "/user";
-        UserData request = new UserData(username, password, email);
-        return this.makeRequest("POST", path, request, String.class);
+        var request = new UserData(username, password, email);
+        var recieved = this.makeRequest("POST", path, request, AuthData.class);
+        return recieved.authToken();
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
