@@ -53,12 +53,11 @@ public class PostLoginClient {
     private String logoutExistingUser() {
         this.authToken = "";
         server.logout();
-        Repl.status = SET_TEXT_COLOR_MAGENTA + "[LOGGED OUT]";
         return "goodbye";
     }
 
     public String welcome() {
-        return "You are logged in.";
+        return "Select an option below";
     }
 
     public String help(){

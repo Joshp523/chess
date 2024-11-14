@@ -10,7 +10,7 @@ public class Repl {
     private final PreLoginClient prelogin;
     private final PostLoginClient postlogin;
     private final ChessClient chessClient;
-    public static String status;
+    private String status;
 
     public Repl(String serverUrl) {
 
@@ -31,7 +31,7 @@ public class Repl {
             try {
                 result = prelogin.eval(line);
                 System.out.println(result);
-                if (result == SET_TEXT_COLOR_GREEN+"success"){
+                if (result == SET_TEXT_COLOR_GREEN+"successfully logged in"){
                     status = "[LOGGED IN]";
                     loggedIn();
                 }
@@ -45,15 +45,18 @@ public class Repl {
 
     private void loggedIn() {
         System.out.println(postlogin.welcome());
+        System.out.println(postlogin.help());
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        while (this.status=="[LOGGED IN") {
-            System.out.println(postlogin.help());
+        while (status=="[LOGGED IN]") {
             printPrompt();
             String line = scanner.nextLine();
             try {
                 outcome = postlogin.eval(line);
                 System.out.print(outcome);
+                if (outcome.equals("goodbye")){
+                    status = "[LOGGED OUT]";
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

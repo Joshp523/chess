@@ -50,7 +50,7 @@ public class PreLoginClient {
             return SET_TEXT_COLOR_RED + "failure";
         }else {
             PostLoginClient.authToken = authToken;
-            return SET_TEXT_COLOR_GREEN + "success";
+            return SET_TEXT_COLOR_GREEN+"successfully logged in";
         }
     }
 
@@ -60,7 +60,7 @@ public class PreLoginClient {
             return SET_TEXT_COLOR_RED + "failure";
         }else {
             PostLoginClient.authToken = authToken;
-            return SET_TEXT_COLOR_GREEN + "success";
+            return SET_TEXT_COLOR_GREEN+"successfully logged in";
         }
     }
 }
