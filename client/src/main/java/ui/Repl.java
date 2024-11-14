@@ -22,10 +22,10 @@ public class Repl {
 
     public void run() {
         System.out.println(prelogin.welcome());
+        System.out.println(prelogin.help());
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals(SET_TEXT_COLOR_RED+"quit")) {
-            System.out.println(prelogin.help());
             printPrompt();
             String line = scanner.nextLine();
             try {
@@ -62,7 +62,7 @@ public class Repl {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + status + RESET_TEXT_BLINKING + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" +SET_TEXT_COLOR_MAGENTA + status + RESET_TEXT_BLINKING + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 
 }

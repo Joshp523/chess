@@ -1,6 +1,9 @@
 package ui;
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.sun.net.httpserver.Request;
+import model.AuthData;
+import model.UserData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,9 +46,10 @@ public class ServerFacade {
         return this.makeRequest("GAME", path, null, String.class);
     }
 
-    public String register(){
+    public String register(String username, String password, String email){
         var path = "/user";
-        return this.makeRequest("POST", path, null, String.class);
+        UserData request = new UserData(username, password, email);
+        return this.makeRequest("POST", path, request, String.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {

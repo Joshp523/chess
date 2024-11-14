@@ -1,5 +1,7 @@
 package ui;
 
+import dataaccess.DataAccessException;
+
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
@@ -15,13 +17,13 @@ public class PreLoginClient {
     }
 
     public String welcome() {
-        return SET_TEXT_COLOR_YELLOW + "Welcome to Joshua's chess server.\nplease create an account or login";
+        return SET_TEXT_COLOR_YELLOW + "Welcome to Joshua's chess server.\nplease create an account or login\n";
     }
 
     public String help() {
-        return "--To register, please enter \"register\" <PASSWORD> <EMAIL>\n" +
-                "--To login, please enter \"login\" <PASSWORD>\n" +
-                "--To quit, please enter \"quit\"";
+        return SET_TEXT_COLOR_YELLOW + "--To register, please enter\t \"register\" <USERNAME> <PASSWORD> <EMAIL>\n" +
+                "--To login, please enter\t \"login\" \t<USERNAME> <PASSWORD>\n" +
+                "--To quit, please enter\t\t \"quit\"";
     }
 
     public String eval(String input) {
@@ -41,10 +43,15 @@ public class PreLoginClient {
     }
 
     private String registerNewUser(String... params) {
-        return "NOT IMPLEMENTED";
+        String returnMe = server.register(params[0], params[1], params[2]);
+        if (returnMe.equals("")) {
+            return SET_TEXT_COLOR_GREEN + "success";
+        }else {
+            return returnMe;
+        }
     }
 
     private String loginExistingUser(String[] params) {
-        return "NOT IMPLEMENTED";
+        return SET_TEXT_COLOR_RED + "NOT IMPLEMENTED";
     }
 }
