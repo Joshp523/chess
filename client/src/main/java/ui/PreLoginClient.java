@@ -5,8 +5,13 @@ import java.util.Arrays;
 import static ui.EscapeSequences.*;
 
 public class PreLoginClient {
+    ServerFacade server;
+    String serverUrl = "";
 
     PreLoginClient(String serverURL, Repl repl) {
+        this.serverUrl = serverUrl;
+        server = new ServerFacade(serverUrl);
+
     }
 
     public String welcome() {
@@ -27,7 +32,7 @@ public class PreLoginClient {
             return switch (cmd) {
                 case "login" -> loginExistingUser(params);
                 case "register" -> registerNewUser(params);
-                case "quit" -> SET_TEXT_COLOR_RED+"quit";
+                case "quit" -> SET_TEXT_COLOR_RED + "quit";
                 default -> help();
             };
         } catch (Exception ex) {
@@ -36,16 +41,10 @@ public class PreLoginClient {
     }
 
     private String registerNewUser(String... params) {
-        if (params.length >= 1) {
-            visitorName = String.join("-", params);
-            ws = new WebSocketFacade(serverUrl, notificationHandler);
-            ws.enterPetShop(visitorName);
-            return String.format("You signed in as %s.", visitorName);
-        }
-        throw new ResponseException(400, "Expected: <yourname>");
-
+        return "NOT IMPLEMENTED";
     }
 
     private String loginExistingUser(String[] params) {
+        return "NOT IMPLEMENTED";
     }
 }

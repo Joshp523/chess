@@ -16,8 +16,12 @@ public class PostLoginClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "logout" -> logoutExistingUser(params);
-                case "register" -> registerNewUser(params);
+                case "logout" -> logoutExistingUser();
+                case "create" -> createGame(params);
+                case "list" -> listGames();
+                case "join" -> joinGame(params);
+                case "observe" -> observeGame(params);
+                case "help" -> help();
                 case "quit" -> SET_TEXT_COLOR_RED+"quit";
                 default -> help();
             };
@@ -26,7 +30,24 @@ public class PostLoginClient {
         }
     }
 
-    private String logoutExistingUser(String[] params) {
+    private String observeGame(String[] params) {
+        return "NOT IMPLEMENTED";
+    }
+
+    private String joinGame(String[] params) {
+        return "NOT IMPLEMENTED";
+    }
+
+    private String listGames() {
+        return "NOT IMPLEMENTED";
+    }
+
+    private String createGame(String[] params) {
+        return "NOT IMPLEMENTED";
+    }
+
+    private String logoutExistingUser() {
+        return "NOT IMPLEMENTED";
     }
 
     public String help() {
