@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.Request;
 import model.AuthData;
 import model.UserData;
+import server.UsernameAndPassword;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +42,11 @@ public class ServerFacade {
         var path = "/session";
         return this.makeRequest("DELETE", path, null, String.class);
     }
-    public String login(){
+    public String login(String username, String password){
         var path = "/session";
-        return this.makeRequest("GAME", path, null, String.class);
+        var request = new UsernameAndPassword(username, password);
+        var recieved = this.makeRequest("POST", path, request, AuthData.class);
+        return recieved.authToken();
     }
 
     public String register(String username, String password, String email){

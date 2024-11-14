@@ -24,7 +24,8 @@ public class PreLoginClient {
     public String help() {
         return SET_TEXT_COLOR_YELLOW + "--To register, please enter\t \"register\" <USERNAME> <PASSWORD> <EMAIL>\n" +
                 "--To login, please enter\t \"login\" \t<USERNAME> <PASSWORD>\n" +
-                "--To quit, please enter\t\t \"quit\"";
+                "--To see this menu again, please enter\t \"help\"\n" +
+                "--To quit a game you are in, please enter\t\t \"quit\"";
     }
 
     public String eval(String input) {
@@ -48,12 +49,18 @@ public class PreLoginClient {
         if (authToken.equals("")) {
             return SET_TEXT_COLOR_RED + "failure";
         }else {
-
+            PostLoginClient.authToken = authToken;
             return SET_TEXT_COLOR_GREEN + "success";
         }
     }
 
     private String loginExistingUser(String[] params) {
-        return SET_TEXT_COLOR_RED + "NOT IMPLEMENTED";
+        String authToken = server.login(params[0], params[1]);
+        if (authToken.equals("")) {
+            return SET_TEXT_COLOR_RED + "failure";
+        }else {
+            PostLoginClient.authToken = authToken;
+            return SET_TEXT_COLOR_GREEN + "success";
+        }
     }
 }

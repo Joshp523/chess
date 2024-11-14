@@ -44,6 +44,7 @@ public class Repl {
     }
 
     private void loggedIn() {
+        System.out.println(postlogin.welcome());
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
         while (!outcome.equals("quit")) {
