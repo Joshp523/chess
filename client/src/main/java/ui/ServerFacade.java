@@ -15,6 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import static ui.PostLoginClient.authToken;
+
 
 public class ServerFacade {
     String serverUrl;
@@ -38,9 +40,9 @@ public class ServerFacade {
         var path = "/game";
         return this.makeRequest("POST", path, null, String.class);
     }
-    public String logout(){
-        var path = "/session";
-        return this.makeRequest("DELETE", path, null, String.class);
+    public void logout(){
+        var path = "/session/";
+        this.makeRequest("DELETE", path, null, null);
     }
     public String login(String username, String password){
         var path = "/session";
@@ -62,6 +64,7 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+            http.setRequestProperty("authorization", authToken);
             writeBody(request, http);
             http.connect();
             return readBody(http, responseClass);
@@ -84,6 +87,9 @@ public class ServerFacade {
     }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+        if (responseClass == null) {
+            return null;
+        }
         T response = null;
         if (http.getContentLength() < 0) {
             try (InputStream respBody = http.getInputStream()) {

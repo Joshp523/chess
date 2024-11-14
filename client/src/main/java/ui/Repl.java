@@ -10,7 +10,7 @@ public class Repl {
     private final PreLoginClient prelogin;
     private final PostLoginClient postlogin;
     private final ChessClient chessClient;
-    private String status;
+    public static String status;
 
     public Repl(String serverUrl) {
 
@@ -47,7 +47,7 @@ public class Repl {
         System.out.println(postlogin.welcome());
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        while (!outcome.equals("quit")) {
+        while (this.status=="[LOGGED IN") {
             System.out.println(postlogin.help());
             printPrompt();
             String line = scanner.nextLine();

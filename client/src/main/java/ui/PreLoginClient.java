@@ -22,10 +22,10 @@ public class PreLoginClient {
     }
 
     public String help() {
-        return SET_TEXT_COLOR_YELLOW + "--To register, please enter\t \"register\" <USERNAME> <PASSWORD> <EMAIL>\n" +
-                "--To login, please enter\t \"login\" \t<USERNAME> <PASSWORD>\n" +
-                "--To see this menu again, please enter\t \"help\"\n" +
-                "--To quit a game you are in, please enter\t\t \"quit\"";
+        return SET_TEXT_COLOR_YELLOW + "--To register, please enter \"register\" <USERNAME> <PASSWORD> <EMAIL>\n" +
+                "--To login, please enter \"login\" <USERNAME> <PASSWORD>\n" +
+                "--To see this menu again, please enter \"help\"\n" +
+                "--To quit a game you are in, please enter \"quit\"";
     }
 
     public String eval(String input) {

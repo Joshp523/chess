@@ -2,13 +2,16 @@ package ui;
 
 import java.util.Arrays;
 
-import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
-import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
+import static ui.EscapeSequences.*;
 
 public class PostLoginClient {
     public static String authToken = "";
+    ServerFacade server;
+    String serverUrl;
 
     PostLoginClient(String serverURL, Repl repl){
+        this.serverUrl = serverURL;
+        server = new ServerFacade(serverUrl);
     }
 
     public String eval(String input) {
@@ -48,7 +51,10 @@ public class PostLoginClient {
     }
 
     private String logoutExistingUser() {
-        return "NOT IMPLEMENTED";
+        this.authToken = "";
+        server.logout();
+        Repl.status = SET_TEXT_COLOR_MAGENTA + "[LOGGED OUT]";
+        return "goodbye";
     }
 
     public String welcome() {
@@ -56,12 +62,12 @@ public class PostLoginClient {
     }
 
     public String help(){
-        return SET_TEXT_COLOR_YELLOW + "--To log out, please enter\t \"logout\" \n" +
-                "--To create a new game, please enter\t \"create\" \t<GAMENAME>\n" +
-                "--To list all the current games, please enter\t \"list\"\n" +
-                "--To join a game, please enter\t \"join\" \t<GAMENAME>\n" +
-                "--To observe a game, please enter\t \"observe\" \t<GAMENAME>\n" +
-                "--To see this menu again, please enter\t \"help\"\n" +
-                "--To quit, please enter\t\t \"quit\"";
+        return SET_TEXT_COLOR_YELLOW + "--To log out, please enter \"logout\" \n" +
+                "--To create a new game, please enter \"create\" <GAMENAME>\n" +
+                "--To list all the current games, please enter \"list\"\n" +
+                "--To join a game, please enter \"join\" <GAMENAME>\n" +
+                "--To observe a game, please enter \"observe\" <GAMENAME>\n" +
+                "--To see this menu again, please enter \"help\"\n" +
+                "--To quit, please enter \"quit\"";
     }
 }
