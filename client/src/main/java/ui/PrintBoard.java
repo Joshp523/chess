@@ -18,18 +18,18 @@ public class PrintBoard {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
         drawHeaders(out);
-        drawBoard(out,black);
+        drawBoard(out, black);
         drawHeaders(out);
         setBlack(out);
         out.println();
     }
 
     private void drawBoard(PrintStream out, int black) {
-        for(int row = 1; row <= 8; row++) {
+        for (int row = 1; row <= 8; row++) {
             int label = abs(black - row);
             setText(out);
-            out.print(" " + label+ " ");
-            drawRow(out,label);
+            out.print(" " + label + " ");
+            drawRow(out, label);
             setText(out);
             out.print(" " + label + " ");
             setBlack(out);
@@ -38,57 +38,93 @@ public class PrintBoard {
     }
 
     private void setBlack(PrintStream out) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
-
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
     private void drawRow(PrintStream out, int row) {
-        switch(row%2) {
-//            case 1 -> WhiteRear(out);
-//            case 8 -> BlackRear(out);
-//            case 2 -> WhiteVan(out);
-//            case 7 -> BlackVan(out);
-            case 1 -> whiteFirst(out);
+        switch (row) {
+                 case 1 -> WhiteRear(out);
+            case 8 -> BlackRear(out);
+            case 2 -> WhiteVan(out);
+            case 7 -> BlackVan(out);
+            case 6 -> whiteFirst(out);
+            case 4 -> whiteFirst(out);
             default -> blackFirst(out);
 
         }
     }
 
     private void blackFirst(PrintStream out) {
-        for(int row = 1; row <= 4; row++) {
+        for (int row = 1; row <= 4; row++) {
             setBlack(out);
-            out.print("   ");
+            out.print(EMPTY);
             setWhite(out);
-            out.print("   ");
+            out.print(EMPTY);
         }
     }
 
     private void setWhite(PrintStream out) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_LIGHT_GREY);
     }
 
 
     private void whiteFirst(PrintStream out) {
-        for(int row = 1; row <= 4; row++) {
+        for (int row = 1; row <= 4; row++) {
             setWhite(out);
-            out.print("   ");
+            out.print(EMPTY);
             setBlack(out);
-            out.print("   ");
+            out.print(EMPTY);
         }
     }
 
     private void BlackVan(PrintStream out) {
+        for (int row = 1; row <= 4; row++) {
+            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_PAWN);
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_PAWN);
+        }
     }
 
     private void WhiteVan(PrintStream out) {
+        for (int row = 1; row <= 4; row++) {
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_TEXT_COLOR_WHITE);
+            out.print(BLACK_PAWN);
+            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_TEXT_COLOR_WHITE);
+            out.print(BLACK_PAWN);
+        }
     }
 
     private void BlackRear(PrintStream out) {
+        for (int row = 1; row <= 4; row++) {
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_ROOK);
+            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_KNIGHT);
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_BISHOP);
+            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_QUEEN);
+        }
     }
 
     private void WhiteRear(PrintStream out) {
+        for (int row = 1; row <= 4; row++) {
+            setBlack(out);
+            out.print(EMPTY);
+            setWhite(out);
+            out.print(EMPTY);
+        }
     }
 
     void drawHeaders(PrintStream out) {
