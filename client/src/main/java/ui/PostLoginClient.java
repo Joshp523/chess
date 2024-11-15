@@ -34,7 +34,7 @@ public class PostLoginClient {
                 case "play" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "help" -> help();
-                case "quit" -> SET_TEXT_COLOR_RED + "quit";
+                case "quit" -> SET_TEXT_COLOR_RED + "you left the game";
                 default -> help();
             };
         } catch (Exception ex) {

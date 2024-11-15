@@ -8,8 +8,8 @@ import static ui.EscapeSequences.*;
 
 
 public class PrintBoard {
-    private final String bb = SET_BG_COLOR_DARK_GREY;
-    private final String ww = SET_BG_COLOR_LIGHT_GREY;
+    private final String bb = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
+    private final String ww = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
     private final String b = SET_TEXT_COLOR_BLACK;
     private final String w = SET_TEXT_COLOR_WHITE;
     private final String p = BLACK_PAWN;
@@ -56,34 +56,40 @@ public class PrintBoard {
     private void drawRow(PrintStream out, int row, int black) {
         switch (row) {
             case 1 -> Rear(w, out, black);
-            case 8 -> Rear(b, out, black);
+            case 8 -> Rear(b, out, abs(black-9));
             case 2 -> Van(w,out,black);
-            case 7 -> Van(b,out,black);
-            case 6 -> whiteFirst(out);
-            case 4 -> whiteFirst(out);
-            default -> blackFirst(out);
+            case 7 -> Van(b,out,abs(black-9));
+            case 4 -> blackFirst(out, black);
+            case 6 -> blackFirst(out, black);
+            default -> whiteFirst(out, black);
 
         }
     }
 
-    private void blackFirst(PrintStream out) {
+    private void blackFirst(PrintStream out, int toggle) {
+        if(toggle == 9){
+            whiteFirst(out, 0);
+        }else{
         for (int row = 1; row <= 4; row++) {
             populateSquare(bb, bb, p, out);
             populateSquare(ww, ww, p, out);
-        }
+        }}
     }
 
 
-    private void whiteFirst(PrintStream out) {
+    private void whiteFirst(PrintStream out, int toggle) {
+        if(toggle == 9){
+            blackFirst(out, 0);
+        }else{
         for (int row = 1; row <= 4; row++) {
             populateSquare(ww, ww, p, out);
             populateSquare(bb, bb, p, out);
-        }
+        }}
     }
 
 
     private void Van(String team, PrintStream out, int black) {
-        if (black == 0) {
+        if (black == 9) {
             for (int row = 1; row <= 4; row++) {
                 populateSquare(ww, team, p, out);
                 populateSquare(bb, team, p, out);
@@ -99,13 +105,19 @@ public class PrintBoard {
     private void Rear(String team, PrintStream out, int black) {
         String left = ww;
         String right = bb;
-        String one = q;
-        String two = k;
+        String one = k;
+        String two = q;
         if (black == 9) {
             left = bb;
             right = ww;
-            one = k;
-            two = q;
+            one = q;
+            two = k;
+        }
+        if (team == b){
+            String three = "";
+            three = one;
+            one = two;
+            two = three;
         }
 
         populateSquare(left, team, r, out);
@@ -136,9 +148,7 @@ public class PrintBoard {
     }
 
     void populateSquare(String squareColor, String pieceColor, String piece, PrintStream out) {
-        out.print(squareColor);
-        out.print(pieceColor);
-        out.print(piece);
+        out.print(squareColor+pieceColor+piece);
     }
 
 }
