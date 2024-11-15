@@ -5,6 +5,7 @@ import com.sun.net.httpserver.Request;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import server.ColorAndGame;
 import server.GameID;
 import server.GamesList;
 import server.UsernameAndPassword;
@@ -28,10 +29,16 @@ public class ServerFacade {
     public ServerFacade(String url) {
         serverUrl = url;
     }
+//    public void observe(int gameID){
+//        var path = "/game";
+//        ColorAndGame request = new ColorAndGame(null, gameID);
+//        this.makeRequest("PUT", path, request, null);
+//    }
 
-    public String join(){
+    public void join(ChessGame.TeamColor color, int gameID){
         var path = "/game";
-        return this.makeRequest("PUT", path, null, String.class);
+        ColorAndGame request = new ColorAndGame(color, gameID);
+        this.makeRequest("PUT", path, request, null);
     }
 
     public ArrayList<GameData> listGames() {
