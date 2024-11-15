@@ -3,25 +3,35 @@ package ui;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+import static java.lang.Math.abs;
 import static ui.EscapeSequences.*;
 
 
 public class PrintBoard {
 
     public void main() {
+        mainProtocol(0);
+        mainProtocol(9);
+    }
+
+    private void mainProtocol(int black) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
         drawHeaders(out);
-        drawBoard(out);
+        drawBoard(out,black);
         drawHeaders(out);
+        setBlack(out);
+        out.println();
     }
 
-    private void drawBoard(PrintStream out) {
+    private void drawBoard(PrintStream out, int black) {
         for(int row = 1; row <= 8; row++) {
+            int label = abs(black - row);
             setText(out);
-            out.print(" " + row+ " ");
-            drawRow(out,row);
-            out.print(" " + row + " ");
+            out.print(" " + label+ " ");
+            drawRow(out,label);
+            setText(out);
+            out.print(" " + label + " ");
             setBlack(out);
             out.println();
         }
@@ -48,9 +58,9 @@ public class PrintBoard {
     private void blackFirst(PrintStream out) {
         for(int row = 1; row <= 4; row++) {
             setBlack(out);
-            out.print(EMPTY+ " ");
+            out.print("   ");
             setWhite(out);
-            out.print(EMPTY+ " ");
+            out.print("   ");
         }
     }
 
@@ -63,9 +73,9 @@ public class PrintBoard {
     private void whiteFirst(PrintStream out) {
         for(int row = 1; row <= 4; row++) {
             setWhite(out);
-            out.print(EMPTY+ " ");
+            out.print("   ");
             setBlack(out);
-            out.print(EMPTY+ " ");
+            out.print("   ");
         }
     }
 
@@ -87,7 +97,7 @@ public class PrintBoard {
         out.print("    ");
         setText(out);
         for (String header : headers) {
-            out.print(header + "    ");
+            out.print(header + "  ");
         }
         out.print("  ");
         setBlack(out);
