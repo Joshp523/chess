@@ -3,6 +3,7 @@ package ui;
 import model.GameData;
 import server.GameID;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
@@ -46,7 +47,15 @@ public class PostLoginClient {
     }
 
     private String listGames() {
-        return "NOT IMPLEMENTED";
+        ArrayList<GameData> games = server.listGames();
+        String returnMe = SET_TEXT_COLOR_BLUE + "here are all the games:\n";
+        int i = 1;
+        for (GameData datum : games) {
+            returnMe += i + ". " + datum.gameName() + "\n\tWhite: "+datum.whiteUsername()+
+                    "\n\tBlack: "+datum.blackUsername()+"\n";
+            i++;
+        }
+        return returnMe;
     }
 
     private String createGame(String[] params) {

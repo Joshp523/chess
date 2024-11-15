@@ -6,6 +6,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import server.GameID;
+import server.GamesList;
 import server.UsernameAndPassword;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import static ui.PostLoginClient.authToken;
 
@@ -27,17 +29,17 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public ChessGame[] listGames() {
-        var path = "/game";
-        record listGamesResponse(ChessGame[] games) {
-        }
-        var response = this.makeRequest("GET", path, null, listGamesResponse.class);
-        return response.games();
-    }
     public String join(){
         var path = "/game";
         return this.makeRequest("PUT", path, null, String.class);
     }
+
+    public ArrayList<GameData> listGames() {
+        var path = "/game";
+        GamesList response = this.makeRequest("GET", path, null, GamesList.class);
+        return response.games();
+    }
+
     public GameID createGame(String gameName){
         var path = "/game";
         GameData allNullButName = new GameData(0, null, null, gameName, null);
