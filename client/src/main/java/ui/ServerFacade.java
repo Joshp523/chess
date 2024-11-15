@@ -1,7 +1,6 @@
 package ui;
 import chess.ChessGame;
 import com.google.gson.Gson;
-import com.sun.net.httpserver.Request;
 import model.AuthData;
 import model.GameData;
 import model.UserData;

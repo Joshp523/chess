@@ -2,8 +2,6 @@ package ui;
 
 import chess.ChessGame;
 import model.GameData;
-import server.GameID;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,7 +58,7 @@ public class PostLoginClient {
         }
         int index = Integer.parseInt(params[0]);
         server.join(color, index);
-        printBoard(index);
+        squares.main();
         return "";
     }
 

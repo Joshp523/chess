@@ -7,12 +7,13 @@ import dataaccess.GameDAO;
 import model.GameData;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import static java.sql.Types.NULL;
 
 public class SqlGame implements GameDAO {
-    static int id = 0;
 
     public SqlGame() throws Exception {
         configureDatabase();
@@ -21,8 +22,8 @@ public class SqlGame implements GameDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  gametable (
-              `gameid` int,
-              `gamename` varchar(256) NOT NULL,
+              `gameid` INT NOT NULL AUTO_INCREMENT,
+              `gamename` varchar(256) NOT NULL UNIQUE,
               `whiteusername` varchar(256) DEFAULT NULL,
               `blackusername` varchar(256) DEFAULT NULL,
               `json` TEXT DEFAULT NULL,
@@ -51,7 +52,7 @@ public class SqlGame implements GameDAO {
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-
+        int value = 0;
         if (gameName == "") {
             throw new DataAccessException("Game name cannot be empty");
         }
@@ -60,21 +61,23 @@ public class SqlGame implements GameDAO {
                 throw new DataAccessException("Game name already exists");
             }
         }
-        id += 1;
-        var statement = "INSERT INTO gametable (gameid, gamename, json) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO gametable (gamename, json) VALUES (?, ?)";
         var json = new Gson().toJson(new ChessGame());
-
         try (var conn = DatabaseManager.getConnection();
-
-             var ps = conn.prepareStatement(statement)) {
-            ps.setInt(1, id);
-            ps.setString(2, gameName);
-            ps.setString(3, json);
+             var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, gameName);
+            ps.setString(2, json);
             ps.executeUpdate();
-            return id;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                value = rs.getInt(1);
+            }
         }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+
+        }
+        return value;
     }
 
 

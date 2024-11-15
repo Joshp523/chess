@@ -8,6 +8,17 @@ import static ui.EscapeSequences.*;
 
 
 public class PrintBoard {
+    private final String bb = SET_BG_COLOR_DARK_GREY;
+    private final String ww = SET_BG_COLOR_LIGHT_GREY;
+    private final String b = SET_TEXT_COLOR_BLACK;
+    private final String w = SET_TEXT_COLOR_WHITE;
+    private final String p = BLACK_PAWN;
+    private final String r = BLACK_ROOK;
+    private final String s = BLACK_BISHOP;
+    private final String n = BLACK_KNIGHT;
+    private final String q = BLACK_QUEEN;
+    private final String k = BLACK_KING;
+
 
     public void main() {
         mainProtocol(0);
@@ -17,9 +28,9 @@ public class PrintBoard {
     private void mainProtocol(int black) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
-        drawHeaders(out);
+        drawHeaders(out, black);
         drawBoard(out, black);
-        drawHeaders(out);
+        drawHeaders(out, black);
         setBlack(out);
         out.println();
     }
@@ -29,7 +40,7 @@ public class PrintBoard {
             int label = abs(black - row);
             setText(out);
             out.print(" " + label + " ");
-            drawRow(out, label);
+            drawRow(out, label, black);
             setText(out);
             out.print(" " + label + " ");
             setBlack(out);
@@ -42,12 +53,12 @@ public class PrintBoard {
         out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
-    private void drawRow(PrintStream out, int row) {
+    private void drawRow(PrintStream out, int row, int black) {
         switch (row) {
-                 case 1 -> WhiteRear(out);
-            case 8 -> BlackRear(out);
-            case 2 -> WhiteVan(out);
-            case 7 -> BlackVan(out);
+            case 1 -> Rear(w, out, black);
+            case 8 -> Rear(b, out, black);
+            case 2 -> Van(w,out,black);
+            case 7 -> Van(b,out,black);
             case 6 -> whiteFirst(out);
             case 4 -> whiteFirst(out);
             default -> blackFirst(out);
@@ -57,108 +68,64 @@ public class PrintBoard {
 
     private void blackFirst(PrintStream out) {
         for (int row = 1; row <= 4; row++) {
-            setBlack(out);
-            out.print(BLACK_PAWN);
-            setWhite(out);
-            out.print(BLACK_PAWN);
+            populateSquare(bb, bb, p, out);
+            populateSquare(ww, ww, p, out);
         }
-    }
-
-    private void setWhite(PrintStream out) {
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_LIGHT_GREY);
     }
 
 
     private void whiteFirst(PrintStream out) {
         for (int row = 1; row <= 4; row++) {
-            setWhite(out);
-            out.print(BLACK_PAWN);
-            setBlack(out);
-            out.print(BLACK_PAWN);
+            populateSquare(ww, ww, p, out);
+            populateSquare(bb, bb, p, out);
         }
     }
 
-    private void BlackVan(PrintStream out) {
-        for (int row = 1; row <= 4; row++) {
-            out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_PAWN);
-            out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_PAWN);
+
+    private void Van(String team, PrintStream out, int black) {
+        if (black == 0) {
+            for (int row = 1; row <= 4; row++) {
+                populateSquare(ww, team, p, out);
+                populateSquare(bb, team, p, out);
+            }
+        } else {
+            for (int row = 1; row <= 4; row++) {
+                populateSquare(bb, team, p, out);
+                populateSquare(ww, team, p, out);
+            }
         }
     }
 
-    private void WhiteVan(PrintStream out) {
-        for (int row = 1; row <= 4; row++) {
-            out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(SET_TEXT_COLOR_WHITE);
-            out.print(BLACK_PAWN);
-            out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_WHITE);
-            out.print(BLACK_PAWN);
+    private void Rear(String team, PrintStream out, int black) {
+        String left = ww;
+        String right = bb;
+        String one = q;
+        String two = k;
+        if (black == 9) {
+            left = bb;
+            right = ww;
+            one = k;
+            two = q;
         }
+
+        populateSquare(left, team, r, out);
+        populateSquare(right, team, n, out);
+        populateSquare(left, team, s, out);
+        populateSquare(right, team, one, out);
+        populateSquare(left, team, two, out);
+        populateSquare(right, team, s, out);
+        populateSquare(left, team, n, out);
+        populateSquare(right, team, r, out);
     }
 
-    private void BlackRear(PrintStream out) {
 
-            out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_ROOK);
-            out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_KNIGHT);
-            out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_BISHOP);
-            out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_QUEEN);
-            out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_KING);
-            out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_BISHOP);
-            out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_KNIGHT);
-            out.print(SET_BG_COLOR_DARK_GREY);
-            out.print(SET_TEXT_COLOR_BLACK);
-            out.print(BLACK_ROOK);
-    }
-
-    private void WhiteRear(PrintStream out) {
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_ROOK);
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_KNIGHT);
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_BISHOP);
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_KING);
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_QUEEN);
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_BISHOP);
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_KNIGHT);
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_WHITE);
-        out.print(BLACK_ROOK);
-    }
-
-    void drawHeaders(PrintStream out) {
+    void drawHeaders(PrintStream out, int black) {
         setText(out);
-        out.print("    A   B  C   D   E  F   G   H"+EMPTY);
+        if (black == 9) {
+            out.print("    A   B  C   D   E  F   G   H" + EMPTY);
+        } else {
+            out.print("    H   G  F   E   D  C   B   A" + EMPTY);
+        }
         setBlack(out);
         out.println();
     }
@@ -167,4 +134,11 @@ public class PrintBoard {
         out.print(SET_BG_COLOR_RED);
         out.print(SET_TEXT_COLOR_WHITE);
     }
+
+    void populateSquare(String squareColor, String pieceColor, String piece, PrintStream out) {
+        out.print(squareColor);
+        out.print(pieceColor);
+        out.print(piece);
+    }
+
 }
