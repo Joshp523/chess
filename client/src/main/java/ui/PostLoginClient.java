@@ -100,8 +100,8 @@ public class PostLoginClient {
         return SET_TEXT_COLOR_YELLOW + "--To log out, please enter \"logout\" \n" +
                 "--To create a new game, please enter \"create\" <GAMENAME>\n" +
                 "--To list all the current games, please enter \"list\"\n" +
-                "--To play in one of the listed games, please enter \"play\" <GAME ID> [WHITE/BLACK]\n" +
-                "--To observe a game, please enter \"observe\" <GAME ID>\n" +
+                "--To play in one of the listed games, please enter \"play\" <GAME NUMBER> [WHITE/BLACK]\n" +
+                "--To observe a game, please enter \"observe\" <GAME NUMBER>\n" +
                 "--To see this menu again, please enter \"help\"\n" +
                 "--To quit, please enter \"quit\"";
     }
