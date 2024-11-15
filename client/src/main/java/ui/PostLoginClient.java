@@ -16,10 +16,12 @@ public class PostLoginClient {
     ServerFacade server;
     String serverUrl;
     Map<Integer, ChessGame> temporaryEnumeration = new HashMap<>();
+    PrintBoard squares;
 
     PostLoginClient(String serverURL, Repl repl) {
         this.serverUrl = serverURL;
         server = new ServerFacade(serverUrl);
+        squares = new PrintBoard();
     }
 
     public String eval(String input) {
@@ -43,8 +45,8 @@ public class PostLoginClient {
     }
 
     private String observeGame(String[] params) {
-        int index = Integer.parseInt(params[0]);
-        return printBoard(index);
+        squares.main();
+        return "";
     }
 
     private String joinGame(String[] params) {
@@ -58,14 +60,12 @@ public class PostLoginClient {
         }
         int index = Integer.parseInt(params[0]);
         server.join(color, index);
-        return printBoard(index);
+        printBoard(index);
+        return "";
     }
 
-    private String printBoard(int index) {
-        ChessGame printMe= temporaryEnumeration.get(index);
-        String blackSide = "";
-        String whiteSide = "";
-        return whiteSide +"\n"+blackSide;
+    private void printBoard(int index) {
+        squares.main();
     }
 
     private String listGames() {
@@ -75,7 +75,7 @@ public class PostLoginClient {
         for (GameData datum : games) {
             returnMe += i + ". " + datum.gameName() + "\n\tWhite: " + datum.whiteUsername() +
                     "\n\tBlack: " + datum.blackUsername() + "\n";
-            temporaryEnumeration.put(i,datum.game());
+            temporaryEnumeration.put(i, datum.game());
             i++;
         }
         return returnMe;

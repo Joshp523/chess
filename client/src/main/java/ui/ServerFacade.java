@@ -29,11 +29,11 @@ public class ServerFacade {
     public ServerFacade(String url) {
         serverUrl = url;
     }
-//    public void observe(int gameID){
-//        var path = "/game";
-//        ColorAndGame request = new ColorAndGame(null, gameID);
-//        this.makeRequest("PUT", path, request, null);
-//    }
+    public void observe(int gameID){
+        var path = "/game";
+        ColorAndGame request = new ColorAndGame(null, gameID);
+        this.makeRequest("PUT", path, request, null);
+    }
 
     public void join(ChessGame.TeamColor color, int gameID){
         var path = "/game";

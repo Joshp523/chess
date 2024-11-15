@@ -58,9 +58,9 @@ public class PrintBoard {
     private void blackFirst(PrintStream out) {
         for (int row = 1; row <= 4; row++) {
             setBlack(out);
-            out.print(EMPTY);
+            out.print(BLACK_PAWN);
             setWhite(out);
-            out.print(EMPTY);
+            out.print(BLACK_PAWN);
         }
     }
 
@@ -73,9 +73,9 @@ public class PrintBoard {
     private void whiteFirst(PrintStream out) {
         for (int row = 1; row <= 4; row++) {
             setWhite(out);
-            out.print(EMPTY);
+            out.print(BLACK_PAWN);
             setBlack(out);
-            out.print(EMPTY);
+            out.print(BLACK_PAWN);
         }
     }
 
@@ -102,7 +102,7 @@ public class PrintBoard {
     }
 
     private void BlackRear(PrintStream out) {
-        for (int row = 1; row <= 4; row++) {
+
             out.print(SET_BG_COLOR_LIGHT_GREY);
             out.print(SET_TEXT_COLOR_BLACK);
             out.print(BLACK_ROOK);
@@ -115,34 +115,52 @@ public class PrintBoard {
             out.print(SET_BG_COLOR_DARK_GREY);
             out.print(SET_TEXT_COLOR_BLACK);
             out.print(BLACK_QUEEN);
-        }
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_KING);
+            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_BISHOP);
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_KNIGHT);
+            out.print(SET_BG_COLOR_DARK_GREY);
+            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(BLACK_ROOK);
     }
 
     private void WhiteRear(PrintStream out) {
-        for (int row = 1; row <= 4; row++) {
-            setBlack(out);
-            out.print(EMPTY);
-            setWhite(out);
-            out.print(EMPTY);
-        }
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_ROOK);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_KNIGHT);
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_BISHOP);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_KING);
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_QUEEN);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_BISHOP);
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_KNIGHT);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(BLACK_ROOK);
     }
 
     void drawHeaders(PrintStream out) {
-        setRed(out);
-        String[] headers = {"A", "B", "C", "D", "E", "F", "G", "H"};
-        out.print("    ");
         setText(out);
-        for (String header : headers) {
-            out.print(header + "  ");
-        }
-        out.print("  ");
+        out.print("    A   B  C   D   E  F   G   H"+EMPTY);
         setBlack(out);
         out.println();
-    }
-
-    void setRed(PrintStream out) {
-        out.print(SET_BG_COLOR_RED);
-        out.print(SET_TEXT_COLOR_RED);
     }
 
     void setText(PrintStream out) {
