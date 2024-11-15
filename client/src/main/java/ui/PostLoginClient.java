@@ -1,5 +1,8 @@
 package ui;
 
+import model.GameData;
+import server.GameID;
+
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
@@ -47,7 +50,8 @@ public class PostLoginClient {
     }
 
     private String createGame(String[] params) {
-        return "NOT IMPLEMENTED";
+        GameID gameID = server.createGame(params[0]);
+        return SET_TEXT_COLOR_BLUE + "a game called " + params[0] + " was created.\nThe ID for that game is " + gameID.gameID();
     }
 
     private String logoutExistingUser() {

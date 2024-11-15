@@ -3,7 +3,9 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Request;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+import server.GameID;
 import server.UsernameAndPassword;
 
 import java.io.IOException;
@@ -36,10 +38,12 @@ public class ServerFacade {
         var path = "/game";
         return this.makeRequest("PUT", path, null, String.class);
     }
-    public Object createGame(String gameName){
+    public GameID createGame(String gameName){
         var path = "/game";
-        return this.makeRequest("POST", path, null, String.class);
+        GameData allNullButName = new GameData(0, null, null, gameName, null);
+        return this.makeRequest("POST", path, allNullButName, GameID.class);
     }
+
     public void logout(){
         var path = "/session/";
         this.makeRequest("DELETE", path, null, null);

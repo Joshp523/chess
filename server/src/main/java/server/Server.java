@@ -59,7 +59,7 @@ public class Server {
         if (service.validToken(authToken)) {
             try {
                 ColorAndGame cag = new Gson().fromJson(request.body(), ColorAndGame.class);
-                if(cag.playerColor()==null || cag.gameID() == 0){
+                if (cag.playerColor() == null || cag.gameID() == 0) {
                     response.status(400);
                     return new Gson().toJson(new Message("Error: bad request"));
                 }
@@ -82,18 +82,13 @@ public class Server {
 
     private Object createGame(Request request, Response response) {
         String authToken = request.headers("authorization");
-        //System.out.println(service.validToken(authToken));
-
         if (service.validToken(authToken)) {
             try {
-                //System.out.println("test me, ben!");
                 GameData allNullButName = new Gson().fromJson(request.body(), GameData.class);
-                //System.out.println(service.createGame(allNullButName.gameName()));
                 int id = service.createGame(allNullButName.gameName());
                 response.status(200);
                 return new Gson().toJson(new GameID(id));
             } catch (DataAccessException dae) {
-                //System.out.println(dae.getMessage());
                 response.status(400);
                 return new Gson().toJson(new Message("Error: bad request"));
             }
