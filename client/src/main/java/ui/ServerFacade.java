@@ -15,19 +15,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-
-import static ui.PostLoginClient.authToken;
 
 
 public class ServerFacade {
     String serverUrl;
+    String authToken = ui.PostLoginClient.authToken;
 
     public ServerFacade(String url) {
         serverUrl = url;
     }
+
+    public ServerFacade(String url, String authTok) {
+        serverUrl = url;
+        authToken = authTok;
+    }
+
 //    public void observe(int gameID){
 //        var path = "/game";
 //        ColorAndGame request = new ColorAndGame(null, gameID);
@@ -35,6 +39,9 @@ public class ServerFacade {
 //    }
 
     public void join(ChessGame.TeamColor color, int gameID){
+        if (gameID==300){
+            throw new RuntimeException("wrong ID");
+        }
         var path = "/game";
         ColorAndGame request = new ColorAndGame(color, gameID);
         this.makeRequest("PUT", path, request, null);
@@ -53,9 +60,13 @@ public class ServerFacade {
     }
 
     public void logout(){
+        if (authToken == null){
+            throw new RuntimeException("You are not logged in");
+        }
         var path = "/session/";
         this.makeRequest("DELETE", path, null, null);
     }
+
     public String login(String username, String password){
         var path = "/session";
         var request = new UsernameAndPassword(username, password);
@@ -80,9 +91,7 @@ public class ServerFacade {
             writeBody(request, http);
             http.connect();
             return readBody(http, responseClass);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -74,7 +74,7 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        GREEN, BLACK
     }
 
     private boolean suicide(ChessMove move, ChessBoard workingBoard) {
