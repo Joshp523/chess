@@ -22,7 +22,62 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
+    public void posJoinTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void negJoinTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void posListGamesTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void negListGamesTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void posCreateGameTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void negCreateGameTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void posLogoutTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void negLogoutTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void posLoginTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void negLoginTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void posRegisterTest() {
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void negRegisterTest() {
         Assertions.assertTrue(true);
     }
 
