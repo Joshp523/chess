@@ -13,7 +13,7 @@ public class PostLoginClient {
     String authToken;
     ServerFacade server;
     String serverUrl;
-    Map<Integer, ChessGame> temporaryEnumeration = new HashMap<>();
+    Map<Integer, GameData> temporaryEnumeration = new HashMap<>();
     PrintBoard squares;
 
     PostLoginClient(String serverURL, Repl repl, String token) {
@@ -49,20 +49,22 @@ public class PostLoginClient {
     }
 
     private String joinGame(String[] params) {
-        ChessGame.TeamColor color = null;
+        String color = params[1];
+        ChessGame.TeamColor useThisColor;
         if (params.length < 2) {
             return SET_TEXT_COLOR_RED + "missing argument(s).\nPlease try again.";
         }if(params.length > 2){
             return SET_TEXT_COLOR_RED + "too many argument(s)\nPlease try again.";
         }
         try {
-            color = switch (params[1]) {
-                case "WHITE" -> ChessGame.TeamColor.WHITE;
-                case "BLACK" -> ChessGame.TeamColor.BLACK;
-                default -> color;
+            switch (color) {
+                case "white" -> useThisColor= ChessGame.TeamColor.WHITE;
+                case "black" -> useThisColor= ChessGame.TeamColor.BLACK;
+                default -> useThisColor = null;
             };
             int index = Integer.parseInt(params[0]);
-            server.join(color, index);
+            int gameID = temporaryEnumeration.get(index).gameID();
+            server.join(useThisColor, gameID);
             printBoard();
             return "";
         } catch (NumberFormatException e) {
@@ -84,7 +86,7 @@ public class PostLoginClient {
             for (GameData datum : games) {
                 returnMe += i + ". " + datum.gameName() + "\n\tWhite: " + datum.whiteUsername() +
                         "\n\tBlack: " + datum.blackUsername() + "\n";
-                temporaryEnumeration.put(i, datum.game());
+                temporaryEnumeration.put(i, datum);
                 i++;
             }
             return returnMe;

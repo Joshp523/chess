@@ -30,13 +30,15 @@ public class Repl {
             try {
                 result = prelogin.eval(line);
                 int newline = result.indexOf("\n");
-                String firstHalf = result.substring(0, newline);
-                String secondHalf = result.substring(newline + 1);
-                System.out.println(firstHalf);
-                if (firstHalf.contains("success")){
+                if (result.contains("success")){
+                    String firstHalf = result.substring(0, newline);
+                    String secondHalf = result.substring(newline + 1);
+                    System.out.println(firstHalf);
                     status = "[LOGGED IN]";
                     PostLoginClient postlogin = new PostLoginClient(prelogin.serverUrl, this, secondHalf);
                     loggedIn(postlogin);
+                }else{
+                    System.out.println(result);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
