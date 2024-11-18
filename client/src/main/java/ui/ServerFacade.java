@@ -32,12 +32,6 @@ public class ServerFacade {
         authToken = authTok;
     }
 
-//    public void observe(int gameID){
-//        var path = "/game";
-//        ColorAndGame request = new ColorAndGame(null, gameID);
-//        this.makeRequest("PUT", path, request, null);
-//    }
-
     public void join(ChessGame.TeamColor color, int gameID){
         if (gameID==300){
             throw new RuntimeException("wrong ID");

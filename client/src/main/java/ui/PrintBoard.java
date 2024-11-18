@@ -55,10 +55,10 @@ public class PrintBoard {
 
     private void drawRow(PrintStream out, int row, int black) {
         switch (row) {
-            case 1 -> Rear(w, out, black);
-            case 8 -> Rear(b, out, abs(black-9));
-            case 2 -> Van(w,out,black);
-            case 7 -> Van(b,out,abs(black-9));
+            case 1 -> rear(w, out, black);
+            case 8 -> rear(b, out, abs(black-9));
+            case 2 -> vanguard(w,out,black);
+            case 7 -> vanguard(b,out,abs(black-9));
             case 4 -> blackFirst(out, black);
             case 6 -> blackFirst(out, black);
             default -> whiteFirst(out, black);
@@ -88,7 +88,7 @@ public class PrintBoard {
     }
 
 
-    private void Van(String team, PrintStream out, int black) {
+    private void vanguard(String team, PrintStream out, int black) {
         if (black == 9) {
             for (int row = 1; row <= 4; row++) {
                 populateSquare(ww, team, p, out);
@@ -102,7 +102,7 @@ public class PrintBoard {
         }
     }
 
-    private void Rear(String team, PrintStream out, int black) {
+    private void rear(String team, PrintStream out, int black) {
         String left = ww;
         String right = bb;
         String one = k;

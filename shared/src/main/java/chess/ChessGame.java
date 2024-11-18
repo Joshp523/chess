@@ -116,9 +116,6 @@ public class ChessGame {
                 }
             }
         }
-//        for (ChessMove move : finalizedMoves) {
-//            System.out.print(move.toString());
-//        }
         return finalizedMoves;
     }
 

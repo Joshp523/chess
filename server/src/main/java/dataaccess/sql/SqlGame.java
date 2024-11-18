@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import dataaccess.memory.MemGame;
 import model.GameData;
 
 import java.sql.ResultSet;
@@ -168,23 +169,6 @@ public class SqlGame implements GameDAO {
     }
 
     private static GameData getGameData(String username, ChessGame.TeamColor color, GameData game) throws DataAccessException {
-        GameData updatedGame = null;
-        switch (color) {
-            case WHITE:
-                if (game.whiteUsername() == null) {
-                    updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                } else {
-                    throw new DataAccessException("Error: already taken");
-                }
-                break;
-            case BLACK:
-                if (game.blackUsername() == null) {
-                    updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                } else {
-                    throw new DataAccessException("Error: already taken");
-                }
-                break;
-        }
-        return updatedGame;
+        return MemGame.extractedFromAddUser(username, color, game);
     }
 }

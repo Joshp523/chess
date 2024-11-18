@@ -38,28 +38,32 @@ public class MemGame implements GameDAO {
 
     @Override
     public void addUser(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException {
+
         for (GameData game : games) {
             if (game.gameID() == gameID) {
-                GameData updatedGame = null;
-                switch (color) {
-                    case WHITE:
-                        if (game.whiteUsername() == null) {
-                            updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                        } else {
-                            throw new DataAccessException("Error: already taken");
-                        }
-                        break;
-                    case BLACK:
-                        if (game.blackUsername() == null) {
-                            updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                        } else {
-                            throw new DataAccessException("Error: already taken");
-                        }
-                        break;
-                }
+                GameData updatedGame = extractedFromAddUser(username, color, game);
                 games.remove(game);
                 games.add(updatedGame);
             }
         }
+    }
+
+    public static GameData extractedFromAddUser(String username, ChessGame.TeamColor color, GameData game) throws DataAccessException {
+        GameData updatedGame = null;
+        switch (color) {
+            case WHITE:
+                if (game.whiteUsername() == null) {
+                    return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                } else {
+                    throw new DataAccessException("Error: already taken");
+                }
+            case BLACK:
+                if (game.blackUsername() == null) {
+                    return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                } else {
+                    throw new DataAccessException("Error: already taken");
+                }
+        }
+        return updatedGame;
     }
 }

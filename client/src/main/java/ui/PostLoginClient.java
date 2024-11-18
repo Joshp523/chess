@@ -65,7 +65,9 @@ public class PostLoginClient {
             printBoard();
             return "";
         } catch (NumberFormatException e) {
-            return SET_TEXT_COLOR_RED + "Something's not right :/\n make sure to type the number of the game from the list and your desired color in all caps.";
+            return SET_TEXT_COLOR_RED + "Something's not right :/\n " +
+                    "make sure to type the number of the game from the list " +
+                    "and your desired color in all caps.";
         }
     }
 
