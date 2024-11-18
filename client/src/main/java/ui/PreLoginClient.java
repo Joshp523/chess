@@ -1,7 +1,5 @@
 package ui;
 
-import dataaccess.DataAccessException;
-
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
