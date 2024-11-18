@@ -1,3 +1,3 @@
-package server;
+package model;
 
 public record GameID(int gameID){};

@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import server.ColorAndGame;
-import server.GameID;
-import server.GamesList;
-import server.UsernameAndPassword;
+import model.ColorAndGame;
+import model.GameID;
+import model.GamesList;
+import model.UsernameAndPassword;
 
 import java.io.IOException;
 import java.io.InputStream;

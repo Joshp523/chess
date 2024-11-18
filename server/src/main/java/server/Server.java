@@ -2,15 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.UserDAO;
-import dataaccess.memory.MemAuth;
-import dataaccess.memory.MemGame;
-import dataaccess.memory.MemUser;
 import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlGame;
 import dataaccess.sql.SqlUser;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 import service.Service;
 import spark.*;
 import dataaccess.*;

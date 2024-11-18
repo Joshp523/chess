@@ -6,7 +6,6 @@ import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlGame;
 import dataaccess.sql.SqlUser;
 import org.junit.jupiter.api.*;
-import server.GameID;
 import server.Server;
 import service.Service;
 import ui.ServerFacade;
