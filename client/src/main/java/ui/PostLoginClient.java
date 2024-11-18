@@ -10,15 +10,16 @@ import java.util.Map;
 import static ui.EscapeSequences.*;
 
 public class PostLoginClient {
-    public static String authToken = "";
+    String authToken;
     ServerFacade server;
     String serverUrl;
     Map<Integer, ChessGame> temporaryEnumeration = new HashMap<>();
     PrintBoard squares;
 
-    PostLoginClient(String serverURL, Repl repl) {
+    PostLoginClient(String serverURL, Repl repl, String token) {
+        authToken = token;
         this.serverUrl = serverURL;
-        server = new ServerFacade(serverUrl);
+        server = new ServerFacade(serverUrl, authToken);
         squares = new PrintBoard();
     }
 

@@ -7,11 +7,14 @@ import static ui.EscapeSequences.*;
 public class PreLoginClient {
     ServerFacade server;
     String serverUrl;
+    Repl repl;
+    String authToken = "";
 
 
     PreLoginClient(String serverURL, Repl repl) {
         this.serverUrl = serverURL;
-        server = new ServerFacade(serverUrl);
+        server = new ServerFacade(serverUrl, authToken);
+        this.repl = repl;
 
     }
 
@@ -54,8 +57,7 @@ public class PreLoginClient {
             if (authToken.equals("")) {
                 return SET_TEXT_COLOR_RED + "The username you entered is already taken.\nPlease try a different one.";
             }else {
-                PostLoginClient.authToken = authToken;
-                return SET_TEXT_COLOR_GREEN+"successfully logged in";
+                return SET_TEXT_COLOR_GREEN+"successfully logged in\n"+authToken;
             }
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
@@ -71,10 +73,9 @@ public class PreLoginClient {
         try {
             String authToken = server.login(params[0], params[1]);
             if (authToken.isEmpty()) {
-                return SET_TEXT_COLOR_RED + "incorrect password.";
+                return SET_TEXT_COLOR_RED + "incorrect password.\n";
             }else {
-                PostLoginClient.authToken = authToken;
-                return SET_TEXT_COLOR_GREEN+"successfully logged in";
+                return SET_TEXT_COLOR_GREEN+"successfully logged in\n"+authToken;
             }
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "login failed. Please doublecheck your password.\nIf you don't have an account with us, please register.";

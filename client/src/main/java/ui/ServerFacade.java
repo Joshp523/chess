@@ -21,11 +21,7 @@ import java.util.ArrayList;
 
 public class ServerFacade {
     String serverUrl;
-    String authToken = ui.PostLoginClient.authToken;
-
-    public ServerFacade(String url) {
-        serverUrl = url;
-    }
+    String authToken;
 
     public ServerFacade(String url, String authTok) {
         serverUrl = url;

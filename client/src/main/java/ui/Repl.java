@@ -8,7 +8,7 @@ import static ui.EscapeSequences.*;
 
 public class Repl {
     private final PreLoginClient prelogin;
-    private final PostLoginClient postlogin;
+
     private final ChessClient chessClient;
     private String status;
 
@@ -16,7 +16,6 @@ public class Repl {
 
         chessClient = new ChessClient(serverUrl, this);
         prelogin = new PreLoginClient(serverUrl, this);
-        postlogin = new PostLoginClient(serverUrl, this);
         status = "[LOGGED OUT]";
     }
 
@@ -30,10 +29,14 @@ public class Repl {
             String line = scanner.nextLine();
             try {
                 result = prelogin.eval(line);
-                System.out.println(result);
-                if (result == SET_TEXT_COLOR_GREEN+"successfully logged in"){
+                int newline = result.indexOf("\n");
+                String firstHalf = result.substring(0, newline);
+                String secondHalf = result.substring(newline + 1);
+                System.out.println(firstHalf);
+                if (firstHalf.contains("success")){
                     status = "[LOGGED IN]";
-                    loggedIn();
+                    PostLoginClient postlogin = new PostLoginClient(prelogin.serverUrl, this, secondHalf);
+                    loggedIn(postlogin);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -43,7 +46,7 @@ public class Repl {
         System.out.println();
     }
 
-    private void loggedIn() {
+    private void loggedIn(PostLoginClient postlogin) {
         System.out.println(postlogin.welcome());
         System.out.println(postlogin.help());
         Scanner scanner = new Scanner(System.in);
