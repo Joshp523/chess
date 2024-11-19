@@ -37,8 +37,8 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.before((request, response) -> {System.out.println("incoming request: "+ request.requestMethod()
-                + " "+request.pathInfo());});
+        //Spark.before((request, response) -> {System.out.println("incoming request: "+ request.requestMethod()
+               // + " "+request.pathInfo());});
 
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
@@ -53,7 +53,7 @@ public class Server {
 
 
     private String join(Request request, Response response) throws SQLException, DataAccessException {
-        System.out.println("join endpoint in server reached");
+        //System.out.println("join endpoint in server reached");
         String authToken = request.headers("authorization");
         if (service.validToken(authToken)) {
             try {

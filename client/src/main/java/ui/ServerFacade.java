@@ -28,7 +28,7 @@ public class ServerFacade {
     }
 
     public void join(ChessGame.TeamColor color, int gameID){
-        System.out.println("join function in serverFacade reached");
+        //System.out.println("join function in serverFacade reached");
         var path = "/game";
         ColorAndGame request = new ColorAndGame(color, gameID);
         this.makeRequest("PUT", path, request, null);
@@ -70,14 +70,14 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try {
-            System.out.println("makeRequest reached");
+            //System.out.println("makeRequest reached");
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
             http.setRequestProperty("authorization", authToken);
             writeBody(request, http);
-            System.out.println(http.getResponseCode());
+            http.getResponseCode();
             http.connect();
             return readBody(http, responseClass);
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class ServerFacade {
 
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
-        System.out.println("writeBody reached");
+        //System.out.println("writeBody reached");
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
@@ -97,7 +97,7 @@ public class ServerFacade {
     }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        System.out.println("readBody reached");
+        //System.out.println("readBody reached");
         if (responseClass != null) {
             if (http.getContentLength() < 0) {
                 InputStream respBody = http.getInputStream();
