@@ -8,7 +8,6 @@ import model.ColorAndGame;
 import model.GameID;
 import model.GamesList;
 import model.UsernameAndPassword;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,9 +28,7 @@ public class ServerFacade {
     }
 
     public void join(ChessGame.TeamColor color, int gameID){
-        if (gameID==300){
-            throw new RuntimeException("wrong ID");
-        }
+        System.out.println("join function in serverFacade reached");
         var path = "/game";
         ColorAndGame request = new ColorAndGame(color, gameID);
         this.makeRequest("PUT", path, request, null);
@@ -53,7 +50,7 @@ public class ServerFacade {
         if (authToken == null){
             throw new RuntimeException("You are not logged in");
         }
-        var path = "/session/";
+        var path = "/session";
         this.makeRequest("DELETE", path, null, null);
     }
 
@@ -73,12 +70,14 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try {
+            System.out.println("makeRequest reached");
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
             http.setRequestProperty("authorization", authToken);
             writeBody(request, http);
+            System.out.println(http.getResponseCode());
             http.connect();
             return readBody(http, responseClass);
         } catch (Exception e) {
@@ -88,28 +87,24 @@ public class ServerFacade {
 
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+        System.out.println("writeBody reached");
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
+            OutputStream reqBody = http.getOutputStream();
+            reqBody.write(reqData.getBytes());
         }
     }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        if (responseClass == null) {
-            return null;
-        }
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
+        System.out.println("readBody reached");
+        if (responseClass != null) {
+            if (http.getContentLength() < 0) {
+                InputStream respBody = http.getInputStream();
                 InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
-                }
+                return new Gson().fromJson(reader, responseClass);
             }
         }
-        return response;
+        return null;
     }
 }
