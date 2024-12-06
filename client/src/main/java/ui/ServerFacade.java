@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class ServerFacade {
@@ -31,7 +32,7 @@ public class ServerFacade {
         //System.out.println("join function in serverFacade reached");
         var path = "/game";
         ColorAndGame request = new ColorAndGame(color, gameID);
-        this.makeRequest("PUT", path, request, null);
+        this.makeRequest("PUT", path, request, Map.class);
     }
 
     public ArrayList<GameData> listGames() {

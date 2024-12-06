@@ -61,7 +61,7 @@ public class Repl {
                 System.out.print(outcome);
                 if (outcome.equals("goodbye")){
                     status = "[LOGGED OUT]";
-                }
+                }if (outcome.contains("")){}
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

@@ -60,7 +60,9 @@ public class PostLoginClient {
             switch (color) {
                 case "white" -> useThisColor= ChessGame.TeamColor.WHITE;
                 case "black" -> useThisColor= ChessGame.TeamColor.BLACK;
-                default -> useThisColor = null;
+                default -> {
+                    return SET_TEXT_COLOR_RED + "invalid color";
+                }
             };
             int index = Integer.parseInt(params[0]);
             int gameID = temporaryEnumeration.get(index).gameID();
@@ -71,6 +73,8 @@ public class PostLoginClient {
             return SET_TEXT_COLOR_RED + "Something's not right :/\n " +
                     "make sure to type the number of the game from the list " +
                     "and your desired color in all caps.";
+        } catch (Exception e) {
+            return SET_TEXT_COLOR_RED + "color already taken";
         }
     }
 
