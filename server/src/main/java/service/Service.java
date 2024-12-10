@@ -69,7 +69,7 @@ public class Service {
         return gameDAO.createGame(gameName);
     }
 
-    private UserData findUserByToken(String authToken) throws DataAccessException, SQLException {
+    public UserData findUserByToken(String authToken) throws DataAccessException, SQLException {
         AuthData authData = authDAO.findByToken(authToken);
         String username = authData.username();
         return userDAO.findByUsername(username);
@@ -79,5 +79,14 @@ public class Service {
         UserData userData = findUserByToken(authToken);
         String username = userData.username();
         gameDAO.addUser(username, color, gameID);
+    }
+
+    public GameData GetGameByID(int id){
+        for (GameData gameData : gameDAO.getAllGames()) {
+            if (gameData.gameID() == id){
+                return gameData;
+            }
+        }
+        return null;
     }
 }
