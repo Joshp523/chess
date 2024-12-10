@@ -6,16 +6,10 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-import com.google.gson.Gson;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Message;
-import websocket.commands.*;
-import websocket.messages.*;
-
-import javax.websocket.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+@WebSocket
 public class Repl implements MessageHandler {
     private final PreLoginClient prelogin;
     private String status;
@@ -66,12 +60,18 @@ public class Repl implements MessageHandler {
             String line = scanner.nextLine();
             try {
                 outcome = postlogin.eval(line);
-                System.out.print(outcome);
+
                 if (outcome.equals("goodbye")) {
+                    System.out.print(outcome);
                     status = "[LOGGED OUT]";
                 }
                 if (outcome.contains("joined") || outcome.contains("observing")) {
+                    char lastChar = outcome.charAt(outcome.length() - 1);
+                    int lastCharAsInt = (int) lastChar;
+                    outcome = outcome.substring(0, outcome.length() - 1);
+                    System.out.print(outcome);
                     ChessClient client = new ChessClient(serverURL, this);
+                    System.out.println(client.welcome(serverURL, postlogin.authToken, lastCharAsInt, this));
                     playGame(client);
                 }
             } catch (Throwable e) {
@@ -83,16 +83,13 @@ public class Repl implements MessageHandler {
     }
 
     private void playGame(ChessClient client) throws Exception {
-        System.out.println(client.help());
-
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        var ws = new ChessClient(serverURL, this);
-        System.out.println(client.printBoard(new ChessBoard(), ws.getPlayerColor()));
+        System.out.println(client.printBoard(new ChessBoard(), client.getPlayerColor()));
         do {
             printPrompt();
             String line = scanner.nextLine();
-            outcome = ws.eval(line);
+            outcome = client.eval(line);
             System.out.print(outcome);
         } while (!outcome.equals("you left"));
     }
@@ -105,7 +102,6 @@ public class Repl implements MessageHandler {
         System.out.println(SET_TEXT_COLOR_BLUE + message.message());
 
     }
-
 }
 
 

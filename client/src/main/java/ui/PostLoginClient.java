@@ -67,9 +67,15 @@ public class PostLoginClient {
             };
             int index = Integer.parseInt(params[0]);
             int gameID = temporaryEnumeration.get(index).gameID();
+            String user;
+            switch (color){
+                case "white" -> user = temporaryEnumeration.get(index).whiteUsername();
+                case "black" -> user = temporaryEnumeration.get(index).blackUsername();
+                default -> user = "";
+            }
             server.join(useThisColor, gameID);
             printBoard();
-            return "joined game as "+ color;
+            return user + "joined game as "+ color + gameID;
         } catch (NumberFormatException e) {
             return SET_TEXT_COLOR_RED + "Something's not right :/\n " +
                     "make sure to type the number of the game from the list " +

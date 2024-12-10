@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPosition;
+import com.google.gson.Gson;
 import model.BoardAndMessage;
 import websocket.commands.UserGameCommand;
 
@@ -12,23 +14,20 @@ import java.util.Arrays;
 import javax.websocket.*;
 
 import static ui.EscapeSequences.*;
+import static websocket.commands.UserGameCommand.CommandType.RESIGN;
 
 public class ChessClient {
     URI uri;
     public Session session;
     ChessBoard board;
     public BoardAndMessage bam;
+    private WebSocketFacade ws;
+    String authToken;
+    int gameID;
+    ServerFacade server;
 
     ChessClient(String serverURL, MessageHandler notificationHandler) throws Exception {
-        this.uri = new URI("ws://localhost:8080/ws");
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        this.session = container.connectToServer(this, this.uri);
-        board = new ChessBoard();
-        this.session.addMessageHandler(new MessageHandler.Whole<BoardAndMessage>() {
-            public void onMessage(BoardAndMessage bam) {
-                /* not sure what goes here*/
-            }
-        });
+        server = new ServerFacade(serverURL, authToken);
     }
 
     public String eval(String input) {
@@ -53,42 +52,73 @@ public class ChessClient {
         }
     }
 
+    private String areYouSure() {
+        return SET_TEXT_COLOR_RED + "Are you sure you want to resign?\nType yes or no";
+    }
+
+    public String welcome(String serverUrl, String authToken, int gameID, MessageHandler messageHandler) throws Exception {
+        ws = new WebSocketFacade(serverUrl, messageHandler);
+        this.authToken = authToken;
+        this.gameID = gameID;
+        return "welcome!";
+    }
+
+    public String help() {
+        return STR."""
+\{SET_TEXT_COLOR_YELLOW}--To forfeit the game, please enter "resign"\s
+--To to see the current game board again, please enter "redraw"
+--To exit the game, please enter "leave"
+--To move, please enter "move" <STARTING SQUARE> <ENDING SQUARE>
+--To view all legal moves for a piece, please enter "highlight" <SQUARE>
+--To see this menu again, please enter "help"
+""";
+    }
 
     public String getPlayerColor() {
         return "w";
     }
 
-    private String areYouSure() {
-        return SET_TEXT_COLOR_RED + "Are you sure you want to resign?\nType yes or no";
+
+    private String quitter() throws IOException {
+        ws.resign(authToken, gameID);
+        return SET_TEXT_COLOR_RED + "you forfeited the game\n--To exit the game, please enter \\\"leave\\\"\\n\"";
+    }
+
+    private String exitGame() throws IOException {
+        ws.leaveGame(authToken, gameID);
+        return SET_TEXT_COLOR_RED + "you left the game";
     }
 
     private String showLegalMoves(String[] params) throws Exception {
-        this.session.getBasicRemote().sendText(params[0]);
-        return printBoard(board, this.getPlayerColor());
+        int row = (int)params[0].charAt(0);
+        char charCol = params[1].charAt(0);
+        int col;
+        switch (charCol) {
+            case 'A' -> col = 1;
+            case 'B' -> col = 2;
+            case 'C' -> col = 3;
+            case 'D' -> col = 4;
+            case 'E' -> col = 5;
+            case 'F' -> col = 6;
+            case 'G' -> col = 7;
+            default -> col = -1;
+        }
+        ChessPosition square = new ChessPosition(row,col);
+        ChessGame game= getGameFromID();
+        return printLegalMoves(game, square);
     }
 
-    private String quitter() throws IOException {
-        this.session.getBasicRemote().sendText("resign");
+    private String printLegalMoves(ChessGame game, ChessPosition square) {
+        return "not implemented";
+    }
 
-        return SET_TEXT_COLOR_RED + "you lost the game\n--To exit the game, please enter \\\"leave\\\"\\n\"";
+    private ChessGame getGameFromID() {
+        return new ChessGame();
     }
 
     private String move(String[] params) throws IOException {
         this.session.getBasicRemote().sendText("move");
         return SET_TEXT_COLOR_BLUE + "you moved";
-    }
-
-    private String exitGame() {
-        return SET_TEXT_COLOR_RED + "you left the game";
-    }
-
-    public String help() {
-        return SET_TEXT_COLOR_YELLOW + "--To forfeit the game, please enter \"resign\" \n" +
-                "--To to see the current game board again, please enter \"redraw\"\n" +
-                "--To exit the game, please enter \"leave\"\n" +
-                "--To move, please enter \"move\" <STARTING SQUARE> <ENDING SQUARE>\n" +
-                "--To view all legal moves for a piece, please enter \"highlight\" <SQUARE>\n" +
-                "--To see this menu again, please enter \"help\"\n";
     }
 
     public String printBoard(ChessBoard board, String perspective) {

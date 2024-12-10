@@ -53,11 +53,6 @@ public class Server {
         return Spark.port();
     }
 
-    @OnWebSocketMessage
-    public void onMessage(Session session, ServerMessage message) throws Exception{
-
-    }
-
 
     private String join(Request request, Response response) throws SQLException, DataAccessException {
         //System.out.println("join endpoint in server reached");
