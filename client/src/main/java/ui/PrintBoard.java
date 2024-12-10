@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
@@ -8,24 +10,26 @@ import static ui.EscapeSequences.*;
 
 
 public class PrintBoard {
-    private final String bb = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
-    private final String ww = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
-    private final String b = SET_TEXT_COLOR_BLACK;
-    private final String w = SET_TEXT_COLOR_WHITE;
-    private final String p = BLACK_PAWN;
-    private final String r = BLACK_ROOK;
-    private final String s = BLACK_BISHOP;
-    private final String n = BLACK_KNIGHT;
-    private final String q = BLACK_QUEEN;
-    private final String k = BLACK_KING;
+    static final String bb = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
+    static final String ww = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
+    static final String b = SET_TEXT_COLOR_BLACK;
+    static final String w = SET_TEXT_COLOR_WHITE;
+    static final String p = BLACK_PAWN;
+    static final String r = BLACK_ROOK;
+    static final String s = BLACK_BISHOP;
+    static final String n = BLACK_KNIGHT;
+    static final String q = BLACK_QUEEN;
+    static final String k = BLACK_KING;
 
 
-    public void main() {
-        mainProtocol(0);
-        mainProtocol(9);
+    public static String main(ChessBoard board, String perspective) {
+        switch (perspective){
+            case b: return mainProtocol(0);
+            default: return mainProtocol(9);
+        }
     }
 
-    private void mainProtocol(int black) {
+    static String mainProtocol(int black) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
         drawHeaders(out, black);
@@ -33,9 +37,10 @@ public class PrintBoard {
         drawHeaders(out, black);
         setBlack(out);
         out.println();
+        return out.toString();
     }
 
-    private void drawBoard(PrintStream out, int black) {
+    static void drawBoard(PrintStream out, int black) {
         for (int row = 1; row <= 8; row++) {
             int label = abs(black - row);
             setText(out);
@@ -48,12 +53,12 @@ public class PrintBoard {
         }
     }
 
-    private void setBlack(PrintStream out) {
+    static void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
-    private void drawRow(PrintStream out, int row, int black) {
+    static void drawRow(PrintStream out, int row, int black) {
         switch (row) {
             case 1 -> rear(w, out, black);
             case 8 -> rear(b, out, abs(black-9));
@@ -66,7 +71,7 @@ public class PrintBoard {
         }
     }
 
-    private void blackFirst(PrintStream out, int toggle) {
+    static void blackFirst(PrintStream out, int toggle) {
         if(toggle == 9){
             whiteFirst(out, 0);
         }else{
@@ -77,7 +82,7 @@ public class PrintBoard {
     }
 
 
-    private void whiteFirst(PrintStream out, int toggle) {
+    static void whiteFirst(PrintStream out, int toggle) {
         if(toggle == 9){
             blackFirst(out, 0);
         }else{
@@ -88,7 +93,7 @@ public class PrintBoard {
     }
 
 
-    private void vanguard(String team, PrintStream out, int black) {
+    static void vanguard(String team, PrintStream out, int black) {
         if (black == 9) {
             for (int row = 1; row <= 4; row++) {
                 populateSquare(ww, team, p, out);
@@ -102,7 +107,7 @@ public class PrintBoard {
         }
     }
 
-    private void rear(String team, PrintStream out, int black) {
+    static void rear(String team, PrintStream out, int black) {
         String left = ww;
         String right = bb;
         String one = k;
@@ -131,7 +136,7 @@ public class PrintBoard {
     }
 
 
-    void drawHeaders(PrintStream out, int black) {
+    static void drawHeaders(PrintStream out, int black) {
         setText(out);
         if (black == 9) {
             out.print("    A   B  C   D   E  F   G   H" + EMPTY);
@@ -142,12 +147,12 @@ public class PrintBoard {
         out.println();
     }
 
-    void setText(PrintStream out) {
+    static void setText(PrintStream out) {
         out.print(SET_BG_COLOR_RED);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    void populateSquare(String squareColor, String pieceColor, String piece, PrintStream out) {
+    static void populateSquare(String squareColor, String pieceColor, String piece, PrintStream out) {
         out.print(squareColor+pieceColor+piece);
     }
 

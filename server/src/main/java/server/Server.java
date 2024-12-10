@@ -6,9 +6,12 @@ import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlGame;
 import dataaccess.sql.SqlUser;
 import model.*;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import service.Service;
 import spark.*;
 import dataaccess.*;
+import websocket.messages.ServerMessage;
+
 
 import java.sql.SQLException;
 
@@ -37,8 +40,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        //Spark.before((request, response) -> {System.out.println("incoming request: "+ request.requestMethod()
-               // + " "+request.pathInfo());});
+        Spark.webSocket("/ws", Server.class);
 
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
@@ -49,6 +51,11 @@ public class Server {
         Spark.put("/game", this::join);
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, ServerMessage message) throws Exception{
+
     }
 
 

@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class PostLoginClient {
 
     private String observeGame(String[] params) {
         printBoard();
-        return "";
+        return "observing game";
     }
 
     private String joinGame(String[] params) {
@@ -68,7 +69,7 @@ public class PostLoginClient {
             int gameID = temporaryEnumeration.get(index).gameID();
             server.join(useThisColor, gameID);
             printBoard();
-            return "";
+            return "joined game as "+ color;
         } catch (NumberFormatException e) {
             return SET_TEXT_COLOR_RED + "Something's not right :/\n " +
                     "make sure to type the number of the game from the list " +
@@ -79,7 +80,7 @@ public class PostLoginClient {
     }
 
     private void printBoard() {
-        squares.main();
+        squares.main(new ChessBoard(), "w");
     }
 
     private String listGames() {
