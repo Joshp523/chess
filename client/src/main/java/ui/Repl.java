@@ -9,7 +9,7 @@ import static ui.EscapeSequences.*;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Message;
-@WebSocket
+
 public class Repl implements MessageHandler {
     private final PreLoginClient prelogin;
     private String status;
