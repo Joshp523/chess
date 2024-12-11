@@ -68,7 +68,8 @@ public class Repl implements ui.MessageHandler {
                     outcome = outcome.substring(0, outcome.length() - 1);
                     String color = outcome.substring(outcome.length() - 1);
                     outcome = outcome.substring(0, outcome.length() - 1);
-                    System.out.print(outcome);
+                    System.out.println(outcome);
+                    System.out.println();
                     ChessGame.TeamColor team = null;
                     switch (color){
                         case "w" -> team = ChessGame.TeamColor.WHITE;
@@ -88,6 +89,7 @@ public class Repl implements ui.MessageHandler {
     }
 
     private void playGame(ChessClient client) throws Exception {
+        status = "[PLAYING]";
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
         System.out.println(client.printBoard());
@@ -96,7 +98,9 @@ public class Repl implements ui.MessageHandler {
             String line = scanner.nextLine();
             outcome = client.eval(line);
             System.out.print(outcome);
-        } while (!outcome.equals("you left"));
+        } while (!outcome.contains("you left"));
+        System.out.print(outcome);
+        status = "[LOGGED IN]";
     }
 
     private void printPrompt() {

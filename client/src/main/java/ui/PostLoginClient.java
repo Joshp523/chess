@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
 import java.util.ArrayList;
@@ -36,8 +35,10 @@ public class PostLoginClient {
                 case "play" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "help" -> help();
-                case "quit" -> SET_TEXT_COLOR_RED + "you left the game";
-                default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the indicated format";
+                case "quit" -> STR."\{SET_TEXT_COLOR_RED}you left the game";
+                default -> STR."""
+\{SET_TEXT_COLOR_RED}Invalid input command
+Please try again in the indicated format""";
             };
         } catch (Exception ex) {
             return SET_TEXT_COLOR_RED + "Something's not right. Please try again.";
@@ -45,17 +46,16 @@ public class PostLoginClient {
     }
 
     private String observeGame(String[] params) {
-        printBoard();
         return "observing game";
     }
 
     private String joinGame(String[] params) {
         String color = params[1];
         ChessGame.TeamColor useThisColor;
-        if (params.length < 2) {
-            return SET_TEXT_COLOR_RED + "missing argument(s).\nPlease try again.";
-        }if(params.length > 2){
-            return SET_TEXT_COLOR_RED + "too many argument(s)\nPlease try again.";
+        if(params.length > 2){
+            return STR."""
+\{SET_TEXT_COLOR_RED}too many argument(s)
+Please try again.""";
         }
         try {
             switch (color) {
@@ -67,57 +67,71 @@ public class PostLoginClient {
             };
             int index = Integer.parseInt(params[0]);
             int gameID = temporaryEnumeration.get(index).gameID();
-            String user;
+            String colorcode;
             server.join(useThisColor, gameID);
-            printBoard();
-            switch (color){
-                case "white" -> user = temporaryEnumeration.get(index).whiteUsername();
-                case "black" -> user = temporaryEnumeration.get(index).blackUsername();
-                default -> user = "";
-            }
-            return user + "joined game as "+ color + gameID;
+            colorcode = switch (color) {
+                case "white" -> {
+                    yield "w";
+                }
+                case "black" -> {
+                    yield "b";
+                }
+                default -> {
+                    yield "";
+                }
+            };
+            return STR."joined\{colorcode}\{gameID}";
         } catch (NumberFormatException e) {
-            return SET_TEXT_COLOR_RED + "Something's not right :/\n " +
-                    "make sure to type the number of the game from the list " +
-                    "and your desired color in all caps.";
+            return STR."""
+\{SET_TEXT_COLOR_RED}Something's not right :/
+ make sure to type the number of the game from the list and your desired color in all caps.""";
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + "color already taken";
+            return STR."\{SET_TEXT_COLOR_RED}color already taken";
         }
-    }
-
-    private void printBoard() {
-        squares.main(new ChessBoard(), "w");
     }
 
     private String listGames() {
         try {
             ArrayList<GameData> games = server.listGames();
-            String returnMe = SET_TEXT_COLOR_BLUE + "here are all the games:\n";
+            String returnMe = STR."""
+\{SET_TEXT_COLOR_BLUE}here are all the games:
+""";
             int i = 1;
             for (GameData datum : games) {
-                returnMe += i + ". " + datum.gameName() + "\n\tWhite: " + datum.whiteUsername() +
-                        "\n\tBlack: " + datum.blackUsername() + "\n";
+                returnMe += STR."""
+\{i}. \{datum.gameName()}
+\tWhite: \{datum.whiteUsername()}
+\tBlack: \{datum.blackUsername()}
+""";
                 temporaryEnumeration.put(i, datum);
                 i++;
             }
             return returnMe;
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
+            return STR."""
+\{SET_TEXT_COLOR_RED}Something's not right :/
+Please try again.""";
 
         }
     }
 
     private String createGame(String[] params) {
         if (params.length < 1) {
-            return SET_TEXT_COLOR_RED + "missing argument(s).\nPlease try again.";
+            return STR."""
+\{SET_TEXT_COLOR_RED}missing argument(s).
+Please try again.""";
         }if(params.length > 1){
-            return SET_TEXT_COLOR_RED + "too many argument(s)\nPlease try again.";
+            return STR."""
+\{SET_TEXT_COLOR_RED}too many argument(s)
+Please try again.""";
         }
         try {
             server.createGame(params[0]);
-            return SET_TEXT_COLOR_BLUE + "a game called " + params[0] + " was created.";
+            return STR."\{SET_TEXT_COLOR_BLUE}a game called \{params[0]} was created.";
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
+            return STR."""
+\{SET_TEXT_COLOR_RED}Something's not right :/
+Please try again.""";
         }
     }
 
@@ -127,7 +141,9 @@ public class PostLoginClient {
             server.logout();
             return "goodbye";
         } catch (Exception e) {
-            return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
+            return STR."""
+\{SET_TEXT_COLOR_RED}Something's not right :/
+Please try again.""";
         }
     }
 
@@ -136,12 +152,13 @@ public class PostLoginClient {
     }
 
     public String help() {
-        return SET_TEXT_COLOR_YELLOW + "--To log out, please enter \"logout\" \n" +
-                "--To create a new game, please enter \"create\" <GAMENAME>\n" +
-                "--To list all the current games, please enter \"list\"\n" +
-                "--To play in one of the listed games, please enter \"play\" <GAME NUMBER> [WHITE/BLACK]\n" +
-                "--To observe a game, please enter \"observe\" <GAME NUMBER>\n" +
-                "--To see this menu again, please enter \"help\"\n" +
-                "--To leave a game you are in, please enter \"quit\"";
+        return STR."""
+\{SET_TEXT_COLOR_YELLOW}--To log out, please enter "logout"\s
+--To create a new game, please enter "create" <GAMENAME>
+--To list all the current games, please enter "list"
+--To play in one of the listed games, please enter "play" <GAME NUMBER> [WHITE/BLACK]
+--To observe a game, please enter "observe" <GAME NUMBER>
+--To see this menu again, please enter "help"
+--To leave a game you are in, please enter "quit\"""";
     }
 }

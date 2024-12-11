@@ -13,6 +13,9 @@ import dataaccess.UserDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
+
 public class Service {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
@@ -97,4 +100,13 @@ public class Service {
         gameDAO.updateGame(updatedGameData);
     }
 
+    public void leaveGame(String authToken, int gameID) throws SQLException, DataAccessException {
+        UserData userData = findUserByToken(authToken);
+        String username = userData.username();
+        GameData game = getGameByID(gameID);
+        ChessGame.TeamColor color = null;
+        if (game.whiteUsername().equals(username)){color = WHITE;}
+        else if (game.blackUsername().equals(username)){color = BLACK;}
+        gameDAO.addUser(null, color, gameID);
+    }
 }

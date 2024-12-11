@@ -48,6 +48,9 @@ public class MemGame implements GameDAO {
         }
     }
 
+    @Override
+    public void updateGame(GameData updatedGameData) {    }
+
     public static GameData extractedFromAddUser(String username, ChessGame.TeamColor color, GameData game) throws DataAccessException {
         GameData updatedGame = null;
         switch (color) {

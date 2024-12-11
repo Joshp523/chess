@@ -78,7 +78,7 @@ public class ChessClient {
 
     private String quitter() throws IOException {
         ws.resign();
-        return SET_TEXT_COLOR_RED + "you forfeited the game\n--To exit the game, please enter \\\"leave\\\"\\n\"";
+        return SET_TEXT_COLOR_RED + "you forfeited the game\n--To exit the game, please enter \"leave\"\n";
     }
 
     private String exitGame() throws IOException {

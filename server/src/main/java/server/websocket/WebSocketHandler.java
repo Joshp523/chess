@@ -33,7 +33,7 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
-            case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), command.getMove(), session);
+            case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), command.getMove());
             case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
             case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
         }
@@ -55,7 +55,7 @@ public class WebSocketHandler {
 
     private void connect(String authToken, int gameID, Session session) throws IOException, SQLException, DataAccessException {
         connections.add(authToken, gameID, session);
-        var message = String.format("%s has joined the game", service.findUserByToken(authToken).username());
+        var message = String.format(" %s has joined the game as ", service.findUserByToken(authToken).username());
         var notification = new Message(message);
         connections.broadcast(authToken, notification);
     }
@@ -72,6 +72,7 @@ public class WebSocketHandler {
     public void leave(String authToken, int gameID, Session session) throws Exception {
         try {
             connections.remove(authToken);
+            service.leaveGame(authToken, gameID);
             var message = String.format("%s has left the game", service.findUserByToken(authToken).username());
             var notification = new Message(message);
             connections.broadcast(authToken, notification);
