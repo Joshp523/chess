@@ -1,4 +1,4 @@
-package websocket;
+package server.websocket;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
@@ -15,8 +15,6 @@ import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
-import static websocket.commands.UserGameCommand.CommandType.*;
 
 @WebSocket
 public class WebSocketHandler {

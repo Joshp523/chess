@@ -37,7 +37,7 @@ public class PostLoginClient {
                 case "observe" -> observeGame(params);
                 case "help" -> help();
                 case "quit" -> SET_TEXT_COLOR_RED + "you left the game";
-                default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the proscribed format";
+                default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the indicated format";
             };
         } catch (Exception ex) {
             return SET_TEXT_COLOR_RED + "Something's not right. Please try again.";
@@ -68,13 +68,13 @@ public class PostLoginClient {
             int index = Integer.parseInt(params[0]);
             int gameID = temporaryEnumeration.get(index).gameID();
             String user;
+            server.join(useThisColor, gameID);
+            printBoard();
             switch (color){
                 case "white" -> user = temporaryEnumeration.get(index).whiteUsername();
                 case "black" -> user = temporaryEnumeration.get(index).blackUsername();
                 default -> user = "";
             }
-            server.join(useThisColor, gameID);
-            printBoard();
             return user + "joined game as "+ color + gameID;
         } catch (NumberFormatException e) {
             return SET_TEXT_COLOR_RED + "Something's not right :/\n " +

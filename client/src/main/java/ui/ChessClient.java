@@ -3,21 +3,14 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
-import com.google.gson.Gson;
 import model.BoardAndMessage;
-import websocket.commands.UserGameCommand;
-
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import javax.websocket.*;
 
 import static ui.EscapeSequences.*;
-import static websocket.commands.UserGameCommand.CommandType.RESIGN;
 
 public class ChessClient {
-    URI uri;
     public Session session;
     ChessBoard board;
     public BoardAndMessage bam;
@@ -26,8 +19,10 @@ public class ChessClient {
     int gameID;
     ServerFacade server;
 
-    ChessClient(String serverURL, MessageHandler notificationHandler) throws Exception {
-        server = new ServerFacade(serverURL, authToken);
+    ChessClient(String serverURL, MessageHandler messageHandler, String token, int id) throws Exception {
+        server = new ServerFacade(serverURL, token);
+        ws = new WebSocketFacade(serverURL, messageHandler, token, id);
+        gameID = id;
     }
 
     public String eval(String input) {
@@ -54,13 +49,6 @@ public class ChessClient {
 
     private String areYouSure() {
         return SET_TEXT_COLOR_RED + "Are you sure you want to resign?\nType yes or no";
-    }
-
-    public String welcome(String serverUrl, String authToken, int gameID, MessageHandler messageHandler) throws Exception {
-        ws = new WebSocketFacade(serverUrl, messageHandler);
-        this.authToken = authToken;
-        this.gameID = gameID;
-        return "welcome!";
     }
 
     public String help() {

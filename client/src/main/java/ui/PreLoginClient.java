@@ -39,7 +39,7 @@ public class PreLoginClient {
                 case "register" -> registerNewUser(params);
                 case "quit" -> SET_TEXT_COLOR_RED + "quit";
                 case "help" -> help();
-                default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the proscribed format";
+                default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the indicated format";
             };
         } catch (Exception ex) {
             return SET_TEXT_COLOR_RED + "Something's not right. Please try again.";

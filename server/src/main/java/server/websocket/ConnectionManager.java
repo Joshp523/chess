@@ -1,10 +1,7 @@
-package websocket;
+package server.websocket;
 
-import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import server.Message;
-import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.util.ArrayList;

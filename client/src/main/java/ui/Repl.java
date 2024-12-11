@@ -1,16 +1,11 @@
 package ui;
 
 import chess.ChessBoard;
-
 import java.util.Scanner;
-
 import static ui.EscapeSequences.*;
-
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Message;
 
-public class Repl implements MessageHandler {
+public class Repl implements ui.MessageHandler {
     private final PreLoginClient prelogin;
     private String status;
     String serverURL;
@@ -67,12 +62,13 @@ public class Repl implements MessageHandler {
                 }
                 if (outcome.contains("joined") || outcome.contains("observing")) {
                     char lastChar = outcome.charAt(outcome.length() - 1);
-                    int lastCharAsInt = (int) lastChar;
+                    int lastCharAsInt = Character.getNumericValue(lastChar);
                     outcome = outcome.substring(0, outcome.length() - 1);
                     System.out.print(outcome);
-                    ChessClient client = new ChessClient(serverURL, this);
-                    System.out.println(client.welcome(serverURL, postlogin.authToken, lastCharAsInt, this));
+                    ChessClient client = new ChessClient(serverURL, this,  postlogin.authToken, lastCharAsInt);
                     playGame(client);
+                }else{
+                    System.out.println(outcome);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
