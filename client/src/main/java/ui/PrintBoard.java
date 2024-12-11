@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -24,30 +26,32 @@ public class PrintBoard {
 
 
     public static String main(ChessBoard board, ChessGame.TeamColor teamColor) {
-//        switch (){
-//            case b -> mainProtocol(0);
-//            //default -> mainProtocol(9);
-//        }
+        switch (teamColor) {
+            case WHITE -> mainProtocol(board, 0);
+            case BLACK -> mainProtocol(board, 9);
+            default -> mainProtocol(board, 0);
+        }
         return null;
     }
 
-    static String mainProtocol(int black) {
+    static String mainProtocol(ChessBoard board, int black) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
         drawHeaders(out, black);
-        drawBoard(out, black);
+        drawBoard(out, board, black);
         drawHeaders(out, black);
         setBlack(out);
         out.println();
         return out.toString();
     }
 
-    static void drawBoard(PrintStream out, int black) {
+    static void drawBoard(PrintStream out, ChessBoard board, int black) {
+
         for (int row = 1; row <= 8; row++) {
             int label = abs(black - row);
             setText(out);
             out.print(" " + label + " ");
-            drawRow(out, label, black);
+            drawRow(out, label, black, board);
             setText(out);
             out.print(" " + label + " ");
             setBlack(out);
@@ -60,40 +64,49 @@ public class PrintBoard {
         out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
-    static void drawRow(PrintStream out, int row, int black) {
-        switch (row) {
-            case 1 -> rear(w, out, black);
-            case 8 -> rear(b, out, abs(black - 9));
-            case 2 -> vanguard(w, out, black);
-            case 7 -> vanguard(b, out, abs(black - 9));
-            case 4 -> blackFirst(out, black);
-            case 6 -> blackFirst(out, black);
-            default -> whiteFirst(out, black);
-
-        }
-    }
-
-    static void blackFirst(PrintStream out, int toggle) {
-        if (toggle == 9) {
-            whiteFirst(out, 0);
-        } else {
-            for (int row = 1; row <= 4; row++) {
-                populateSquare(bb, bb, p, out);
-                populateSquare(ww, ww, p, out);
+    static void drawRow(PrintStream out, int row, int black, ChessBoard board) {
+        if (black == 0) {
+            switch (row) {
+                case 1 ->whiteFirst(row, board, 1);
+                case 2 ->blackFirst(row, board, 1);
+                case 3 ->whiteFirst(row, board, 1);
+                case 4 ->blackFirst(row, board, 1);
+                case 5 ->whiteFirst(row, board, 1);
+                case 6 ->blackFirst(row, board, 1);
+                case 7 ->whiteFirst(row, board, 1);
+                case 8 ->blackFirst(row, board, 1);
+            }
+        }else{
+            switch (row) {
+                case 8 ->whiteFirst(row, board, -1);
+                case 7 ->blackFirst(row, board, -1);
+                case 6 ->whiteFirst(row, board, -1);
+                case 5 ->blackFirst(row, board, -1);
+                case 4 ->whiteFirst(row, board, -1);
+                case 3 ->blackFirst(row, board, -1);
+                case 2 ->whiteFirst(row, board, -1);
+                case 1 ->blackFirst(row, board, -1);
             }
         }
     }
 
-
-    static void whiteFirst(PrintStream out, int toggle) {
-        if (toggle == 9) {
-            blackFirst(out, 0);
+    static void whiteFirst(int row, ChessBoard board, int toggle) {
+        if (toggle == 1) {
+            for (int col = 1; col <= 8; col+=2) {
+                ChessPosition pos1 = new ChessPosition(row, col);
+                ChessPiece piece1 =board.getPiece(pos1);
+                populateSquare(ww, color, piece);
+                populateSquare(bb, team, piece);
+            }
         } else {
-            for (int row = 1; row <= 4; row++) {
-                populateSquare(ww, ww, p, out);
-                populateSquare(bb, bb, p, out);
+            for (int col = 8; col <= 0; col-=2) {
+                populateSquare(ww, color, piece);
+                populateSquare(bb, team, color);
             }
         }
+    }
+
+    static void blackFirst(int row, ChessBoard board , int toggle) {
     }
 
 
