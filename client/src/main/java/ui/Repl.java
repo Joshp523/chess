@@ -3,6 +3,8 @@ package ui;
 import chess.ChessBoard;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
+
+import chess.ChessGame;
 import server.Message;
 
 public class Repl implements ui.MessageHandler {
@@ -64,8 +66,15 @@ public class Repl implements ui.MessageHandler {
                     char lastChar = outcome.charAt(outcome.length() - 1);
                     int lastCharAsInt = Character.getNumericValue(lastChar);
                     outcome = outcome.substring(0, outcome.length() - 1);
+                    String color = outcome.substring(outcome.length() - 1);
+                    outcome = outcome.substring(0, outcome.length() - 1);
                     System.out.print(outcome);
-                    ChessClient client = new ChessClient(serverURL, this,  postlogin.authToken, lastCharAsInt);
+                    ChessGame.TeamColor team = null;
+                    switch (color){
+                        case "w" -> team = ChessGame.TeamColor.WHITE;
+                        case "b" -> team = ChessGame.TeamColor.BLACK;
+                    }
+                    ChessClient client = new ChessClient(serverURL, this,  postlogin.authToken, lastCharAsInt, team);
                     playGame(client);
                 }else{
                     System.out.println(outcome);
@@ -81,7 +90,7 @@ public class Repl implements ui.MessageHandler {
     private void playGame(ChessClient client) throws Exception {
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        System.out.println(client.printBoard(new ChessBoard(), client.getPlayerColor()));
+        System.out.println(client.printBoard());
         do {
             printPrompt();
             String line = scanner.nextLine();

@@ -1,11 +1,15 @@
 package server.websocket;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlGame;
 import dataaccess.sql.SqlUser;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -39,10 +43,10 @@ public class WebSocketHandler {
         connections.add(authToken, gameID, session);
         String loser = service.findUserByToken(authToken).username();
         String winner;
-        if(service.GetGameByID(gameID).whiteUsername()!=loser) {
-            winner = service.GetGameByID(gameID).whiteUsername();
+        if(service.getGameByID(gameID).whiteUsername()!=loser) {
+            winner = service.getGameByID(gameID).whiteUsername();
         }else{
-            winner = service.GetGameByID(gameID).blackUsername();
+            winner = service.getGameByID(gameID).blackUsername();
         }
         var message = String.format("%s has forfeited the game. %s wins!", loser, winner);
         var notification = new Message(message);
@@ -56,11 +60,13 @@ public class WebSocketHandler {
         connections.broadcast(authToken, notification);
     }
 
-    private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException {
-//        connections.remove(visitorName);
-//        var message = String.format("%s left the shop", visitorName);
-//        var notification = new Notification(Notification.Type.DEPARTURE, message);
-//        connections.broadcast(visitorName, notification);
+    private void makeMove(String authToken, int gameID, ChessMove move) throws IOException, SQLException, DataAccessException, InvalidMoveException {
+        ChessGame game = getGameFromID(gameID);
+        game.makeMove(move);
+        service.updateGame(gameID, game);
+        var message = String.format("%s moved.", service.findUserByToken(authToken).username());
+        var notification = new Message(message);
+        connections.broadcast(authToken, notification);
     }
 
     public void leave(String authToken, int gameID, Session session) throws Exception {
@@ -72,5 +78,14 @@ public class WebSocketHandler {
         } catch (Exception ex) {
             throw new Exception();
         }
+    }
+
+    private ChessGame getGameFromID(int id){
+        for (GameData data: service.listGames()){
+            if (data.gameID()==id){
+                return data.game();
+            }
+        }
+        return null;
     }
 }

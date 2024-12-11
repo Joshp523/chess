@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -22,11 +23,12 @@ public class PrintBoard {
     static final String k = BLACK_KING;
 
 
-    public static String main(ChessBoard board, String perspective) {
-        switch (perspective){
-            case b: return mainProtocol(0);
-            default: return mainProtocol(9);
-        }
+    public static String main(ChessBoard board, ChessGame.TeamColor teamColor) {
+//        switch (){
+//            case b -> mainProtocol(0);
+//            //default -> mainProtocol(9);
+//        }
+        return null;
     }
 
     static String mainProtocol(int black) {
@@ -61,9 +63,9 @@ public class PrintBoard {
     static void drawRow(PrintStream out, int row, int black) {
         switch (row) {
             case 1 -> rear(w, out, black);
-            case 8 -> rear(b, out, abs(black-9));
-            case 2 -> vanguard(w,out,black);
-            case 7 -> vanguard(b,out,abs(black-9));
+            case 8 -> rear(b, out, abs(black - 9));
+            case 2 -> vanguard(w, out, black);
+            case 7 -> vanguard(b, out, abs(black - 9));
             case 4 -> blackFirst(out, black);
             case 6 -> blackFirst(out, black);
             default -> whiteFirst(out, black);
@@ -72,24 +74,26 @@ public class PrintBoard {
     }
 
     static void blackFirst(PrintStream out, int toggle) {
-        if(toggle == 9){
+        if (toggle == 9) {
             whiteFirst(out, 0);
-        }else{
-        for (int row = 1; row <= 4; row++) {
-            populateSquare(bb, bb, p, out);
-            populateSquare(ww, ww, p, out);
-        }}
+        } else {
+            for (int row = 1; row <= 4; row++) {
+                populateSquare(bb, bb, p, out);
+                populateSquare(ww, ww, p, out);
+            }
+        }
     }
 
 
     static void whiteFirst(PrintStream out, int toggle) {
-        if(toggle == 9){
+        if (toggle == 9) {
             blackFirst(out, 0);
-        }else{
-        for (int row = 1; row <= 4; row++) {
-            populateSquare(ww, ww, p, out);
-            populateSquare(bb, bb, p, out);
-        }}
+        } else {
+            for (int row = 1; row <= 4; row++) {
+                populateSquare(ww, ww, p, out);
+                populateSquare(bb, bb, p, out);
+            }
+        }
     }
 
 
@@ -118,7 +122,7 @@ public class PrintBoard {
             one = q;
             two = k;
         }
-        if (team == b){
+        if (team == b) {
             String three = "";
             three = one;
             one = two;
@@ -153,7 +157,7 @@ public class PrintBoard {
     }
 
     static void populateSquare(String squareColor, String pieceColor, String piece, PrintStream out) {
-        out.print(squareColor+pieceColor+piece);
+        out.print(squareColor + pieceColor + piece);
     }
 
 }

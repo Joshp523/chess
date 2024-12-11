@@ -2,27 +2,41 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import model.BoardAndMessage;
+import model.GameData;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import javax.websocket.*;
 
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
     public Session session;
-    ChessBoard board;
     public BoardAndMessage bam;
     private WebSocketFacade ws;
-    String authToken;
     int gameID;
     ServerFacade server;
+    ChessGame.TeamColor color;
 
-    ChessClient(String serverURL, MessageHandler messageHandler, String token, int id) throws Exception {
+    ChessClient(String serverURL, MessageHandler messageHandler, String token, int id, ChessGame.TeamColor color) throws Exception {
         server = new ServerFacade(serverURL, token);
-        ws = new WebSocketFacade(serverURL, messageHandler, token, id);
+        ws = new WebSocketFacade(serverURL, messageHandler, token, id, color);
         gameID = id;
+        this.color = color;
+    }
+
+    private ChessGame getGameFromID(int id){
+        for (GameData data: server.listGames()){
+            if (data.gameID()==id){
+                return data.game();
+            }
+        }
+        return null;
     }
 
     public String eval(String input) {
@@ -32,7 +46,7 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> printBoard(board, this.getPlayerColor());
+                case "redraw" -> printBoard();
                 case "leave" -> exitGame();
                 case "move" -> move(params);
                 case "resign" -> areYouSure();
@@ -62,26 +76,22 @@ public class ChessClient {
 """;
     }
 
-    public String getPlayerColor() {
-        return "w";
-    }
-
-
     private String quitter() throws IOException {
-        ws.resign(authToken, gameID);
+        ws.resign();
         return SET_TEXT_COLOR_RED + "you forfeited the game\n--To exit the game, please enter \\\"leave\\\"\\n\"";
     }
 
     private String exitGame() throws IOException {
-        ws.leaveGame(authToken, gameID);
+        ws.leaveGame();
         return SET_TEXT_COLOR_RED + "you left the game";
     }
 
-    private String showLegalMoves(String[] params) throws Exception {
-        int row = (int)params[0].charAt(0);
-        char charCol = params[1].charAt(0);
+    private ChessPosition inputToPosition(String input) {
+        char alphaCol = input.charAt(0);
+        char charRow = input.charAt(1);
         int col;
-        switch (charCol) {
+        int row = Character.getNumericValue(charRow);
+        switch (alphaCol) {
             case 'A' -> col = 1;
             case 'B' -> col = 2;
             case 'C' -> col = 3;
@@ -91,25 +101,21 @@ public class ChessClient {
             case 'G' -> col = 7;
             default -> col = -1;
         }
-        ChessPosition square = new ChessPosition(row,col);
-        ChessGame game= getGameFromID();
-        return printLegalMoves(game, square);
+        return new ChessPosition(row, col);
     }
 
-    private String printLegalMoves(ChessGame game, ChessPosition square) {
-        return "not implemented";
-    }
-
-    private ChessGame getGameFromID() {
-        return new ChessGame();
+    private String showLegalMoves(String[] params) throws Exception {
+        ChessPosition square = inputToPosition(params[0]);
+        Collection<ChessMove> legalMoves = getGameFromID(gameID).validMoves(square);
+        return legalMoves.toString();
     }
 
     private String move(String[] params) throws IOException {
-        this.session.getBasicRemote().sendText("move");
+        ws.makeMove(new ChessMove(inputToPosition(params[0]), inputToPosition(params[1]),null));
         return SET_TEXT_COLOR_BLUE + "you moved";
     }
 
-    public String printBoard(ChessBoard board, String perspective) {
-        return PrintBoard.main(board, perspective);
+    public String printBoard() {
+        return PrintBoard.main(getGameFromID(gameID).getBoard(), color);
     }
 }

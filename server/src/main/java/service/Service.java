@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -81,7 +82,7 @@ public class Service {
         gameDAO.addUser(username, color, gameID);
     }
 
-    public GameData GetGameByID(int id){
+    public GameData getGameByID(int id){
         for (GameData gameData : gameDAO.getAllGames()) {
             if (gameData.gameID() == id){
                 return gameData;
@@ -89,4 +90,11 @@ public class Service {
         }
         return null;
     }
+
+    public void updateGame(int gameID, ChessGame newGame){
+        GameData old = getGameByID(gameID);
+        GameData updatedGameData = new GameData(gameID, old.whiteUsername(), old.blackUsername(), old.gameName(), newGame);
+        gameDAO.updateGame(updatedGameData);
+    }
+
 }

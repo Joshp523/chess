@@ -1,12 +1,11 @@
 package ui;
 
+import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import server.Message;
 import websocket.commands.UserGameCommand;
-
 import javax.websocket.*;
-import ui.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,8 +19,10 @@ public class WebSocketFacade extends Endpoint {
     MessageHandler messageHandler;
     int id;
     URI socketURI;
+    ChessGame.TeamColor color;
 
-    public WebSocketFacade(String url, ui.MessageHandler messageHandler, String authToken, int gameID) throws Exception{
+    public WebSocketFacade(String url, ui.MessageHandler messageHandler, String authToken, int gameID, ChessGame.TeamColor color) throws Exception{
+        this.color = color;
         id = gameID;
         try {
             url = url.replace("http", "ws");
@@ -51,15 +52,19 @@ public class WebSocketFacade extends Endpoint {
     }
 
 
-    public void resign(String authToken, int gameID) throws IOException {
-        var command = new UserGameCommand(RESIGN, authToken, gameID, null);
+    public void resign() throws IOException {
+        var command = new UserGameCommand(RESIGN, authToken, id, null);
         this.session.getBasicRemote().sendText(new Gson().toJson(command));
     }
 
-    public void leaveGame(String authToken, int gameID) throws IOException {
-        var command = new UserGameCommand(LEAVE, authToken, gameID, null);
+    public void leaveGame() throws IOException {
+        var command = new UserGameCommand(LEAVE, authToken, id, null);
         this.session.getBasicRemote().sendText(new Gson().toJson(command));
     }
 
+    public void makeMove(ChessMove move) throws IOException {
+        var command = new UserGameCommand(MAKE_MOVE, authToken, id, move);
+        this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
 
 }

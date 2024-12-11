@@ -73,8 +73,7 @@ public class SqlGame implements GameDAO {
             if (rs.next()) {
                 value = rs.getInt(1);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
 
         }
@@ -170,5 +169,40 @@ public class SqlGame implements GameDAO {
 
     private static GameData getGameData(String username, ChessGame.TeamColor color, GameData game) throws DataAccessException {
         return MemGame.extractedFromAddUser(username, color, game);
+    }
+
+    @Override
+    public void updateGame(GameData updatedGameData) {
+        int id = updatedGameData.gameID();
+        String name = updatedGameData.gameName();
+        String whiteUsername = updatedGameData.whiteUsername();
+        String blackUsername = updatedGameData.blackUsername();
+        var statement1 = "DELETE FROM gametable WHERE gameid=?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(statement1)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        var statement2 = "INSERT INTO gametable (gameid, gamename, whiteusername, blackusername, json) VALUES (?, ?, ?, ?, ?)";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(statement2)) {
+            ps.setInt(1, id);
+            ps.setString(2, name);
+            ps.setString(3, whiteUsername);
+            ps.setString(4, blackUsername);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }
