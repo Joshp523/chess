@@ -55,13 +55,13 @@ public class MemGame implements GameDAO {
         GameData updatedGame = null;
         switch (color) {
             case WHITE:
-                if (game.whiteUsername() == null) {
+                if (game.whiteUsername() == null&&username!=null) {
                     return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
                 } else {
                     throw new DataAccessException("Error: already taken");
                 }
             case BLACK:
-                if (game.blackUsername() == null) {
+                if (game.blackUsername() == null&&username!=null) {
                     return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
                 } else {
                     throw new DataAccessException("Error: already taken");

@@ -147,22 +147,15 @@ public class SqlGame implements GameDAO {
         var json = new Gson().toJson(updatedGame);
         try (var conn2 = DatabaseManager.getConnection();
              var ps2 = conn2.prepareStatement(statement2)) {
-            if (updatedGame.whiteUsername() != null) {
-                ps2.setString(3, updatedGame.whiteUsername());
-            } else {
-                ps2.setNull(3, NULL);
-            }
-            if (updatedGame.blackUsername() != null) {
-                ps2.setString(4, updatedGame.blackUsername());
-            } else {
-                ps2.setNull(4, NULL);
-            }
+            ps2.setString(3, updatedGame.whiteUsername());
+            ps2.setString(4, updatedGame.blackUsername());
             ps2.setInt(1, gameID);
             ps2.setString(2, updatedGame.gameName());
 
             ps2.setString(5, json);
             ps2.executeUpdate();
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             throw new DataAccessException(String.format("unable to update database: %s", e.getMessage()));
         }
     }

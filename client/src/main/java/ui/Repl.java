@@ -99,7 +99,6 @@ public class Repl implements ui.MessageHandler {
             outcome = client.eval(line);
             System.out.print(outcome);
         } while (!outcome.contains("you left"));
-        System.out.print(outcome);
         status = "[LOGGED IN]";
     }
 
