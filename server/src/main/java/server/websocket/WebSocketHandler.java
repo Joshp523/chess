@@ -57,7 +57,9 @@ public class WebSocketHandler {
         connections.add(authToken, gameID, session);
         var message = String.format(" %s has joined the game as ", service.findUserByToken(authToken).username());
         var notification = new Message(message);
+
         connections.broadcast(authToken, notification);
+
     }
 
     private void makeMove(String authToken, int gameID, ChessMove move) throws IOException, SQLException, DataAccessException, InvalidMoveException {

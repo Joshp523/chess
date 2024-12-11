@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import model.BoardAndMessage;
 import model.GameData;
 
@@ -92,13 +89,13 @@ public class ChessClient {
         int col;
         int row = Character.getNumericValue(charRow);
         switch (alphaCol) {
-            case 'A' -> col = 1;
-            case 'B' -> col = 2;
-            case 'C' -> col = 3;
-            case 'D' -> col = 4;
-            case 'E' -> col = 5;
-            case 'F' -> col = 6;
-            case 'G' -> col = 7;
+            case 'a' -> col = 1;
+            case 'b' -> col = 2;
+            case 'c' -> col = 3;
+            case 'd' -> col = 4;
+            case 'e' -> col = 5;
+            case 'f' -> col = 6;
+            case 'g' -> col = 7;
             default -> col = -1;
         }
         return new ChessPosition(row, col);
@@ -107,7 +104,9 @@ public class ChessClient {
     private String showLegalMoves(String[] params) throws Exception {
         ChessPosition square = inputToPosition(params[0]);
         Collection<ChessMove> legalMoves = getGameFromID(gameID).validMoves(square);
-        return legalMoves.toString();
+        AnnotatedChessBoard movesMarked = new AnnotatedChessBoard(getGameFromID(gameID).getBoard(), legalMoves);
+        PrintBoard.main(movesMarked, color);
+        return SET_TEXT_COLOR_BLUE + "valid moves for this piece marked in green.\n";
     }
 
     private String move(String[] params) throws IOException {
@@ -116,6 +115,7 @@ public class ChessClient {
     }
 
     public String printBoard() {
-        return PrintBoard.main(getGameFromID(gameID).getBoard(), color);
+        PrintBoard.main(new AnnotatedChessBoard(getGameFromID(gameID).getBoard(),null), color);
+        return SET_TEXT_COLOR_BLUE+ "current gameboard\n";
     }
 }

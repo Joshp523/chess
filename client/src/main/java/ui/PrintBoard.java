@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +14,8 @@ import static ui.EscapeSequences.*;
 public class PrintBoard {
     static final String bb = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
     static final String ww = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
+    static final String dg = SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_DARK_GREEN;
+    static final String lg = SET_BG_COLOR_GREEN + SET_TEXT_COLOR_GREEN;
     static final String b = SET_TEXT_COLOR_BLACK;
     static final String w = SET_TEXT_COLOR_WHITE;
     static final String p = BLACK_PAWN;
@@ -27,7 +26,7 @@ public class PrintBoard {
     static final String k = BLACK_KING;
 
 
-    public static String main(ChessBoard board, ChessGame.TeamColor teamColor) {
+    public static String main(AnnotatedChessBoard board, ChessGame.TeamColor teamColor) {
         switch (teamColor) {
             case WHITE -> mainProtocol(board, 9);
             case BLACK -> mainProtocol(board, 0);
@@ -36,7 +35,8 @@ public class PrintBoard {
         return null;
     }
 
-    static String mainProtocol(ChessBoard board, int black) {
+
+    static String mainProtocol(AnnotatedChessBoard board, int black) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
         drawHeaders(out, black);
@@ -47,7 +47,7 @@ public class PrintBoard {
         return out.toString();
     }
 
-    static void drawBoard(PrintStream out, ChessBoard board, int black) {
+    static void drawBoard(PrintStream out, AnnotatedChessBoard board, int black) {
         for (int row = 1; row <= 8; row++) {
             int label = abs(black - row);
             setText(out);
@@ -65,7 +65,7 @@ public class PrintBoard {
         out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
-    static void drawRow(PrintStream out, int row, int black, ChessBoard board) {
+    static void drawRow(PrintStream out, int row, int black, AnnotatedChessBoard board) {
         if (black == 0) {
             switch (row) {
                 case 1 -> whiteFirst(row, board, 1, out);
@@ -91,20 +91,23 @@ public class PrintBoard {
         }
     }
 
-    static void whiteFirst(int row, ChessBoard board, int toggle, PrintStream out) {
+    static void whiteFirst(int row, AnnotatedChessBoard board, int toggle, PrintStream out) {
         if (toggle == -1) {
             for (int col = 1; col <= 8; col += 2) {
-                populateRow(row, board, col, 1, ww, bb, out);
+                populateRow(row, board, col, 1, ww, bb, out, lg, dg);
             }
         } else {
             for (int col = 8; col > 0; col -= 2) {
-                populateRow(row, board, col, -1, ww, bb, out);
+                populateRow(row, board, col, -1, ww, bb, out, lg, dg);
             }
         }
     }
 
-    private static void populateRow(int row, ChessBoard board, int col, int increment, String background1, String background2, PrintStream out) {
+    private static void populateRow(int row, AnnotatedChessBoard board, int col, int increment, String background1, String background2, PrintStream out, String background1v, String background2v) {
         ChessPosition pos1 = new ChessPosition(row, col);
+        if (board.getValidity(pos1)) {
+            background1 = background1v;
+        }
         ChessPiece piece1 = board.getPiece(pos1);
         if (piece1 == null) {
             populateSquare(background1, GREEN, BLANK, out);
@@ -114,6 +117,9 @@ public class PrintBoard {
             populateSquare(background1, color, pieceKind, out);
         }
         ChessPosition pos2 = new ChessPosition(row, col + increment);
+            if (board.getValidity(pos2)) {
+                background2 = background2v;
+            }
         ChessPiece piece2 = board.getPiece(pos2);
         if (piece2 == null) {
             populateSquare(background2, GREEN, BLANK, out);
@@ -124,14 +130,14 @@ public class PrintBoard {
         }
     }
 
-    static void blackFirst(int row, ChessBoard board, int toggle, PrintStream out) {
+    static void blackFirst(int row, AnnotatedChessBoard board, int toggle, PrintStream out) {
         if (toggle == -1) {
             for (int col = 1; col <= 8; col += 2) {
-                populateRow(row, board, col, 1, bb, ww, out);
+                populateRow(row, board, col, 1, bb, ww, out, dg, lg);
             }
         } else {
             for (int col = 8; col > 0; col -= 2) {
-                populateRow(row, board, col, -1, bb, ww, out);
+                populateRow(row, board, col, -1, bb, ww, out, dg, lg);
             }
         }
     }
@@ -153,6 +159,7 @@ public class PrintBoard {
     }
 
     static void populateSquare(String squareColor, ChessGame.TeamColor color, ChessPiece.PieceType type, PrintStream out) {
+
         String c;
         String t;
         switch (color) {
