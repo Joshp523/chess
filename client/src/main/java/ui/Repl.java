@@ -6,6 +6,7 @@ import static ui.EscapeSequences.*;
 
 import chess.ChessGame;
 import server.Message;
+import websocket.messages.ServerMessage;
 
 public class Repl implements ui.MessageHandler {
     private final PreLoginClient prelogin;
@@ -106,8 +107,8 @@ public class Repl implements ui.MessageHandler {
         System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + status + RESET_TEXT_BLINKING + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    public void notify(Message message) {
-        System.out.println(SET_TEXT_COLOR_BLUE + message.message());
+    public void notify(ServerMessage message) {
+        System.out.println(SET_TEXT_COLOR_BLUE + message.getMessage());
 
     }
 }

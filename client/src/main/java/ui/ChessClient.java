@@ -22,7 +22,7 @@ public class ChessClient {
 
     ChessClient(String serverURL, MessageHandler messageHandler, String token, int id, ChessGame.TeamColor color) throws Exception {
         server = new ServerFacade(serverURL, token);
-        ws = new WebSocketFacade(serverURL, messageHandler, token, id, color);
+        ws = new WebSocketFacade(serverURL, messageHandler, token, id, color, this);
         gameID = id;
         this.color = color;
     }
@@ -117,5 +117,8 @@ public class ChessClient {
     public String printBoard() {
         PrintBoard.main(new AnnotatedChessBoard(getGameFromID(gameID).getBoard(),null), color);
         return SET_TEXT_COLOR_BLUE+ "current gameboard\n";
+    }
+    public String printBoard(ChessBoard board) {
+        return PrintBoard.main(new AnnotatedChessBoard(board,null), color);
     }
 }

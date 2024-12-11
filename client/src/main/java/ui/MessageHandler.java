@@ -2,7 +2,8 @@ package ui;
 
 
 import server.Message;
+import websocket.messages.ServerMessage;
 
 public interface MessageHandler {
-    void notify(Message message);
+    void notify(ServerMessage message);
 }

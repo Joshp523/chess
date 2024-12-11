@@ -16,9 +16,12 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Message;
 import service.Service;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
+import static websocket.messages.ServerMessage.ServerMessageType.LOAD_GAME;
 
 @WebSocket
 public class WebSocketHandler {
@@ -55,11 +58,21 @@ public class WebSocketHandler {
 
     private void connect(String authToken, int gameID, Session session) throws IOException, SQLException, DataAccessException {
         connections.add(authToken, gameID, session);
-        var message = String.format(" %s has joined the game as ", service.findUserByToken(authToken).username());
+        String player = service.findUserByToken(authToken).username();
+        String role;
+        if (service.getGameByID(gameID).whiteUsername() == player){
+            role = "white";
+        }else if (service.getGameByID(gameID).blackUsername() == player){
+            role = "black";
+        }else{
+            role = "an observer";
+        }
+        var message = String.format(" %s has joined the game as %s", player, role);
         var notification = new Message(message);
-
         connections.broadcast(authToken, notification);
-
+        Connection c = this.connections.connections.get(authToken);
+        ServerMessage response = new ServerMessage(LOAD_GAME,service.getGameByID(gameID).game().getBoard(),null);
+        c.send(new Gson().toJson(response));
     }
 
     private void makeMove(String authToken, int gameID, ChessMove move) throws IOException, SQLException, DataAccessException, InvalidMoveException {
@@ -69,6 +82,9 @@ public class WebSocketHandler {
         var message = String.format("%s moved.", service.findUserByToken(authToken).username());
         var notification = new Message(message);
         connections.broadcast(authToken, notification);
+        Connection c = this.connections.connections.get(authToken);
+        ServerMessage response = new ServerMessage(LOAD_GAME,service.getGameByID(gameID).game().getBoard(),null);
+        c.send(new Gson().toJson(response));
     }
 
     public void leave(String authToken, int gameID, Session session) throws Exception {

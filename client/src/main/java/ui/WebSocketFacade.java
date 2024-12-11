@@ -4,7 +4,10 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import server.Message;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
+
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
@@ -20,9 +23,11 @@ public class WebSocketFacade extends Endpoint {
     int id;
     URI socketURI;
     ChessGame.TeamColor color;
+    ChessClient sponsor;
 
-    public WebSocketFacade(String url, ui.MessageHandler messageHandler, String authToken, int gameID, ChessGame.TeamColor color) throws Exception{
+    public WebSocketFacade(String url, ui.MessageHandler messageHandler, String authToken, int gameID, ChessGame.TeamColor color, ChessClient caller) throws Exception{
         this.color = color;
+        this.sponsor = caller;
         id = gameID;
         try {
             url = url.replace("http", "ws");
@@ -33,7 +38,9 @@ public class WebSocketFacade extends Endpoint {
             this.session = container.connectToServer(this, socketURI);
             this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
-                    System.out.println(message);
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    sponsor.printBoard(serverMessage.getChessBoard());
+                    messageHandler.notify(serverMessage);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
