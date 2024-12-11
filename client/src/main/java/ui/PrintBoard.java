@@ -8,6 +8,8 @@ import chess.ChessPosition;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+import static chess.ChessGame.TeamColor.GREEN;
+import static chess.ChessPiece.PieceType.BLANK;
 import static java.lang.Math.abs;
 import static ui.EscapeSequences.*;
 
@@ -27,9 +29,9 @@ public class PrintBoard {
 
     public static String main(ChessBoard board, ChessGame.TeamColor teamColor) {
         switch (teamColor) {
-            case WHITE -> mainProtocol(board, 0);
-            case BLACK -> mainProtocol(board, 9);
-            default -> mainProtocol(board, 0);
+            case WHITE -> mainProtocol(board, 9);
+            case BLACK -> mainProtocol(board, 0);
+            default -> mainProtocol(board, 9);
         }
         return null;
     }
@@ -46,7 +48,6 @@ public class PrintBoard {
     }
 
     static void drawBoard(PrintStream out, ChessBoard board, int black) {
-
         for (int row = 1; row <= 8; row++) {
             int label = abs(black - row);
             setText(out);
@@ -67,91 +68,73 @@ public class PrintBoard {
     static void drawRow(PrintStream out, int row, int black, ChessBoard board) {
         if (black == 0) {
             switch (row) {
-                case 1 ->whiteFirst(row, board, 1);
-                case 2 ->blackFirst(row, board, 1);
-                case 3 ->whiteFirst(row, board, 1);
-                case 4 ->blackFirst(row, board, 1);
-                case 5 ->whiteFirst(row, board, 1);
-                case 6 ->blackFirst(row, board, 1);
-                case 7 ->whiteFirst(row, board, 1);
-                case 8 ->blackFirst(row, board, 1);
+                case 1 -> whiteFirst(row, board, 1, out);
+                case 2 -> blackFirst(row, board, 1, out);
+                case 3 -> whiteFirst(row, board, 1, out);
+                case 4 -> blackFirst(row, board, 1, out);
+                case 5 -> whiteFirst(row, board, 1, out);
+                case 6 -> blackFirst(row, board, 1, out);
+                case 7 -> whiteFirst(row, board, 1, out);
+                case 8 -> blackFirst(row, board, 1, out);
             }
-        }else{
+        } else {
             switch (row) {
-                case 8 ->whiteFirst(row, board, -1);
-                case 7 ->blackFirst(row, board, -1);
-                case 6 ->whiteFirst(row, board, -1);
-                case 5 ->blackFirst(row, board, -1);
-                case 4 ->whiteFirst(row, board, -1);
-                case 3 ->blackFirst(row, board, -1);
-                case 2 ->whiteFirst(row, board, -1);
-                case 1 ->blackFirst(row, board, -1);
+                case 8 -> whiteFirst(row, board, -1, out);
+                case 7 -> blackFirst(row, board, -1, out);
+                case 6 -> whiteFirst(row, board, -1, out);
+                case 5 -> blackFirst(row, board, -1, out);
+                case 4 -> whiteFirst(row, board, -1, out);
+                case 3 -> blackFirst(row, board, -1, out);
+                case 2 -> whiteFirst(row, board, -1, out);
+                case 1 -> blackFirst(row, board, -1, out);
             }
         }
     }
 
-    static void whiteFirst(int row, ChessBoard board, int toggle) {
-        if (toggle == 1) {
-            for (int col = 1; col <= 8; col+=2) {
-                ChessPosition pos1 = new ChessPosition(row, col);
-                ChessPiece piece1 =board.getPiece(pos1);
-                populateSquare(ww, color, piece);
-                populateSquare(bb, team, piece);
+    static void whiteFirst(int row, ChessBoard board, int toggle, PrintStream out) {
+        if (toggle == -1) {
+            for (int col = 1; col <= 8; col += 2) {
+                populateRow(row, board, col, 1, ww, bb, out);
             }
         } else {
-            for (int col = 8; col <= 0; col-=2) {
-                populateSquare(ww, color, piece);
-                populateSquare(bb, team, color);
+            for (int col = 8; col > 0; col -= 2) {
+                populateRow(row, board, col, -1, ww, bb, out);
             }
         }
     }
 
-    static void blackFirst(int row, ChessBoard board , int toggle) {
+    private static void populateRow(int row, ChessBoard board, int col, int increment, String background1, String background2, PrintStream out) {
+        ChessPosition pos1 = new ChessPosition(row, col);
+        ChessPiece piece1 = board.getPiece(pos1);
+        if (piece1 == null) {
+            populateSquare(background1, GREEN, BLANK, out);
+        } else {
+            ChessGame.TeamColor color = piece1.getTeamColor();
+            ChessPiece.PieceType pieceKind = piece1.getPieceType();
+            populateSquare(background1, color, pieceKind, out);
+        }
+        ChessPosition pos2 = new ChessPosition(row, col + increment);
+        ChessPiece piece2 = board.getPiece(pos2);
+        if (piece2 == null) {
+            populateSquare(background2, GREEN, BLANK, out);
+        } else {
+            ChessGame.TeamColor color2 = piece2.getTeamColor();
+            ChessPiece.PieceType pieceKind2 = piece2.getPieceType();
+            populateSquare(background2, color2, pieceKind2, out);
+        }
     }
 
-
-    static void vanguard(String team, PrintStream out, int black) {
-        if (black == 9) {
-            for (int row = 1; row <= 4; row++) {
-                populateSquare(ww, team, p, out);
-                populateSquare(bb, team, p, out);
+    static void blackFirst(int row, ChessBoard board, int toggle, PrintStream out) {
+        if (toggle == -1) {
+            for (int col = 1; col <= 8; col += 2) {
+                populateRow(row, board, col, 1, bb, ww, out);
             }
         } else {
-            for (int row = 1; row <= 4; row++) {
-                populateSquare(bb, team, p, out);
-                populateSquare(ww, team, p, out);
+            for (int col = 8; col > 0; col -= 2) {
+                populateRow(row, board, col, -1, bb, ww, out);
             }
         }
     }
-
-    static void rear(String team, PrintStream out, int black) {
-        String left = ww;
-        String right = bb;
-        String one = k;
-        String two = q;
-        if (black == 9) {
-            left = bb;
-            right = ww;
-            one = q;
-            two = k;
-        }
-        if (team == b) {
-            String three = "";
-            three = one;
-            one = two;
-            two = three;
-        }
-
-        populateSquare(left, team, r, out);
-        populateSquare(right, team, n, out);
-        populateSquare(left, team, s, out);
-        populateSquare(right, team, one, out);
-        populateSquare(left, team, two, out);
-        populateSquare(right, team, s, out);
-        populateSquare(left, team, n, out);
-        populateSquare(right, team, r, out);
-    }
-
 
     static void drawHeaders(PrintStream out, int black) {
         setText(out);
@@ -169,8 +152,25 @@ public class PrintBoard {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    static void populateSquare(String squareColor, String pieceColor, String piece, PrintStream out) {
-        out.print(squareColor + pieceColor + piece);
+    static void populateSquare(String squareColor, ChessGame.TeamColor color, ChessPiece.PieceType type, PrintStream out) {
+        String c;
+        String t;
+        switch (color) {
+            case WHITE -> c = w;
+            case BLACK -> c = b;
+            default -> c = squareColor;
+        }
+        switch (type) {
+            case PAWN -> t = p;
+            case KNIGHT -> t = n;
+            case QUEEN -> t = q;
+            case KING -> t = k;
+            case BISHOP -> t = s;
+            case ROOK -> t = r;
+            default -> t = p;
+        }
+
+        out.print(squareColor + c + t);
     }
 
 }
