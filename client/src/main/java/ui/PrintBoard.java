@@ -4,7 +4,6 @@ import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-
 import static chess.ChessGame.TeamColor.GREEN;
 import static chess.ChessPiece.PieceType.BLANK;
 import static java.lang.Math.abs;

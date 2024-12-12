@@ -1,11 +1,9 @@
 package ui;
 
-import chess.ChessBoard;
+
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
-
 import chess.ChessGame;
-import server.Message;
 import websocket.messages.ServerMessage;
 
 public class Repl implements ui.MessageHandler {

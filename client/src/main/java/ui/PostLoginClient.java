@@ -36,9 +36,7 @@ public class PostLoginClient {
                 case "observe" -> observeGame(params);
                 case "help" -> help();
                 case "quit" -> STR."\{SET_TEXT_COLOR_RED}you left the game";
-                default -> STR."""
-\{SET_TEXT_COLOR_RED}Invalid input command
-Please try again in the indicated format""";
+                default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the indicated format";
             };
         } catch (Exception ex) {
             return SET_TEXT_COLOR_RED + "Something's not right. Please try again.";
