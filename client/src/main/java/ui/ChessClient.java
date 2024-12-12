@@ -3,9 +3,7 @@ package ui;
 import chess.*;
 import model.BoardAndMessage;
 import model.GameData;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.websocket.*;
