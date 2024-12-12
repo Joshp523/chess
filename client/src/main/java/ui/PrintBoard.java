@@ -11,18 +11,18 @@ import static ui.EscapeSequences.*;
 
 
 public class PrintBoard {
-    static final String bb = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
-    static final String ww = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
-    static final String dg = SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_DARK_GREEN;
-    static final String lg = SET_BG_COLOR_GREEN + SET_TEXT_COLOR_GREEN;
-    static final String b = SET_TEXT_COLOR_BLACK;
-    static final String w = SET_TEXT_COLOR_WHITE;
-    static final String p = BLACK_PAWN;
-    static final String r = BLACK_ROOK;
-    static final String s = BLACK_BISHOP;
-    static final String n = BLACK_KNIGHT;
-    static final String q = BLACK_QUEEN;
-    static final String k = BLACK_KING;
+    static final String blackBack = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
+    static final String whiteBack = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
+    static final String darkGreen = SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_DARK_GREEN;
+    static final String lightGreen = SET_BG_COLOR_GREEN + SET_TEXT_COLOR_GREEN;
+    static final String blackText = SET_TEXT_COLOR_BLACK;
+    static final String whiteText = SET_TEXT_COLOR_WHITE;
+    static final String pawn = BLACK_PAWN;
+    static final String rook = BLACK_ROOK;
+    static final String bishop = BLACK_BISHOP;
+    static final String knight = BLACK_KNIGHT;
+    static final String queen = BLACK_QUEEN;
+    static final String king = BLACK_KING;
 
 
     public static String main(AnnotatedChessBoard board, ChessGame.TeamColor teamColor) {
@@ -93,16 +93,24 @@ public class PrintBoard {
     static void whiteFirst(int row, AnnotatedChessBoard board, int toggle, PrintStream out) {
         if (toggle == -1) {
             for (int col = 1; col <= 8; col += 2) {
-                populateRow(row, board, col, 1, ww, bb, out, lg, dg);
+                populateRow(row, board, col, 1, whiteBack, blackBack, out, lightGreen, darkGreen);
             }
         } else {
             for (int col = 8; col > 0; col -= 2) {
-                populateRow(row, board, col, -1, ww, bb, out, lg, dg);
+                populateRow(row, board, col, -1, whiteBack, blackBack, out, lightGreen, darkGreen);
             }
         }
     }
 
-    private static void populateRow(int row, AnnotatedChessBoard board, int col, int increment, String background1, String background2, PrintStream out, String background1v, String background2v) {
+    private static void populateRow(int row,
+                                    AnnotatedChessBoard board,
+                                    int col,
+                                    int increment,
+                                    String background1,
+                                    String background2,
+                                    PrintStream out,
+                                    String background1v,
+                                    String background2v) {
         ChessPosition pos1 = new ChessPosition(row, col);
         if (board.getValidity(pos1)) {
             background1 = background1v;
@@ -132,11 +140,11 @@ public class PrintBoard {
     static void blackFirst(int row, AnnotatedChessBoard board, int toggle, PrintStream out) {
         if (toggle == -1) {
             for (int col = 1; col <= 8; col += 2) {
-                populateRow(row, board, col, 1, bb, ww, out, dg, lg);
+                populateRow(row, board, col, 1, blackBack, whiteBack, out, darkGreen, lightGreen);
             }
         } else {
             for (int col = 8; col > 0; col -= 2) {
-                populateRow(row, board, col, -1, bb, ww, out, dg, lg);
+                populateRow(row, board, col, -1, blackBack, whiteBack, out, darkGreen, lightGreen);
             }
         }
     }
@@ -162,18 +170,18 @@ public class PrintBoard {
         String c;
         String t;
         switch (color) {
-            case WHITE -> c = w;
-            case BLACK -> c = b;
+            case WHITE -> c = whiteText;
+            case BLACK -> c = blackText;
             default -> c = squareColor;
         }
         switch (type) {
-            case PAWN -> t = p;
-            case KNIGHT -> t = n;
-            case QUEEN -> t = q;
-            case KING -> t = k;
-            case BISHOP -> t = s;
-            case ROOK -> t = r;
-            default -> t = p;
+            case PAWN -> t = pawn;
+            case KNIGHT -> t = knight;
+            case QUEEN -> t = queen;
+            case KING -> t = king;
+            case BISHOP -> t = bishop;
+            case ROOK -> t = rook;
+            default -> t = pawn;
         }
 
         out.print(squareColor + c + t);

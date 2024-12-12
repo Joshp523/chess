@@ -20,6 +20,7 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
@@ -114,14 +115,17 @@ public class WebSocketHandler {
 
     }
 
-    private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException, SQLException, DataAccessException, InvalidMoveException {
+    private void makeMove(String authToken, int gameID, ChessMove move,
+                          Session session) throws IOException {
         if (service.getGameByID(gameID).game().gameOver() != null) {
-            ServerMessage response = new ServerMessage(ERROR, null, null, service.getGameByID(gameID).game().gameOver());
+            ServerMessage response = new ServerMessage(ERROR, null, null,
+                    service.getGameByID(gameID).game().gameOver());
             session.getRemote().sendString(new Gson().toJson(response));
             return;
         }
         try {
-            ChessGame.TeamColor pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+            ChessGame.TeamColor pieceColor;
+            pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
             String playerUsername = service.findUserByToken(authToken).username();
             ChessGame.TeamColor playerColor = ChessGame.TeamColor.GREEN;
             if (service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
@@ -163,17 +167,13 @@ public class WebSocketHandler {
     }
 
     public void leave(String authToken, int gameID, Session session) throws Exception {
-//        try {
-            //connections.remove(authToken);
+
             service.leaveGame(authToken, gameID);
+
             var message = String.format("%s has left the game", service.findUserByToken(authToken).username());
             var notification = new ServerMessage(NOTIFICATION, null, message, null);
             connections.broadcast(authToken, notification);
-            //connections.remove(authToken);
-//        } catch (Exception ex) {
-//            var error = new ServerMessage(ERROR, null, null, "error");
-//            session.getRemote().sendString(new Gson().toJson(error));
-//        }
+            connections.remove(authToken);
     }
 
     private ChessGame getGameFromID(int id) {

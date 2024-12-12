@@ -28,7 +28,12 @@ public class WebSocketFacade extends Endpoint {
     ChessGame.TeamColor color;
     ChessClient sponsor;
 
-    public WebSocketFacade(String url, ui.MessageHandler messageHandler, String authToken, int gameID, ChessGame.TeamColor color, ChessClient caller) throws Exception{
+    public WebSocketFacade(String url,
+                           ui.MessageHandler messageHandler,
+                           String authToken,
+                           int gameID,
+                           ChessGame.TeamColor color,
+                           ChessClient caller) throws Exception{
         this.color = color;
         this.sponsor = caller;
         id = gameID;
