@@ -73,10 +73,14 @@ public class Service {
         return gameDAO.createGame(gameName);
     }
 
-    public UserData findUserByToken(String authToken) throws DataAccessException, SQLException {
-        AuthData authData = authDAO.findByToken(authToken);
-        String username = authData.username();
-        return userDAO.findByUsername(username);
+    public UserData findUserByToken(String authToken) throws DataAccessException {
+        try {
+            AuthData authData = authDAO.findByToken(authToken);
+            String username = authData.username();
+            return userDAO.findByUsername(username);
+        } catch (SQLException e) {
+            throw new DataAccessException("unauthorized");
+        }
     }
 
     public void joinGame(String authToken, ChessGame.TeamColor color, int gameID) throws DataAccessException, SQLException {
@@ -94,7 +98,7 @@ public class Service {
         return null;
     }
 
-    public void updateGame(int gameID, ChessGame newGame){
+    public void updateGame(int gameID, ChessGame newGame)throws DataAccessException{
         GameData old = getGameByID(gameID);
         GameData updatedGameData = new GameData(gameID, old.whiteUsername(), old.blackUsername(), old.gameName(), newGame);
         gameDAO.updateGame(updatedGameData);

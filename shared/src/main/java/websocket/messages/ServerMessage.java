@@ -12,8 +12,9 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-    ChessBoard chessBoard;
+    ChessBoard game;
     String message;
+    String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -21,10 +22,11 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, ChessBoard board, String message) {
-        this.chessBoard = board;
+    public ServerMessage(ServerMessageType type, ChessBoard board, String message, String errorMessage) {
+        this.game = board;
         this.serverMessageType = type;
         this.message = message;
+        this.errorMessage = errorMessage;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -33,6 +35,9 @@ public class ServerMessage {
 
     public String getMessage() {
         return this.message;
+    }
+    public String getErrorMessage() {
+        return this.errorMessage;
     }
 
     @Override
@@ -52,7 +57,7 @@ public class ServerMessage {
         return Objects.hash(getServerMessageType());
     }
 
-    public ChessBoard getChessBoard(){
-        return chessBoard;
+    public ChessBoard getGame(){
+        return game;
     }
 }

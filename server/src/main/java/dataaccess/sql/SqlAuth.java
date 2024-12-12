@@ -78,7 +78,7 @@ public class SqlAuth implements AuthDAO {
     }
 
     @Override
-    public AuthData findByToken(String authToken) {
+    public AuthData findByToken(String authToken) throws DataAccessException {
         try {
             var conn = DatabaseManager.getConnection();
             var statement = "SELECT * FROM authtable WHERE authtoken=?";
@@ -89,9 +89,9 @@ public class SqlAuth implements AuthDAO {
             System.out.print("authToken: " + authToken);
             return readToAuthDataObject(rs);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("SQL problem: " + e.getMessage());
+        } catch (SQLException ex) {
+            throw new DataAccessException("unauthorized");
         }
     }
 
@@ -104,7 +104,7 @@ public class SqlAuth implements AuthDAO {
                 username = rs.getString("username");
                 authToken = rs.getString("authtoken");
             } else {
-                throw new DataAccessException("the table is empty");
+                throw new DataAccessException("the table does not contain that token");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

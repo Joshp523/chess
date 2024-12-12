@@ -165,7 +165,7 @@ public class SqlGame implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData updatedGameData) {
+    public void updateGame(GameData updatedGameData){
         int id = updatedGameData.gameID();
         String name = updatedGameData.gameName();
         String whiteUsername = updatedGameData.whiteUsername();

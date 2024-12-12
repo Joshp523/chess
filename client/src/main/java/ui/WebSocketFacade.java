@@ -4,7 +4,6 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import server.Message;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -39,7 +38,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    sponsor.printBoard(serverMessage.getChessBoard());
+                    sponsor.printBoard(serverMessage.getGame());
                     messageHandler.notify(serverMessage);
                 }
             });
