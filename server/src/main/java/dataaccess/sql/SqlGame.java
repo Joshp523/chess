@@ -188,7 +188,7 @@ public class SqlGame implements GameDAO {
             ps.setString(2, name);
             ps.setString(3, whiteUsername);
             ps.setString(4, blackUsername);
-            ps.setString(5, new Gson().toJson(updatedGameData));
+            ps.setString(5, new Gson().toJson(updatedGameData.game()));
             ps.executeUpdate();
 
         } catch (SQLException e) {

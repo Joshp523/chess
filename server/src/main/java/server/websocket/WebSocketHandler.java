@@ -27,8 +27,6 @@ import static websocket.messages.ServerMessage.ServerMessageType.*;
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     Service service = new Service(new SqlUser(), new SqlAuth(), new SqlGame());
-    boolean gameOver = false;
-    boolean resigned = false;
 
     public WebSocketHandler() throws Exception {
     }
@@ -45,8 +43,8 @@ public class WebSocketHandler {
     }
 
     private void resign(String authToken, Integer gameID, Session session) throws IOException, SQLException, DataAccessException {
-        if (resigned == true) {
-            var error = new ServerMessage(NOTIFICATION, null,  "You already resigned.",null);
+        if (service.getGameByID(gameID).game().gameOver() != null) {
+            var error = new ServerMessage(ERROR, null,  null,"over");
             session.getRemote().sendString(new Gson().toJson(error));
             return;
         }
@@ -61,8 +59,9 @@ public class WebSocketHandler {
         var message = String.format("%s has forfeited the game. %s wins!", loser, winner);
         var notification = new ServerMessage(NOTIFICATION, null, message, null);
         connections.broadcast(null, notification);
-        gameOver = true;
-        resigned = true;
+        ChessGame updatedGame = service.getGameByID(gameID).game();
+        updatedGame.resign();
+        service.updateGame(gameID, updatedGame);
     }
 
     private void connect(String authToken, Integer gameID, Session session) throws IOException, SQLException, DataAccessException {
@@ -104,14 +103,9 @@ public class WebSocketHandler {
     }
 
     private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException, SQLException, DataAccessException, InvalidMoveException {
-        if (resigned == true) {
-            var error = new ServerMessage(ERROR, null, null,"you already resigned");
-            session.getRemote().sendString(new Gson().toJson(error));
-            return;
-        }
-        if (service.getGameByID(gameID).game().gameOver() != null || gameOver == true) {
-            ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
-            connections.broadcast(null, response);
+        if (service.getGameByID(gameID).game().gameOver() != null) {
+            ServerMessage response = new ServerMessage(ERROR, null, null, service.getGameByID(gameID).game().gameOver());
+            session.getRemote().sendString(new Gson().toJson(response));
             return;
         }
         try {
@@ -149,10 +143,9 @@ public class WebSocketHandler {
             var error = new ServerMessage(ERROR, null, null, "you are not authorized to perform this action.");
             session.getRemote().sendString(new Gson().toJson(error));
         }
-        if (service.getGameByID(gameID).game().gameOver() != null || gameOver == true) {
-            ServerMessage response = new ServerMessage(NOTIFICATION, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
+        if (service.getGameByID(gameID).game().gameOver() != null) {
+            ServerMessage response = new ServerMessage(NOTIFICATION, null, service.getGameByID(gameID).game().gameOver(), null);
             connections.broadcast(null, response);
-            this.gameOver = true;
         }
 
     }

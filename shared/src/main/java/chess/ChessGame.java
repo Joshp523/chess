@@ -21,6 +21,7 @@ public class ChessGame {
     boolean blackCM;
     boolean whiteSM;
     boolean blackSM;
+    boolean over;
 
     public ChessGame() {
         this.turn = WHITE;
@@ -30,14 +31,27 @@ public class ChessGame {
         this.blackCM = false;
         this.whiteSM = false;
         this.blackSM = false;
+        this.over = false;
         updateStatus();
     }
 
     public String gameOver(){
-        if(whiteCM){return "Black wins!\nGame over.";}
-        if(blackCM){return "White wins!\nGame over.";}
-        if(whiteSM || blackSM){return "Stalemate!\nGame over.";}
+        if(whiteCM){
+            over = true;
+            return "Black wins!\nGame over.";}
+        if(blackCM){
+            over = true;
+            return "White wins!\nGame over.";}
+        if(whiteSM || blackSM){
+            over = true;
+            return "Stalemate!\nGame over.";}
+        if(over){return "";}
         else{return null;}
+
+    }
+
+    public void resign(){
+        over = true;
     }
 
     @Override
