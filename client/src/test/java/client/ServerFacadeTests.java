@@ -1,6 +1,5 @@
 package client;
 
-
 import chess.ChessGame;
 import dataaccess.sql.SqlAuth;
 import dataaccess.sql.SqlGame;
