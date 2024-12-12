@@ -35,7 +35,7 @@ public class PostLoginClient {
                 case "play" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "help" -> help();
-                case "quit" -> STR."\{SET_TEXT_COLOR_RED}you left the game";
+                case "quit" -> SET_TEXT_COLOR_RED + "you left the game";
                 default -> SET_TEXT_COLOR_RED + "Invalid input command\nPlease try again in the indicated format";
             };
         } catch (Exception ex) {
@@ -51,9 +51,7 @@ public class PostLoginClient {
         String color = params[1];
         ChessGame.TeamColor useThisColor;
         if(params.length > 2){
-            return STR."""
-\{SET_TEXT_COLOR_RED}too many argument(s)
-Please try again.""";
+            return SET_TEXT_COLOR_RED + "too many argument(s)\nPlease try again.";
         }
         try {
             switch (color) {
@@ -78,12 +76,12 @@ Please try again.""";
                     yield "";
                 }
             };
-            return STR."joined\{colorcode}\{gameID}";
+            return "joined" + colorcode + gameID;
         } catch (NumberFormatException e) {
             return SET_TEXT_COLOR_RED + "Something's not right :/\n make sure to type the number of the game from" +
                     " the list and your desired color in all caps.";
         } catch (Exception e) {
-            return STR."\{SET_TEXT_COLOR_RED}color already taken";
+            return SET_TEXT_COLOR_RED + "color already taken";
         }
     }
 
@@ -113,7 +111,7 @@ Please try again.""";
         }
         try {
             server.createGame(params[0]);
-            return STR."\{SET_TEXT_COLOR_BLUE}a game called \{params[0]} was created.";
+            return SET_TEXT_COLOR_BLUE + "a game called " + params[0] + " was created.";
         } catch (Exception e) {
             return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
         }
