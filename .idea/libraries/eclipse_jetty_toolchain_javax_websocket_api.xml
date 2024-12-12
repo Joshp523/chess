@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="eclipse.jetty.toolchain.javax.websocket.api" type="repository">
+    <properties maven-id="org.eclipse.jetty.toolchain:jetty-javax-websocket-api:1.1.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/toolchain/jetty-javax-websocket-api/1.1.2/jetty-javax-websocket-api-1.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
