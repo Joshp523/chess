@@ -28,6 +28,7 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     Service service = new Service(new SqlUser(), new SqlAuth(), new SqlGame());
     boolean gameOver = false;
+    boolean resigned = false;
 
     public WebSocketHandler() throws Exception {
     }
@@ -44,6 +45,11 @@ public class WebSocketHandler {
     }
 
     private void resign(String authToken, Integer gameID, Session session) throws IOException, SQLException, DataAccessException {
+        if (resigned == true) {
+            var error = new ServerMessage(NOTIFICATION, null,  "You already resigned.",null);
+            session.getRemote().sendString(new Gson().toJson(error));
+            return;
+        }
         connections.add(authToken, gameID, session);
         String loser = service.findUserByToken(authToken).username();
         String winner;
@@ -55,7 +61,8 @@ public class WebSocketHandler {
         var message = String.format("%s has forfeited the game. %s wins!", loser, winner);
         var notification = new ServerMessage(NOTIFICATION, null, message, null);
         connections.broadcast(null, notification);
-
+        gameOver = true;
+        resigned = true;
     }
 
     private void connect(String authToken, Integer gameID, Session session) throws IOException, SQLException, DataAccessException {
@@ -87,60 +94,66 @@ public class WebSocketHandler {
                 Connection c = this.connections.connections.get(authToken);
                 ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
                 c.send(new Gson().toJson(response));
+
             } catch (Exception e) {
                 var error = new ServerMessage(ERROR, null, null, "You are not authorized to perform this action.");
                 session.getRemote().sendString(new Gson().toJson(error));
             }
         }
+
     }
 
     private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException, SQLException, DataAccessException, InvalidMoveException {
-
-            if(service.getGameByID(gameID).game().gameOver() != null || gameOver==true) {
-                ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
-                connections.broadcast(null, response);
-                return;
+        if (resigned == true) {
+            var error = new ServerMessage(ERROR, null, null,"you already resigned");
+            session.getRemote().sendString(new Gson().toJson(error));
+            return;
+        }
+        if (service.getGameByID(gameID).game().gameOver() != null || gameOver == true) {
+            ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
+            connections.broadcast(null, response);
+            return;
+        }
+        try {
+            ChessGame.TeamColor pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+            String playerUsername = service.findUserByToken(authToken).username();
+            ChessGame.TeamColor playerColor = ChessGame.TeamColor.GREEN;
+            if (service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
+                playerColor = ChessGame.TeamColor.WHITE;
             }
-            try {
-                ChessGame.TeamColor pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
-                String playerUsername = service.findUserByToken(authToken).username();
-                ChessGame.TeamColor playerColor = ChessGame.TeamColor.GREEN;
-                if (service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
-                    playerColor = ChessGame.TeamColor.WHITE;
-                }
-                if (service.getGameByID(gameID).blackUsername().equals(playerUsername)) {
-                    playerColor = ChessGame.TeamColor.BLACK;
-                }
-                if (!pieceColor.equals(playerColor)) {
-                    var error = new ServerMessage(ERROR, null, null, "You can only move your own pieces.");
-                    session.getRemote().sendString(new Gson().toJson(error));
-                } else {
-                    ChessGame game = getGameFromID(gameID);
-                    try {
-                        assert game != null;
-                        game.makeMove(move);
-                    } catch (InvalidMoveException e) {
-                        var error = new ServerMessage(ERROR, null, null, "invalid move");
-                        session.getRemote().sendString(new Gson().toJson(error));
-                        return;
-                    }
-                    service.updateGame(gameID, game);
-                    var message = String.format("%s moved.", service.findUserByToken(authToken).username());
-                    var notification = new ServerMessage(NOTIFICATION, null, message, null);
-                    connections.broadcast(authToken, notification);
-                    Connection c = this.connections.connections.get(authToken);
-                    ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
-                    connections.broadcast(null, response);
-                }
-            } catch (Exception e) {
-                var error = new ServerMessage(ERROR, null, null, "you are not authorized to perform this action.");
+            if (service.getGameByID(gameID).blackUsername().equals(playerUsername)) {
+                playerColor = ChessGame.TeamColor.BLACK;
+            }
+            if (!pieceColor.equals(playerColor)) {
+                var error = new ServerMessage(ERROR, null, null, "You can only move your own pieces.");
                 session.getRemote().sendString(new Gson().toJson(error));
-            }
-            if(service.getGameByID(gameID).game().gameOver() != null|| gameOver == true) {
-                ServerMessage response = new ServerMessage(NOTIFICATION, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
+            } else {
+                ChessGame game = getGameFromID(gameID);
+                try {
+                    assert game != null;
+                    game.makeMove(move);
+                } catch (InvalidMoveException e) {
+                    var error = new ServerMessage(ERROR, null, null, "invalid move");
+                    session.getRemote().sendString(new Gson().toJson(error));
+                    return;
+                }
+                service.updateGame(gameID, game);
+                var message = String.format("%s moved.", service.findUserByToken(authToken).username());
+                var notification = new ServerMessage(NOTIFICATION, null, message, null);
+                connections.broadcast(authToken, notification);
+                Connection c = this.connections.connections.get(authToken);
+                ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
                 connections.broadcast(null, response);
-                this.gameOver = true;
             }
+        } catch (Exception e) {
+            var error = new ServerMessage(ERROR, null, null, "you are not authorized to perform this action.");
+            session.getRemote().sendString(new Gson().toJson(error));
+        }
+        if (service.getGameByID(gameID).game().gameOver() != null || gameOver == true) {
+            ServerMessage response = new ServerMessage(NOTIFICATION, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
+            connections.broadcast(null, response);
+            this.gameOver = true;
+        }
 
     }
 
@@ -150,10 +163,11 @@ public class WebSocketHandler {
             service.leaveGame(authToken, gameID);
             var message = String.format("%s has left the game", service.findUserByToken(authToken).username());
             var notification = new ServerMessage(NOTIFICATION, null, message, null);
-            connections.broadcast(null, notification);
+            connections.broadcast(authToken, notification);
             connections.remove(authToken);
         } catch (Exception ex) {
-            throw new Exception();
+            var error = new ServerMessage(ERROR, null, null, "error");
+            session.getRemote().sendString(new Gson().toJson(error));
         }
     }
 
