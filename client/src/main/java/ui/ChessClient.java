@@ -19,7 +19,8 @@ public class ChessClient {
     ChessGame.TeamColor color;
 
     ChessClient(String serverURL, MessageHandler messageHandler, String token, int id, ChessGame.TeamColor color) throws Exception {
-        server = new ServerFacade(serverURL, token);
+        server = new ServerFacade(serverURL);
+        server.setTok(token);
         ws = new WebSocketFacade(serverURL, messageHandler, token, id, color, this);
         gameID = id;
         this.color = color;

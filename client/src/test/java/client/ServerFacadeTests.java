@@ -33,7 +33,8 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:" + port);
         String token = facade.register("username", "password", "email");
-        facade = new ServerFacade("http://localhost:" + port, token);
+        facade = new ServerFacade("http://localhost:" + port);
+        facade.setTok(token);
         //facade2 = new ServerFacade("http://localhost:" + port);
     }
 

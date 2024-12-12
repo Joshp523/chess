@@ -23,13 +23,16 @@ public class ServerFacade {
     String serverUrl;
     String authToken;
 
-    public ServerFacade(String url, String authTok) {
+    public ServerFacade(String url) {
         serverUrl = url;
-        authToken = authTok;
+
+    }
+    public void setTok(String token) {
+        this.authToken = token;
     }
 
     public void join(ChessGame.TeamColor color, int gameID){
-        //System.out.println("join function in serverFacade reached");
+
         var path = "/game";
         ColorAndGame request = new ColorAndGame(color, gameID);
         this.makeRequest("PUT", path, request, Map.class);

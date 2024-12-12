@@ -19,7 +19,8 @@ public class PostLoginClient {
     PostLoginClient(String serverURL, Repl repl, String token) {
         authToken = token;
         this.serverUrl = serverURL;
-        server = new ServerFacade(serverUrl, authToken);
+        server = new ServerFacade(serverUrl);
+        server.setTok(token);
         squares = new PrintBoard();
     }
 

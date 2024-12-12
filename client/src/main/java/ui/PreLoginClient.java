@@ -13,7 +13,8 @@ public class PreLoginClient {
 
     PreLoginClient(String serverURL, Repl repl) {
         this.serverUrl = serverURL;
-        server = new ServerFacade(serverUrl, authToken);
+        server = new ServerFacade(serverUrl);
+        server.setTok(authToken);
         this.repl = repl;
 
     }
