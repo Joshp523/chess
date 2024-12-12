@@ -33,6 +33,13 @@ public class ChessGame {
         updateStatus();
     }
 
+    public String gameOver(){
+        if(whiteCM){return "Black wins!\nGame over.";}
+        if(blackCM){return "White wins!\nGame over.";}
+        if(whiteSM || blackSM){return "Stalemate!\nGame over.";}
+        else{return null;}
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

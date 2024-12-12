@@ -27,6 +27,7 @@ import static websocket.messages.ServerMessage.ServerMessageType.*;
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     Service service = new Service(new SqlUser(), new SqlAuth(), new SqlGame());
+    boolean gameOver = false;
 
     public WebSocketHandler() throws Exception {
     }
@@ -94,41 +95,53 @@ public class WebSocketHandler {
     }
 
     private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException, SQLException, DataAccessException, InvalidMoveException {
-        try {
-            ChessGame.TeamColor pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
-            String playerUsername = service.findUserByToken(authToken).username();
-            ChessGame.TeamColor playerColor = ChessGame.TeamColor.GREEN;
-            if (service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
-                playerColor = ChessGame.TeamColor.WHITE;
-            }
-            if (service.getGameByID(gameID).blackUsername().equals(playerUsername)) {
-                playerColor = ChessGame.TeamColor.BLACK;
-            }
-            if (!pieceColor.equals(playerColor)) {
-                var error = new ServerMessage(ERROR, null, null, "You can only move your own pieces.");
-                session.getRemote().sendString(new Gson().toJson(error));
-            } else {
-                ChessGame game = getGameFromID(gameID);
-                try {
-                    assert game != null;
-                    game.makeMove(move);
-                } catch (InvalidMoveException e) {
-                    var error = new ServerMessage(ERROR, null, null, "invalid move");
-                    session.getRemote().sendString(new Gson().toJson(error));
-                    return;
-                }
-                service.updateGame(gameID, game);
-                var message = String.format("%s moved.", service.findUserByToken(authToken).username());
-                var notification = new ServerMessage(NOTIFICATION, null, message, null);
-                connections.broadcast(authToken, notification);
-                Connection c = this.connections.connections.get(authToken);
-                ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
+
+            if(service.getGameByID(gameID).game().gameOver() != null || gameOver==true) {
+                ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
                 connections.broadcast(null, response);
+                return;
             }
-        } catch (Exception e) {
-            var error = new ServerMessage(ERROR, null, null, "you are not authorized to perform this action.");
-            session.getRemote().sendString(new Gson().toJson(error));
-        }
+            try {
+                ChessGame.TeamColor pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+                String playerUsername = service.findUserByToken(authToken).username();
+                ChessGame.TeamColor playerColor = ChessGame.TeamColor.GREEN;
+                if (service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
+                    playerColor = ChessGame.TeamColor.WHITE;
+                }
+                if (service.getGameByID(gameID).blackUsername().equals(playerUsername)) {
+                    playerColor = ChessGame.TeamColor.BLACK;
+                }
+                if (!pieceColor.equals(playerColor)) {
+                    var error = new ServerMessage(ERROR, null, null, "You can only move your own pieces.");
+                    session.getRemote().sendString(new Gson().toJson(error));
+                } else {
+                    ChessGame game = getGameFromID(gameID);
+                    try {
+                        assert game != null;
+                        game.makeMove(move);
+                    } catch (InvalidMoveException e) {
+                        var error = new ServerMessage(ERROR, null, null, "invalid move");
+                        session.getRemote().sendString(new Gson().toJson(error));
+                        return;
+                    }
+                    service.updateGame(gameID, game);
+                    var message = String.format("%s moved.", service.findUserByToken(authToken).username());
+                    var notification = new ServerMessage(NOTIFICATION, null, message, null);
+                    connections.broadcast(authToken, notification);
+                    Connection c = this.connections.connections.get(authToken);
+                    ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
+                    connections.broadcast(null, response);
+                }
+            } catch (Exception e) {
+                var error = new ServerMessage(ERROR, null, null, "you are not authorized to perform this action.");
+                session.getRemote().sendString(new Gson().toJson(error));
+            }
+            if(service.getGameByID(gameID).game().gameOver() != null|| gameOver == true) {
+                ServerMessage response = new ServerMessage(NOTIFICATION, service.getGameByID(gameID).game().getBoard(), service.getGameByID(gameID).game().gameOver(), null);
+                connections.broadcast(null, response);
+                this.gameOver = true;
+            }
+
     }
 
     public void leave(String authToken, int gameID, Session session) throws Exception {
