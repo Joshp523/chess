@@ -1,6 +1,6 @@
 package server.websocket;
 
-import chess.ChessBoard;
+
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
@@ -13,7 +13,7 @@ import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import server.Message;
+
 import service.Service;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;

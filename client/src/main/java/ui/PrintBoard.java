@@ -11,18 +11,19 @@ import static ui.EscapeSequences.*;
 
 
 public class PrintBoard {
-    static final String blackBack = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
-    static final String whiteBack = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
-    static final String darkGreen = SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_DARK_GREEN;
-    static final String lightGreen = SET_BG_COLOR_GREEN + SET_TEXT_COLOR_GREEN;
-    static final String blackText = SET_TEXT_COLOR_BLACK;
-    static final String whiteText = SET_TEXT_COLOR_WHITE;
-    static final String pawn = BLACK_PAWN;
-    static final String rook = BLACK_ROOK;
-    static final String bishop = BLACK_BISHOP;
-    static final String knight = BLACK_KNIGHT;
-    static final String queen = BLACK_QUEEN;
-    static final String king = BLACK_KING;
+    static final String BLACKBACK = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_DARK_GREY;
+    static final String WHITEBACK = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_LIGHT_GREY;
+    static final String DARKGREEN = SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_DARK_GREEN;
+    static final String LIGHTGREEN = SET_BG_COLOR_GREEN + SET_TEXT_COLOR_GREEN;
+    static final String BLACKTEXT = SET_TEXT_COLOR_BLACK;
+    static final String WHITETEXT = SET_TEXT_COLOR_WHITE;
+    static final String PAWN = BLACK_PAWN;
+    static final String ROOK = BLACK_ROOK;
+    static final String BISHOP = BLACK_BISHOP;
+    static final String KNIGHT = BLACK_KNIGHT;
+
+    static final String QUEEN = BLACK_QUEEN;
+    static final String KING = BLACK_KING;
 
 
     public static String main(AnnotatedChessBoard board, ChessGame.TeamColor teamColor) {
@@ -93,11 +94,11 @@ public class PrintBoard {
     static void whiteFirst(int row, AnnotatedChessBoard board, int toggle, PrintStream out) {
         if (toggle == -1) {
             for (int col = 1; col <= 8; col += 2) {
-                populateRow(row, board, col, 1, whiteBack, blackBack, out, lightGreen, darkGreen);
+                populateRow(row, board, col, 1, WHITEBACK, BLACKBACK, out, LIGHTGREEN, DARKGREEN);
             }
         } else {
             for (int col = 8; col > 0; col -= 2) {
-                populateRow(row, board, col, -1, whiteBack, blackBack, out, lightGreen, darkGreen);
+                populateRow(row, board, col, -1, WHITEBACK, BLACKBACK, out, LIGHTGREEN, DARKGREEN);
             }
         }
     }
@@ -140,11 +141,11 @@ public class PrintBoard {
     static void blackFirst(int row, AnnotatedChessBoard board, int toggle, PrintStream out) {
         if (toggle == -1) {
             for (int col = 1; col <= 8; col += 2) {
-                populateRow(row, board, col, 1, blackBack, whiteBack, out, darkGreen, lightGreen);
+                populateRow(row, board, col, 1, BLACKBACK, WHITEBACK, out, DARKGREEN, LIGHTGREEN);
             }
         } else {
             for (int col = 8; col > 0; col -= 2) {
-                populateRow(row, board, col, -1, blackBack, whiteBack, out, darkGreen, lightGreen);
+                populateRow(row, board, col, -1, BLACKBACK, WHITEBACK, out, DARKGREEN, LIGHTGREEN);
             }
         }
     }
@@ -170,18 +171,18 @@ public class PrintBoard {
         String c;
         String t;
         switch (color) {
-            case WHITE -> c = whiteText;
-            case BLACK -> c = blackText;
+            case WHITE -> c = WHITETEXT;
+            case BLACK -> c = BLACKTEXT;
             default -> c = squareColor;
         }
         switch (type) {
-            case PAWN -> t = pawn;
-            case KNIGHT -> t = knight;
-            case QUEEN -> t = queen;
-            case KING -> t = king;
-            case BISHOP -> t = bishop;
-            case ROOK -> t = rook;
-            default -> t = pawn;
+            case PAWN -> t = PAWN;
+            case KNIGHT -> t = KNIGHT;
+            case QUEEN -> t = QUEEN;
+            case KING -> t = KING;
+            case BISHOP -> t = BISHOP;
+            case ROOK -> t = ROOK;
+            default -> t = PAWN;
         }
 
         out.print(squareColor + c + t);
