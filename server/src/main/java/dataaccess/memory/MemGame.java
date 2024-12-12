@@ -52,21 +52,21 @@ public class MemGame implements GameDAO {
     public void updateGame(GameData updatedGameData) {    }
 
     public static GameData extractedFromAddUser(String username, ChessGame.TeamColor color, GameData game) throws DataAccessException {
-        GameData updatedGame = null;
+        if(color!=null){
         switch (color) {
             case WHITE:
-                if (game.whiteUsername() == null&&username!=null) {
-                    return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-                } else {
+                if (game.whiteUsername() != null&&username != null) {
                     throw new DataAccessException("Error: already taken");
+                } else {
+                    return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
                 }
             case BLACK:
-                if (game.blackUsername() == null&&username!=null) {
-                    return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-                } else {
+                if (game.blackUsername() != null&&username!=null) {
                     throw new DataAccessException("Error: already taken");
+                } else {
+                    return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
                 }
-        }
-        return updatedGame;
+        }}
+        return new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
     }
 }

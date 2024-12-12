@@ -63,14 +63,12 @@ public class ChessClient {
     }
 
     public String help() {
-        return STR."""
-\{SET_TEXT_COLOR_YELLOW}--To forfeit the game, please enter "resign"\s
---To to see the current game board again, please enter "redraw"
---To exit the game, please enter "leave"
---To move, please enter "move" <STARTING SQUARE> <ENDING SQUARE>
---To view all legal moves for a piece, please enter "highlight" <SQUARE>
---To see this menu again, please enter "help"
-""";
+        return SET_TEXT_COLOR_YELLOW + "--To forfeit the game, please enter \"resign\" " +
+                "\n--To to see the current game board again, please enter \"redraw\"\n--To " +
+                "exit the game, please enter \"leave\"\n--To move, please enter \"move\" " +
+                "<STARTING SQUARE> <ENDING SQUARE>\n--To view all legal moves for a piece, " +
+                "please enter \"highlight\" <SQUARE>\n--To see this menu again, please enter " +
+                "\"help\"\n";
     }
 
     private String quitter() throws IOException {

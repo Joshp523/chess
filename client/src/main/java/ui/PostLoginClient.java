@@ -82,9 +82,8 @@ Please try again.""";
             };
             return STR."joined\{colorcode}\{gameID}";
         } catch (NumberFormatException e) {
-            return STR."""
-\{SET_TEXT_COLOR_RED}Something's not right :/
- make sure to type the number of the game from the list and your desired color in all caps.""";
+            return SET_TEXT_COLOR_RED + "Something's not right :/\n make sure to type the number of the game from" +
+                    " the list and your desired color in all caps.";
         } catch (Exception e) {
             return STR."\{SET_TEXT_COLOR_RED}color already taken";
         }
@@ -93,45 +92,32 @@ Please try again.""";
     private String listGames() {
         try {
             ArrayList<GameData> games = server.listGames();
-            String returnMe = STR."""
-\{SET_TEXT_COLOR_BLUE}here are all the games:
-""";
+            String returnMe = SET_TEXT_COLOR_BLUE + "here are all the games:\n";
             int i = 1;
             for (GameData datum : games) {
-                returnMe += STR."""
-\{i}. \{datum.gameName()}
-\tWhite: \{datum.whiteUsername()}
-\tBlack: \{datum.blackUsername()}
-""";
+                returnMe += i + ". " + datum.gameName() + "\n\tWhite: " + datum.whiteUsername() +
+                        "\n\tBlack: " + datum.blackUsername() + "\n";
                 temporaryEnumeration.put(i, datum);
                 i++;
             }
             return returnMe;
         } catch (Exception e) {
-            return STR."""
-\{SET_TEXT_COLOR_RED}Something's not right :/
-Please try again.""";
+            return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
 
         }
     }
 
     private String createGame(String[] params) {
         if (params.length < 1) {
-            return STR."""
-\{SET_TEXT_COLOR_RED}missing argument(s).
-Please try again.""";
+            return SET_TEXT_COLOR_RED + "missing argument(s).\nPlease try again.";
         }if(params.length > 1){
-            return STR."""
-\{SET_TEXT_COLOR_RED}too many argument(s)
-Please try again.""";
+            return SET_TEXT_COLOR_RED + "too many argument(s)\nPlease try again.";
         }
         try {
             server.createGame(params[0]);
             return STR."\{SET_TEXT_COLOR_BLUE}a game called \{params[0]} was created.";
         } catch (Exception e) {
-            return STR."""
-\{SET_TEXT_COLOR_RED}Something's not right :/
-Please try again.""";
+            return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
         }
     }
 
@@ -141,9 +127,7 @@ Please try again.""";
             server.logout();
             return "goodbye";
         } catch (Exception e) {
-            return STR."""
-\{SET_TEXT_COLOR_RED}Something's not right :/
-Please try again.""";
+            return SET_TEXT_COLOR_RED + "Something's not right :/\nPlease try again.";
         }
     }
 
@@ -152,13 +136,10 @@ Please try again.""";
     }
 
     public String help() {
-        return STR."""
-\{SET_TEXT_COLOR_YELLOW}--To log out, please enter "logout"\s
---To create a new game, please enter "create" <GAMENAME>
---To list all the current games, please enter "list"
---To play in one of the listed games, please enter "play" <GAME NUMBER> [WHITE/BLACK]
---To observe a game, please enter "observe" <GAME NUMBER>
---To see this menu again, please enter "help"
---To leave a game you are in, please enter "quit\"""";
+        return SET_TEXT_COLOR_YELLOW + "--To log out, please enter \"logout\" \n--To create a new game, please " +
+                "enter \"create\" <GAMENAME>\n--To list all the current games, please enter \"list\"\n--To play " +
+                "in one of the listed games, please enter \"play\" <GAME NUMBER> [WHITE/BLACK]\n--To observe a game, " +
+                "please enter \"observe\" <GAME NUMBER>\n--To see this menu again, please enter \"help\"\n--To leave" +
+                " a game you are in, please enter \"quit\"";
     }
 }

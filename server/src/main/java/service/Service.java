@@ -104,13 +104,13 @@ public class Service {
         gameDAO.updateGame(updatedGameData);
     }
 
-    public void leaveGame(String authToken, int gameID) throws SQLException, DataAccessException {
+    public void leaveGame(String authToken, int gameID) throws DataAccessException {
         UserData userData = findUserByToken(authToken);
         String username = userData.username();
         GameData game = getGameByID(gameID);
         ChessGame.TeamColor color = null;
-        if (game.whiteUsername().equals(username)){color = WHITE;}
-        else if (game.blackUsername().equals(username)){color = BLACK;}
+        if (game.whiteUsername()==username){color = WHITE;}
+        else if (game.blackUsername() == username){color = BLACK;}
         gameDAO.addUser(null, color, gameID);
     }
 }

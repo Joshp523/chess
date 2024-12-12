@@ -175,7 +175,6 @@ public class SqlGame implements GameDAO {
              var ps = conn.prepareStatement(statement1)) {
             ps.setInt(1, id);
             ps.executeUpdate();
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (DataAccessException e) {
