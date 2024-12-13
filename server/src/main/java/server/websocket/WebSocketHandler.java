@@ -71,7 +71,7 @@ public class WebSocketHandler {
         }
         var message = String.format("%s has forfeited the game. %s wins!", loser, winner);
         var notification = new ServerMessage(NOTIFICATION, null, message, null);
-        connections.broadcast(null, notification);
+        connections.broadcast(gameID,null, notification);
         ChessGame updatedGame = service.getGameByID(gameID).game();
         updatedGame.resign();
         service.updateGame(gameID, updatedGame);
@@ -102,7 +102,7 @@ public class WebSocketHandler {
                 }
                 var message = String.format(" %s has joined the game as %s", player, role);
                 var notification = new ServerMessage(NOTIFICATION, null, message, null);
-                connections.broadcast(authToken, notification);
+                connections.broadcast(gameID, authToken, notification);
                 Connection c = this.connections.connections.get(authToken);
                 ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
                 c.send(new Gson().toJson(response));
@@ -150,10 +150,10 @@ public class WebSocketHandler {
                 service.updateGame(gameID, game);
                 var message = String.format("%s moved.", service.findUserByToken(authToken).username());
                 var notification = new ServerMessage(NOTIFICATION, null, message, null);
-                connections.broadcast(authToken, notification);
+                connections.broadcast(gameID, authToken, notification);
                 Connection c = this.connections.connections.get(authToken);
                 ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
-                connections.broadcast(null, response);
+                connections.broadcast(gameID,null, response);
             }
         } catch (Exception e) {
             var error = new ServerMessage(ERROR, null, null, "you are not authorized to perform this action.");
@@ -161,7 +161,7 @@ public class WebSocketHandler {
         }
         if (service.getGameByID(gameID).game().gameOver() != null) {
             ServerMessage response = new ServerMessage(NOTIFICATION, null, service.getGameByID(gameID).game().gameOver(), null);
-            connections.broadcast(null, response);
+            connections.broadcast(gameID,null, response);
         }
 
     }
@@ -169,10 +169,9 @@ public class WebSocketHandler {
     public void leave(String authToken, int gameID, Session session) throws Exception {
 
             service.leaveGame(authToken, gameID);
-
             var message = String.format("%s has left the game", service.findUserByToken(authToken).username());
             var notification = new ServerMessage(NOTIFICATION, null, message, null);
-            connections.broadcast(authToken, notification);
+            connections.broadcast(gameID, authToken, notification);
             connections.remove(authToken);
     }
 

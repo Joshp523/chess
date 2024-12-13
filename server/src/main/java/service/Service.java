@@ -109,8 +109,8 @@ public class Service {
         String username = userData.username();
         GameData game = getGameByID(gameID);
         ChessGame.TeamColor color = null;
-        if (game.whiteUsername()==username){color = WHITE;}
-        else if (game.blackUsername() == username){color = BLACK;}
+        if (game.whiteUsername()!=null&&game.whiteUsername().equals(username)){color = WHITE;}
+        else if (game.blackUsername()!=null&&game.blackUsername().equals(username)){color = BLACK;}
         gameDAO.addUser(null, color, gameID);
     }
 }

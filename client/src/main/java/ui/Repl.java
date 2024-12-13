@@ -2,7 +2,9 @@ package ui;
 
 
 import java.util.Scanner;
+
 import static ui.EscapeSequences.*;
+
 import chess.ChessGame;
 import websocket.messages.ServerMessage;
 
@@ -70,13 +72,13 @@ public class Repl implements ui.MessageHandler {
                     System.out.println(outcome);
                     System.out.println();
                     ChessGame.TeamColor team = null;
-                    switch (color){
+                    switch (color) {
                         case "w" -> team = ChessGame.TeamColor.WHITE;
                         case "b" -> team = ChessGame.TeamColor.BLACK;
                     }
-                    ChessClient client = new ChessClient(serverURL, this,  postlogin.authToken, lastCharAsInt, team);
+                    ChessClient client = new ChessClient(serverURL, this, postlogin.authToken, lastCharAsInt, team);
                     playGame(client);
-                }else{
+                } else {
                     System.out.println(outcome);
                 }
             } catch (Throwable e) {
@@ -91,12 +93,12 @@ public class Repl implements ui.MessageHandler {
         status = "[PLAYING]";
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        System.out.println(client.printBoard());
+        //System.out.println(client.printBoard());
         do {
-            printPrompt();
             String line = scanner.nextLine();
             outcome = client.eval(line);
             System.out.print(outcome);
+            printPrompt();
         } while (!outcome.contains("you left"));
         status = "[LOGGED IN]";
     }
@@ -106,8 +108,9 @@ public class Repl implements ui.MessageHandler {
     }
 
     public void notify(ServerMessage message) {
-        System.out.println(SET_TEXT_COLOR_BLUE + message.getMessage());
-
+        if (message.getMessage() != null) {
+            System.out.println(SET_TEXT_COLOR_BLUE + message.getMessage());
+        }
     }
 }
 

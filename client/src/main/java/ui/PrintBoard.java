@@ -39,6 +39,7 @@ public class PrintBoard {
     static String mainProtocol(AnnotatedChessBoard board, int black) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.ERASE_SCREEN);
+        out.println();
         drawHeaders(out, black);
         drawBoard(out, board, black);
         drawHeaders(out, black);
