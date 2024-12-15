@@ -123,7 +123,7 @@ public class Repl implements ui.MessageHandler {
                 printPrompt();
             }
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
-            if (message.getMessage() != null) {
+            if (message.getErrorMessage() != null) {
                 System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message.getErrorMessage());
                 printPrompt();
             }
