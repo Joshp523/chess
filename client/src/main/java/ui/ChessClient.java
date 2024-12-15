@@ -108,7 +108,8 @@ public class ChessClient {
 
     private String move(String[] params) throws IOException {
         ws.makeMove(new ChessMove(inputToPosition(params[0]), inputToPosition(params[1]),null));
-        return SET_TEXT_COLOR_BLUE + "you moved";
+        //PrintBoard.main(new AnnotatedChessBoard(getGameFromID(gameID).getBoard(),null),color);
+        return null;
     }
 
     public String printBoard() {

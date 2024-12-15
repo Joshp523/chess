@@ -45,6 +45,7 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
             this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
+                synchronized
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                     sponsor.printBoard(serverMessage.getGame());

@@ -57,7 +57,7 @@ public class WebSocketHandler {
             session.getRemote().sendString(new Gson().toJson(error));
         }else{
         if (service.getGameByID(gameID).game().gameOver() != null) {
-            var error = new ServerMessage(ERROR, null,  null,"over");
+            var error = new ServerMessage(ERROR, null,  null,"game over");
             session.getRemote().sendString(new Gson().toJson(error));
             return;
         }
@@ -127,11 +127,16 @@ public class WebSocketHandler {
             ChessGame.TeamColor pieceColor;
             pieceColor = service.getGameByID(gameID).game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
             String playerUsername = service.findUserByToken(authToken).username();
+            if(playerUsername == null){
+                var error = new ServerMessage(ERROR, null, null, "only players can move");
+                session.getRemote().sendString(new Gson().toJson(error));
+                return;
+            }
             ChessGame.TeamColor playerColor = ChessGame.TeamColor.GREEN;
-            if (service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
+            if (service.getGameByID(gameID).whiteUsername()!=null&&service.getGameByID(gameID).whiteUsername().equals(playerUsername)) {
                 playerColor = ChessGame.TeamColor.WHITE;
             }
-            if (service.getGameByID(gameID).blackUsername().equals(playerUsername)) {
+            else if (service.getGameByID(gameID).blackUsername()!=null&&service.getGameByID(gameID).blackUsername().equals(playerUsername)) {
                 playerColor = ChessGame.TeamColor.BLACK;
             }
             if (!pieceColor.equals(playerColor)) {
@@ -151,7 +156,7 @@ public class WebSocketHandler {
                 var message = String.format("%s moved.", service.findUserByToken(authToken).username());
                 var notification = new ServerMessage(NOTIFICATION, null, message, null);
                 connections.broadcast(gameID, authToken, notification);
-                Connection c = this.connections.connections.get(authToken);
+                //Connection c = this.connections.connections.get(authToken);
                 ServerMessage response = new ServerMessage(LOAD_GAME, service.getGameByID(gameID).game().getBoard(), null, null);
                 connections.broadcast(gameID,null, response);
             }

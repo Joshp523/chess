@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
+import chess.AnnotatedChessBoard;
 import chess.ChessGame;
 import websocket.messages.ServerMessage;
 
@@ -12,6 +13,7 @@ public class Repl implements ui.MessageHandler {
     private final PreLoginClient prelogin;
     private String status;
     String serverURL;
+    ChessGame.TeamColor team;
 
     public Repl(String serverUrl) {
         this.serverURL = serverUrl;
@@ -71,10 +73,9 @@ public class Repl implements ui.MessageHandler {
                     outcome = outcome.substring(0, outcome.length() - 1);
                     System.out.println(outcome);
                     System.out.println();
-                    ChessGame.TeamColor team = null;
                     switch (color) {
-                        case "w" -> team = ChessGame.TeamColor.WHITE;
-                        case "b" -> team = ChessGame.TeamColor.BLACK;
+                        case "w" -> this.team = ChessGame.TeamColor.WHITE;
+                        case "b" -> this.team = ChessGame.TeamColor.BLACK;
                     }
                     ChessClient client = new ChessClient(serverURL, this, postlogin.authToken, lastCharAsInt, team);
                     playGame(client);
@@ -93,13 +94,15 @@ public class Repl implements ui.MessageHandler {
         status = "[PLAYING]";
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        //System.out.println(client.printBoard());
+        printPrompt();
         do {
             String line = scanner.nextLine();
             outcome = client.eval(line);
-            System.out.print(outcome);
+            synchronized(this) {
+                System.out.print(outcome);
+            }
             printPrompt();
-        } while (!outcome.contains("you left"));
+        } while (outcome == null||!outcome.contains("you left"));
         status = "[LOGGED IN]";
     }
 
@@ -109,9 +112,15 @@ public class Repl implements ui.MessageHandler {
 
     public void notify(ServerMessage message) {
         if (message.getMessage() != null) {
-            System.out.println(SET_TEXT_COLOR_BLUE + message.getMessage());
-        }
+            System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_BLUE + message.getMessage());
+        }if (message.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
+        if(message.getGame()!=null){
+            System.out.print(PrintBoard.main(new AnnotatedChessBoard(message.getGame(),null),team));
+        }else{
+            System.out.println("please wait your turn");
+        }}
     }
+
 }
 
 
