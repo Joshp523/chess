@@ -93,9 +93,9 @@ public class WebSocketHandler {
                 connections.add(authToken, gameID, session);
                 String player = service.findUserByToken(authToken).username();
                 String role;
-                if (service.getGameByID(gameID).whiteUsername() == player) {
+                if (service.getGameByID(gameID).whiteUsername().equals(player)) {
                     role = "white";
-                } else if (service.getGameByID(gameID).blackUsername() == player) {
+                } else if (service.getGameByID(gameID).blackUsername().equals(player)) {
                     role = "black";
                 } else {
                     role = "an observer";
@@ -141,6 +141,9 @@ public class WebSocketHandler {
             }
             if (!pieceColor.equals(playerColor)) {
                 var error = new ServerMessage(ERROR, null, null, "You can only move your own pieces.");
+                session.getRemote().sendString(new Gson().toJson(error));
+            }if (!pieceColor.equals(getGameFromID(gameID).getTeamTurn())) {
+                var error = new ServerMessage(ERROR, null, null, "wait your turn");
                 session.getRemote().sendString(new Gson().toJson(error));
             } else {
                 ChessGame game = getGameFromID(gameID);

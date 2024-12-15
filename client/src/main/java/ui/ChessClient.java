@@ -3,6 +3,7 @@ package ui;
 import chess.*;
 import model.BoardAndMessage;
 import model.GameData;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,9 +27,9 @@ public class ChessClient {
         this.color = color;
     }
 
-    private ChessGame getGameFromID(int id){
-        for (GameData data: server.listGames()){
-            if (data.gameID()==id){
+    private ChessGame getGameFromID(int id) {
+        for (GameData data : server.listGames()) {
+            if (data.gameID() == id) {
                 return data.game();
             }
         }
@@ -47,6 +48,7 @@ public class ChessClient {
                 case "move" -> move(params);
                 case "resign" -> areYouSure();
                 case "yes" -> quitter();
+                case "no" -> "good choice";
                 case "highlight" -> showLegalMoves(params);
                 case "help" -> help();
                 case "quit" -> SET_TEXT_COLOR_RED + "you left the game";
@@ -107,16 +109,16 @@ public class ChessClient {
     }
 
     private String move(String[] params) throws IOException {
-        ws.makeMove(new ChessMove(inputToPosition(params[0]), inputToPosition(params[1]),null));
-        //PrintBoard.main(new AnnotatedChessBoard(getGameFromID(gameID).getBoard(),null),color);
-        return null;
+        ws.makeMove(new ChessMove(inputToPosition(params[0]), inputToPosition(params[1]), null));
+        return "";
     }
 
     public String printBoard() {
-        PrintBoard.main(new AnnotatedChessBoard(getGameFromID(gameID).getBoard(),null), color);
-        return SET_TEXT_COLOR_BLUE+ "current gameboard\n";
+        PrintBoard.main(new AnnotatedChessBoard(getGameFromID(gameID).getBoard(), null), color);
+        return SET_TEXT_COLOR_BLUE + "current gameboard\n";
     }
+
     public String printBoard(ChessBoard board) {
-        return PrintBoard.main(new AnnotatedChessBoard(board,null), color);
+        return PrintBoard.main(new AnnotatedChessBoard(board, null), color);
     }
 }

@@ -94,15 +94,14 @@ public class Repl implements ui.MessageHandler {
         status = "[PLAYING]";
         Scanner scanner = new Scanner(System.in);
         var outcome = "";
-        printPrompt();
         do {
+            if(outcome!=null&&(outcome.contains("are you sure") ||outcome.contains("marked")||outcome.contains("choice")||outcome.contains("current"))){
+                printPrompt();
+            }
             String line = scanner.nextLine();
             outcome = client.eval(line);
-            synchronized(this) {
-                System.out.print(outcome);
-            }
-            printPrompt();
-        } while (outcome == null||!outcome.contains("you left"));
+            System.out.print(outcome);
+        } while (outcome == null || !outcome.contains("you left"));
         status = "[LOGGED IN]";
     }
 
@@ -111,16 +110,23 @@ public class Repl implements ui.MessageHandler {
     }
 
     public void notify(ServerMessage message) {
-        if (message.getMessage() != null) {
-            System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_BLUE + message.getMessage());
-        }if (message.getServerMessageType()== ServerMessage.ServerMessageType.LOAD_GAME){
-        if(message.getGame()!=null){
-            System.out.print(PrintBoard.main(new AnnotatedChessBoard(message.getGame(),null),team));
-        }else{
-            System.out.println("please wait your turn");
-        }}
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            if (message.getGame() == null) {
+                System.out.println("please wait your turn");
+            } else {
+                System.out.println(PrintBoard.main(new AnnotatedChessBoard(message.getGame(), null), team));
+                printPrompt();
+            }
+        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            if (message.getMessage() != null) {
+                System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_BLUE + message.getMessage());
+                printPrompt();
+            }
+        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+            if (message.getMessage() != null) {
+                System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message.getErrorMessage());
+                printPrompt();
+            }
+        }
     }
-
 }
-
-

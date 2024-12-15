@@ -48,7 +48,6 @@ public class WebSocketFacade extends Endpoint {
                 synchronized
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    sponsor.printBoard(serverMessage.getGame());
                     messageHandler.notify(serverMessage);
                 }
             });

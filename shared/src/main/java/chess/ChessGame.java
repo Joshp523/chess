@@ -16,7 +16,7 @@ public class ChessGame {
 
     private TeamColor turn;
     private ChessBoard board;
-    private ArrayList<ChessBoard> history = new ArrayList<ChessBoard>();
+    private final ArrayList<ChessBoard> history = new ArrayList<ChessBoard>();
     boolean whiteCM;
     boolean blackCM;
     boolean whiteSM;
@@ -76,7 +76,6 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-
         return turn;
     }
 
